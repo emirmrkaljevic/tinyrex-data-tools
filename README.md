@@ -39,6 +39,20 @@ print(list(client.dataset(run["defaultDatasetId"]).iterate_items())[:3])
 { "mcpServers": { "apify": { "url": "https://mcp.apify.com?tools=tinyrex/tech-stack-detector,tinyrex/ats-jobs-scraper,tinyrex/shopify-products-scraper,tinyrex/workday-jobs-scraper,tinyrex/woocommerce-products-scraper,tinyrex/ted-tenders-scraper,tinyrex/dach-jobs-scraper" } } }
 ```
 
+## Rebuilding the site / adding a new actor
+
+1. Make sure the actor is **public** on Apify (under `tinyrex`) and has `README.md` (with a ```json example input block) and `sample-output.json` in `/workspace/zarada/actors/<name>/`.
+2. Add an entry for it to the `G` dict in `build.py` (slug, ptitle, h1, desc, kw, short, price, intro, steps, faq). Actors without an entry are skipped.
+3. Rebuild and publish:
+
+```bash
+cd /workspace/zarada/site
+APIFY_TOKEN=... python3 build.py      # regenerates docs/ (pages, sitemap.xml, robots.txt)
+git add -A && git commit -m "Add <name> guide" && git push   # GitHub Pages redeploys from main /docs
+```
+
+4. Add the guide link line (see existing actor READMEs, placed just above `## Related actors`) to the actor's README and `apify push`.
+
 ## Principles
 
 - Only public data; official APIs and public feeds wherever they exist.

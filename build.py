@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Static site generator for the TinyRex data tools guide site (GitHub Pages).
-Run: APIFY_TOKEN=... python3 build.py   (reads /workspace/zarada/actors/*, writes ./docs)"""
+Usage: APIFY_TOKEN=... python3 build.py  -> regenerates ./docs from public tinyrex actors that have an entry in G.
+To add an actor: add it to G below, rebuild, commit and push (see README "Rebuilding the site")."""
 import json, os, re, html, datetime, urllib.request, shutil
 ROOT = os.path.dirname(os.path.abspath(__file__))
 ACT = "/workspace/zarada/actors"
