@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://emirmrkaljevic.github.io/tinyrex-data-tools/sitemap.xml

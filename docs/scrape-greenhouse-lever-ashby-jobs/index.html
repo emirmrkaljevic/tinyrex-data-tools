@@ -1,0 +1,137 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Scrape Greenhouse, Lever &amp; Ashby Jobs via API (Personio, Teamtailor, Recruitee too)</title><meta name="description" content="Get every open job from Greenhouse, Lever, Ashby, Personio, Teamtailor and Recruitee career pages as JSON/CSV. Auto-detects the ATS from a company website."><link rel="canonical" href="https://emirmrkaljevic.github.io/tinyrex-data-tools/scrape-greenhouse-lever-ashby-jobs/">
+<meta property="og:title" content="Scrape Greenhouse, Lever &amp; Ashby Jobs via API (Personio, Teamtailor, Recruitee too)"><meta property="og:description" content="Get every open job from Greenhouse, Lever, Ashby, Personio, Teamtailor and Recruitee career pages as JSON/CSV. Auto-detects the ATS from a company website."><meta property="og:type" content="article"><meta property="og:url" content="https://emirmrkaljevic.github.io/tinyrex-data-tools/scrape-greenhouse-lever-ashby-jobs/">
+<link rel="stylesheet" href="../style.css"><script type="application/ld+json">[{"@context": "https://schema.org", "@type": "TechArticle", "headline": "How to scrape Greenhouse, Lever and Ashby jobs (plus Personio, Teamtailor, Recruitee)", "description": "Get every open job from Greenhouse, Lever, Ashby, Personio, Teamtailor and Recruitee career pages as JSON/CSV. Auto-detects the ATS from a company website.", "dateModified": "2026-10-08", "keywords": "scrape greenhouse jobs api, lever jobs api, ashby job board api, personio jobs scraper, job postings dataset from career pages", "about": {"@type": "SoftwareApplication", "name": "Greenhouse / Lever / Ashby Jobs Scraper - Personio & more", "url": "https://apify.com/tinyrex/ats-jobs-scraper", "applicationCategory": "DeveloperApplication", "operatingSystem": "Web"}}, {"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "Does Greenhouse have a public jobs API?", "acceptedAnswer": {"@type": "Answer", "text": "Yes, Greenhouse's Job Board API (boards-api.greenhouse.io) is public for each company's board. The actor uses it and the equivalent official feeds of Lever, Ashby, Personio, Teamtailor and Recruitee, so no HTML scraping or login is involved."}}, {"@type": "Question", "name": "How do I find which ATS a company uses?", "acceptedAnswer": {"@type": "Answer", "text": "Just pass the company website. The actor scans the site and careers pages for ATS links and checks the company name on each supported ATS."}}, {"@type": "Question", "name": "Can I use it as a hiring signal for sales?", "acceptedAnswer": {"@type": "Answer", "text": "Yes. Monitoring mode returns only new jobs per run, which is a common trigger for outbound (e.g. companies hiring a first data engineer)."}}]}]</script></head><body>
+<header><a href="../">🦖 TinyRex Data Tools</a><span class="mut">practical guides for web data APIs</span></header>
+<main><h1>How to scrape Greenhouse, Lever and Ashby jobs (plus Personio, Teamtailor, Recruitee)</h1>
+<p class="mut">Updated 2026-10-08 · Tool used: <a href="https://apify.com/tinyrex/ats-jobs-scraper">Greenhouse / Lever / Ashby Jobs Scraper - Personio &amp; more</a> on Apify · Price: $1 per 1,000 jobs; companies without a supported ATS and filtered-out jobs are free</p>
+<p>Greenhouse, Lever and Ashby all expose public job-board feeds, but each has a different URL scheme and schema, and you first need to know which ATS a company uses and what its board token is. Doing that for 200 companies by hand takes a day.</p><p>This guide shows how to give a list of company websites (e.g. <code>stripe.com</code>) or board URLs and get every open job in one normalized dataset: title, department, locations, country, remote/hybrid, salary where published, posting date and description.</p>
+<a class="cta" href="https://apify.com/tinyrex/ats-jobs-scraper">Open Greenhouse / Lever / Ashby Jobs Scraper on Apify →</a>
+<h2>Steps</h2><ol><li>List companies as websites, careers URLs, board URLs or <code>ats:token</code> shortcuts like <code>personio:kb1</code>.</li><li>Add title / location keywords and <code>postedWithinDays</code> to keep only relevant jobs (filtered jobs are free).</li><li>Schedule it with monitoring mode on to receive only jobs that are new since the previous run.</li></ol>
+<h2>Example input</h2><pre><code class="language-json">{
+  &quot;companies&quot;: [
+    &quot;stripe.com&quot;,
+    &quot;polestar.com&quot;,
+    &quot;https://jobs.ashbyhq.com/ramp&quot;,
+    &quot;personio:kb1&quot;,
+    &quot;bunq.com&quot;
+  ],
+  &quot;titleKeywords&quot;: [
+    &quot;engineer&quot;,
+    &quot;developer&quot;
+  ],
+  &quot;locationKeywords&quot;: [
+    &quot;Germany&quot;,
+    &quot;Remote&quot;,
+    &quot;Amsterdam&quot;
+  ],
+  &quot;postedWithinDays&quot;: 30,
+  &quot;descriptionFormat&quot;: &quot;text&quot;
+}</code></pre>
+<h2>Example output (one item, shortened)</h2><pre><code class="language-json">{
+  &quot;company&quot;: &quot;Ramp&quot;,
+  &quot;companyInput&quot;: &quot;ramp.com&quot;,
+  &quot;ats&quot;: &quot;ashby&quot;,
+  &quot;atsBoard&quot;: &quot;ramp&quot;,
+  &quot;jobId&quot;: &quot;baf0a4d2-e07e-4f76-af85-d85c91f479a4&quot;,
+  &quot;title&quot;: &quot;Senior Manager, Account Manager | Mid-Market&quot;,
+  &quot;department&quot;: &quot;Sales&quot;,
+  &quot;team&quot;: &quot;Account Manager&quot;,
+  &quot;employmentType&quot;: &quot;FullTime&quot;,
+  &quot;seniority&quot;: null,
+  &quot;locations&quot;: [
+    &quot;New York, NY (HQ)&quot;,
+    &quot;San Francisco, CA&quot;
+  ],
+  &quot;location&quot;: &quot;New York, NY (HQ)&quot;,
+  &quot;country&quot;: &quot;USA&quot;,
+  &quot;workplaceType&quot;: &quot;hybrid&quot;,
+  &quot;salary&quot;: {
+    &quot;min&quot;: 290000,
+    &quot;max&quot;: 350000,
+    &quot;currency&quot;: &quot;USD&quot;,
+    &quot;period&quot;: &quot;1 YEAR&quot;,
+    &quot;text&quot;: &quot;$290K - $350K&quot;
+  },
+  &quot;postedAt&quot;: &quot;2026-09-23T16:31:53.863Z&quot;,
+  &quot;updatedAt&quot;: null,
+  &quot;url&quot;: &quot;https://jobs.ashbyhq.com/ramp/baf0a4d2-e07e-4f76-af85-d85c91f479a4&quot;,
+  &quot;applyUrl&quot;: &quot;https://jobs.ashbyhq.com/ramp/baf0a4d2-e07e-4f76-af85-d85c91f479a4/application&quot;,
+  &quot;language&quot;: null,
+  &quot;isNew&quot;: null,
+  &quot;scrapedAt&quot;: &quot;2026-10-04T07:15:18.313Z&quot;,
+  &quot;descriptionText&quot;: &quot;About Ramp\nRamp is building the smart infrastructure for finance teams, embedded in the transaction flow of every dollar a business spends. We automate how over $200B in annualized spend flows in and out of 70,000+ compa...&quot;
+}</code></pre>
+<p>Every run's dataset can be downloaded as JSON, CSV, Excel, XML or HTML from the Apify Console, or via <code>https://api.apify.com/v2/datasets/&lt;datasetId&gt;/items?format=csv</code>.</p>
+<h2>Run it from code</h2><h3>Python</h3><pre><code class="language-python">from apify_client import ApifyClient  # pip install apify-client
+
+client = ApifyClient(&quot;&lt;YOUR_APIFY_TOKEN&gt;&quot;)
+run_input = {
+  &quot;companies&quot;: [
+    &quot;stripe.com&quot;,
+    &quot;polestar.com&quot;,
+    &quot;https://jobs.ashbyhq.com/ramp&quot;,
+    &quot;personio:kb1&quot;,
+    &quot;bunq.com&quot;
+  ],
+  &quot;titleKeywords&quot;: [
+    &quot;engineer&quot;,
+    &quot;developer&quot;
+  ],
+  &quot;locationKeywords&quot;: [
+    &quot;Germany&quot;,
+    &quot;Remote&quot;,
+    &quot;Amsterdam&quot;
+  ],
+  &quot;postedWithinDays&quot;: 30,
+  &quot;descriptionFormat&quot;: &quot;text&quot;
+}
+run = client.actor(&quot;tinyrex/ats-jobs-scraper&quot;).call(run_input=run_input)
+for item in client.dataset(run[&quot;defaultDatasetId&quot;]).iterate_items():
+    print(item)</code></pre><h3>JavaScript / Node.js</h3><pre><code class="language-javascript">import { ApifyClient } from &#x27;apify-client&#x27;; // npm i apify-client
+
+const client = new ApifyClient({ token: process.env.APIFY_TOKEN });
+const run = await client.actor(&#x27;tinyrex/ats-jobs-scraper&#x27;).call({
+  &quot;companies&quot;: [
+    &quot;stripe.com&quot;,
+    &quot;polestar.com&quot;,
+    &quot;https://jobs.ashbyhq.com/ramp&quot;,
+    &quot;personio:kb1&quot;,
+    &quot;bunq.com&quot;
+  ],
+  &quot;titleKeywords&quot;: [
+    &quot;engineer&quot;,
+    &quot;developer&quot;
+  ],
+  &quot;locationKeywords&quot;: [
+    &quot;Germany&quot;,
+    &quot;Remote&quot;,
+    &quot;Amsterdam&quot;
+  ],
+  &quot;postedWithinDays&quot;: 30,
+  &quot;descriptionFormat&quot;: &quot;text&quot;
+});
+const { items } = await client.dataset(run.defaultDatasetId).listItems();
+console.log(items);</code></pre><h3>curl (no SDK)</h3><pre><code class="language-bash"># Runs the actor and returns the results directly (CSV here; use format=json for JSON)
+curl -X POST &quot;https://api.apify.com/v2/acts/tinyrex~ats-jobs-scraper/run-sync-get-dataset-items?format=csv&quot; \
+  -H &quot;Authorization: Bearer $APIFY_TOKEN&quot; \
+  -H &quot;Content-Type: application/json&quot; \
+  -d &#x27;{&quot;companies&quot;: [&quot;stripe.com&quot;, &quot;polestar.com&quot;, &quot;https://jobs.ashbyhq.com/ramp&quot;, &quot;personio:kb1&quot;, &quot;bunq.com&quot;], &quot;titleKeywords&quot;: [&quot;engineer&quot;, &quot;developer&quot;], &quot;locationKeywords&quot;: [&quot;Germany&quot;, &quot;Remote&quot;, &quot;Amsterdam&quot;], &quot;postedWithinDays&quot;: 30, &quot;descriptionFormat&quot;: &quot;text&quot;}&#x27; &gt; results.csv</code></pre>
+<p>Get your API token in Apify Console → Settings → API &amp; Integrations. The free Apify plan includes monthly credit that is enough to try this.</p>
+<h2>Use it from an AI agent (MCP)</h2>
+<p>The <a href="https://mcp.apify.com">Apify MCP server</a> exposes this actor as a tool for Claude, Cursor, VS Code, n8n and other MCP clients. Add this to your client's MCP config (or use the OAuth flow at mcp.apify.com instead of a token):</p><pre><code class="language-json">{
+  &quot;mcpServers&quot;: {
+    &quot;apify&quot;: {
+      &quot;url&quot;: &quot;https://mcp.apify.com?tools=tinyrex/ats-jobs-scraper&quot;,
+      &quot;headers&quot;: {
+        &quot;Authorization&quot;: &quot;Bearer &lt;YOUR_APIFY_TOKEN&gt;&quot;
+      }
+    }
+  }
+}</code></pre>
+<p>Then ask in plain language, e.g. <i>"Scrape greenhouse jobs api for this list and give me a table"</i>.</p>
+<h2>Pricing</h2><p>Pay per result: $1 per 1,000 jobs; companies without a supported ATS and filtered-out jobs are free. You can cap the cost of every run in the run options.</p>
+<h2>FAQ</h2><h3>Does Greenhouse have a public jobs API?</h3><p>Yes, Greenhouse's Job Board API (boards-api.greenhouse.io) is public for each company's board. The actor uses it and the equivalent official feeds of Lever, Ashby, Personio, Teamtailor and Recruitee, so no HTML scraping or login is involved.</p><h3>How do I find which ATS a company uses?</h3><p>Just pass the company website. The actor scans the site and careers pages for ATS links and checks the company name on each supported ATS.</p><h3>Can I use it as a hiring signal for sales?</h3><p>Yes. Monitoring mode returns only new jobs per run, which is a common trigger for outbound (e.g. companies hiring a first data engineer).</p>
+<a class="cta" href="https://apify.com/tinyrex/ats-jobs-scraper">Try it on Apify →</a>
+<h2>More guides</h2><ul><li><a href="../bulk-tech-stack-lookup-wappalyzer-alternative/">Bulk tech stack lookup: a Wappalyzer / BuiltWith alternative for thousands of domains</a></li><li><a href="../export-shopify-store-products-to-csv/">How to export all products from any Shopify store to CSV or JSON</a></li><li><a href="../scrape-workday-jobs-myworkdayjobs/">How to scrape jobs from Workday career sites (myworkdayjobs.com)</a></li><li><a href="../export-woocommerce-store-products-to-csv/">How to export products from any WooCommerce store to CSV or JSON</a></li><li><a href="../ted-tenders-api-export/">How to export EU public tenders from TED (Tenders Electronic Daily) to CSV or JSON</a></li><li><a href="../arbeitsagentur-jobs-api/">How to export jobs from the Bundesagentur für Arbeit (Arbeitsagentur) and EURES</a></li></ul></main>
+<footer>TinyRex Data Tools. Guides and examples for <a href="https://apify.com/tinyrex">TinyRex actors on Apify</a>. Only public data; respect each site's terms. Source on <a href="https://github.com/emirmrkaljevic/tinyrex-data-tools">GitHub</a>.</footer></body></html>

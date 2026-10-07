@@ -1,0 +1,150 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>TED Tenders API Export: Download EU Public Tenders to CSV/JSON</title><meta name="description" content="Export EU public tenders and contract awards from TED by CPV code, country and deadline to CSV/JSON via the official TED API. Daily tender alerts, no coding required."><link rel="canonical" href="https://emirmrkaljevic.github.io/tinyrex-data-tools/ted-tenders-api-export/">
+<meta property="og:title" content="TED Tenders API Export: Download EU Public Tenders to CSV/JSON"><meta property="og:description" content="Export EU public tenders and contract awards from TED by CPV code, country and deadline to CSV/JSON via the official TED API. Daily tender alerts, no coding required."><meta property="og:type" content="article"><meta property="og:url" content="https://emirmrkaljevic.github.io/tinyrex-data-tools/ted-tenders-api-export/">
+<link rel="stylesheet" href="../style.css"><script type="application/ld+json">[{"@context": "https://schema.org", "@type": "TechArticle", "headline": "How to export EU public tenders from TED (Tenders Electronic Daily) to CSV or JSON", "description": "Export EU public tenders and contract awards from TED by CPV code, country and deadline to CSV/JSON via the official TED API. Daily tender alerts, no coding required.", "dateModified": "2026-10-08", "keywords": "ted tenders api export, tenders electronic daily api, eu public procurement data csv, ted cpv code search export, eu tender alerts by cpv", "about": {"@type": "SoftwareApplication", "name": "TED EU Tenders Scraper - Public Procurement & Awards", "url": "https://apify.com/tinyrex/ted-tenders-scraper", "applicationCategory": "DeveloperApplication", "operatingSystem": "Web"}}, {"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "Is there an official TED API?", "acceptedAnswer": {"@type": "Answer", "text": "Yes, the TED Search API (api.ted.europa.eu). The actor uses it, so there is no HTML scraping and no blocking, and flattens the results for you."}}, {"@type": "Question", "name": "Can I get contract award winners?", "acceptedAnswer": {"@type": "Answer", "text": "Yes. Use noticeCategories: [\"result\"] to get awarded values, winners and award dates."}}, {"@type": "Question", "name": "How do I get daily tender alerts?", "acceptedAnswer": {"@type": "Answer", "text": "Enable the only-new-notices option and create an Apify schedule; each run returns only notices you have not seen before."}}]}]</script></head><body>
+<header><a href="../">🦖 TinyRex Data Tools</a><span class="mut">practical guides for web data APIs</span></header>
+<main><h1>How to export EU public tenders from TED (Tenders Electronic Daily) to CSV or JSON</h1>
+<p class="mut">Updated 2026-10-08 · Tool used: <a href="https://apify.com/tinyrex/ted-tenders-scraper">TED EU Tenders Scraper - Public Procurement &amp; Awards</a> on Apify · Price: $2.50 per 1,000 notices; already-seen notices in alert mode are free</p>
+<p>TED (ted.europa.eu) publishes every EU/EEA public tender above the EU thresholds, but its search UI is slow for repeat work and its API returns deeply nested eForms data that is hard to use in a spreadsheet.</p><p>This guide shows how to export tenders by CPV codes, countries and dates to flat CSV/JSON rows (buyer, CPV, deadline, value, winners, links to the PDF and documents), and how to turn it into a daily tender alert.</p>
+<a class="cta" href="https://apify.com/tinyrex/ted-tenders-scraper">Open TED EU Tenders Scraper on Apify →</a>
+<h2>Steps</h2><ol><li>Pick CPV codes (e.g. <code>72000000</code> IT services) and buyer countries, or use keywords.</li><li>Set <code>publishedWithinDays</code>, <code>noticeCategories</code> (competition/result/planning) and <code>onlyOpen</code>.</li><li>Schedule daily with <i>Only new notices</i> on and connect it to email, Slack or a Google Sheet.</li></ol>
+<h2>Example input</h2><pre><code class="language-json">{
+  &quot;cpvCodes&quot;: [
+    &quot;72000000&quot;,
+    &quot;48000000&quot;
+  ],
+  &quot;countries&quot;: [
+    &quot;DE&quot;,
+    &quot;AT&quot;
+  ],
+  &quot;publishedWithinDays&quot;: 7,
+  &quot;noticeCategories&quot;: [
+    &quot;competition&quot;
+  ],
+  &quot;onlyOpen&quot;: true,
+  &quot;maxResults&quot;: 200
+}</code></pre>
+<h2>Example output (one item, shortened)</h2><pre><code class="language-json">{
+  &quot;publicationNumber&quot;: &quot;681061-2026&quot;,
+  &quot;noticeId&quot;: &quot;bcc87ea3-dab7-4dd4-b8b3-fc9c3b18d452&quot;,
+  &quot;noticeVersion&quot;: 1,
+  &quot;procedureId&quot;: &quot;059ca195-f237-4299-83b3-ad6520a48e7a&quot;,
+  &quot;title&quot;: &quot;LC - MSMS&quot;,
+  &quot;titleLanguage&quot;: &quot;de&quot;,
+  &quot;titleOriginal&quot;: &quot;LC - MSMS&quot;,
+  &quot;noticeTitle&quot;: &quot;Germany – Laboratory, optical and precision equipments (excl. glasses) – LC - MSMS&quot;,
+  &quot;publicationDate&quot;: &quot;2026-10-02&quot;,
+  &quot;dispatchDate&quot;: &quot;2026-09-30&quot;,
+  &quot;deadline&quot;: &quot;2026-11-04T08:00:00+01:00&quot;,
+  &quot;deadlineDate&quot;: &quot;2026-11-04&quot;,
+  &quot;isOpen&quot;: true,
+  &quot;noticeCategory&quot;: &quot;competition&quot;,
+  &quot;noticeType&quot;: &quot;cn-standard&quot;,
+  &quot;noticeTypeLabel&quot;: &quot;Contract or concession notice – standard regime&quot;,
+  &quot;procedureType&quot;: &quot;open&quot;,
+  &quot;procedureTypeLabel&quot;: &quot;Open&quot;,
+  &quot;contractType&quot;: &quot;supplies&quot;,
+  &quot;frameworkAgreement&quot;: false,
+  &quot;buyerName&quot;: &quot;LAVES&quot;,
+  &quot;buyerCountry&quot;: &quot;DE&quot;,
+  &quot;buyerCountryIso3&quot;: &quot;DEU&quot;,
+  &quot;buyerCountryName&quot;: &quot;Germany&quot;,
+  &quot;buyerCity&quot;: &quot;Oldenburg&quot;,
+  &quot;buyerWebsite&quot;: &quot;https://www.laves.niedersachsen.de&quot;,
+  &quot;buyerType&quot;: &quot;Regional authority&quot;,
+  &quot;buyerActivity&quot;: &quot;Health&quot;,
+  &quot;mainCpv&quot;: &quot;38000000&quot;,
+  &quot;mainCpvLabel&quot;: &quot;Laboratory, optical and precision equipments (excl. glasses)&quot;,
+  &quot;cpvCodes&quot;: [
+    &quot;38000000&quot;
+  ],
+  &quot;placeOfPerformanceCountries&quot;: [
+    &quot;DE&quot;
+  ],
+  &quot;placeOfPerformanceNuts&quot;: [
+    &quot;DE939&quot;
+  ],
+  &quot;estimatedValue&quot;: 302000,
+  &quot;estimatedValueCurrency&quot;: &quot;EUR&quot;,
+  &quot;awardedValue&quot;: null,
+  &quot;awardedValueCurrency&quot;: null,
+  &quot;winners&quot;: [],
+  &quot;winnerCountries&quot;: [],
+  &quot;awardDate&quot;: null,
+  &quot;lotCount&quot;: 1,
+  &quot;description&quot;: &quot;Beschaffung eines Laborgerätes LC-MSMS&quot;,
+  &quot;language&quot;: &quot;de&quot;,
+  &quot;legalBasis&quot;: &quot;32014L0024&quot;,
+  &quot;ojsNumber&quot;: &quot;191/2026&quot;,
+  &quot;noticeUrl&quot;: &quot;https://ted.europa.eu/en/notice/-/detail/681061-2026&quot;,
+  &quot;pdfUrl&quot;: &quot;https://ted.europa.eu/en/notice/681061-2026/pdf&quot;,
+  &quot;xmlUrl&quot;: &quot;https://ted.europa.eu/en/notice/681061-2026/xml&quot;,
+  &quot;documentsUrl&quot;: &quot;https://vergabe.niedersachsen.de/Satellite/notice/CXQ6YYERS9M/documents&quot;,
+  &quot;submissionUrl&quot;: &quot;https://vergabe.niedersachsen.de/Satellite/notice/CXQ6YYERS9M&quot;,
+  &quot;scrapedAt&quot;: &quot;2026-10-04T16:45:00.000Z&quot;
+}</code></pre>
+<p>Every run's dataset can be downloaded as JSON, CSV, Excel, XML or HTML from the Apify Console, or via <code>https://api.apify.com/v2/datasets/&lt;datasetId&gt;/items?format=csv</code>.</p>
+<h2>Run it from code</h2><h3>Python</h3><pre><code class="language-python">from apify_client import ApifyClient  # pip install apify-client
+
+client = ApifyClient(&quot;&lt;YOUR_APIFY_TOKEN&gt;&quot;)
+run_input = {
+  &quot;cpvCodes&quot;: [
+    &quot;72000000&quot;,
+    &quot;48000000&quot;
+  ],
+  &quot;countries&quot;: [
+    &quot;DE&quot;,
+    &quot;AT&quot;
+  ],
+  &quot;publishedWithinDays&quot;: 7,
+  &quot;noticeCategories&quot;: [
+    &quot;competition&quot;
+  ],
+  &quot;onlyOpen&quot;: true,
+  &quot;maxResults&quot;: 200
+}
+run = client.actor(&quot;tinyrex/ted-tenders-scraper&quot;).call(run_input=run_input)
+for item in client.dataset(run[&quot;defaultDatasetId&quot;]).iterate_items():
+    print(item)</code></pre><h3>JavaScript / Node.js</h3><pre><code class="language-javascript">import { ApifyClient } from &#x27;apify-client&#x27;; // npm i apify-client
+
+const client = new ApifyClient({ token: process.env.APIFY_TOKEN });
+const run = await client.actor(&#x27;tinyrex/ted-tenders-scraper&#x27;).call({
+  &quot;cpvCodes&quot;: [
+    &quot;72000000&quot;,
+    &quot;48000000&quot;
+  ],
+  &quot;countries&quot;: [
+    &quot;DE&quot;,
+    &quot;AT&quot;
+  ],
+  &quot;publishedWithinDays&quot;: 7,
+  &quot;noticeCategories&quot;: [
+    &quot;competition&quot;
+  ],
+  &quot;onlyOpen&quot;: true,
+  &quot;maxResults&quot;: 200
+});
+const { items } = await client.dataset(run.defaultDatasetId).listItems();
+console.log(items);</code></pre><h3>curl (no SDK)</h3><pre><code class="language-bash"># Runs the actor and returns the results directly (CSV here; use format=json for JSON)
+curl -X POST &quot;https://api.apify.com/v2/acts/tinyrex~ted-tenders-scraper/run-sync-get-dataset-items?format=csv&quot; \
+  -H &quot;Authorization: Bearer $APIFY_TOKEN&quot; \
+  -H &quot;Content-Type: application/json&quot; \
+  -d &#x27;{&quot;cpvCodes&quot;: [&quot;72000000&quot;, &quot;48000000&quot;], &quot;countries&quot;: [&quot;DE&quot;, &quot;AT&quot;], &quot;publishedWithinDays&quot;: 7, &quot;noticeCategories&quot;: [&quot;competition&quot;], &quot;onlyOpen&quot;: true, &quot;maxResults&quot;: 200}&#x27; &gt; results.csv</code></pre>
+<p>Get your API token in Apify Console → Settings → API &amp; Integrations. The free Apify plan includes monthly credit that is enough to try this.</p>
+<h2>Use it from an AI agent (MCP)</h2>
+<p>The <a href="https://mcp.apify.com">Apify MCP server</a> exposes this actor as a tool for Claude, Cursor, VS Code, n8n and other MCP clients. Add this to your client's MCP config (or use the OAuth flow at mcp.apify.com instead of a token):</p><pre><code class="language-json">{
+  &quot;mcpServers&quot;: {
+    &quot;apify&quot;: {
+      &quot;url&quot;: &quot;https://mcp.apify.com?tools=tinyrex/ted-tenders-scraper&quot;,
+      &quot;headers&quot;: {
+        &quot;Authorization&quot;: &quot;Bearer &lt;YOUR_APIFY_TOKEN&gt;&quot;
+      }
+    }
+  }
+}</code></pre>
+<p>Then ask in plain language, e.g. <i>"Ted tenders api export for this list and give me a table"</i>.</p>
+<h2>Pricing</h2><p>Pay per result: $2.50 per 1,000 notices; already-seen notices in alert mode are free. You can cap the cost of every run in the run options.</p>
+<h2>FAQ</h2><h3>Is there an official TED API?</h3><p>Yes, the TED Search API (api.ted.europa.eu). The actor uses it, so there is no HTML scraping and no blocking, and flattens the results for you.</p><h3>Can I get contract award winners?</h3><p>Yes. Use <code>noticeCategories: ["result"]</code> to get awarded values, winners and award dates.</p><h3>How do I get daily tender alerts?</h3><p>Enable the only-new-notices option and create an Apify schedule; each run returns only notices you have not seen before.</p>
+<a class="cta" href="https://apify.com/tinyrex/ted-tenders-scraper">Try it on Apify →</a>
+<h2>More guides</h2><ul><li><a href="../bulk-tech-stack-lookup-wappalyzer-alternative/">Bulk tech stack lookup: a Wappalyzer / BuiltWith alternative for thousands of domains</a></li><li><a href="../scrape-greenhouse-lever-ashby-jobs/">How to scrape Greenhouse, Lever and Ashby jobs (plus Personio, Teamtailor, Recruitee)</a></li><li><a href="../export-shopify-store-products-to-csv/">How to export all products from any Shopify store to CSV or JSON</a></li><li><a href="../scrape-workday-jobs-myworkdayjobs/">How to scrape jobs from Workday career sites (myworkdayjobs.com)</a></li><li><a href="../export-woocommerce-store-products-to-csv/">How to export products from any WooCommerce store to CSV or JSON</a></li><li><a href="../arbeitsagentur-jobs-api/">How to export jobs from the Bundesagentur für Arbeit (Arbeitsagentur) and EURES</a></li></ul></main>
+<footer>TinyRex Data Tools. Guides and examples for <a href="https://apify.com/tinyrex">TinyRex actors on Apify</a>. Only public data; respect each site's terms. Source on <a href="https://github.com/emirmrkaljevic/tinyrex-data-tools">GitHub</a>.</footer></body></html>
