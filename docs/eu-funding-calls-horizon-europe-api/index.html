@@ -1,0 +1,134 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>EU Funding Calls API: Export Horizon Europe &amp; EU Grants to CSV/JSON</title><meta name="description" content="Export open and upcoming EU funding calls from the official EU Funding &amp; Tenders Portal: deadlines, budgets, EU contribution per project and real status. Weekly grant alerts."><link rel="canonical" href="https://emirmrkaljevic.github.io/tinyrex-data-tools/eu-funding-calls-horizon-europe-api/">
+<meta property="og:title" content="EU Funding Calls API: Export Horizon Europe &amp; EU Grants to CSV/JSON"><meta property="og:description" content="Export open and upcoming EU funding calls from the official EU Funding &amp; Tenders Portal: deadlines, budgets, EU contribution per project and real status. Weekly grant alerts."><meta property="og:type" content="article"><meta property="og:url" content="https://emirmrkaljevic.github.io/tinyrex-data-tools/eu-funding-calls-horizon-europe-api/">
+<link rel="stylesheet" href="../style.css"><script type="application/ld+json">[{"@context": "https://schema.org", "@type": "TechArticle", "headline": "How to export open EU funding calls (Horizon Europe, Digital Europe, cascade funding) to CSV or JSON", "description": "Export open and upcoming EU funding calls from the official EU Funding & Tenders Portal: deadlines, budgets, EU contribution per project and real status. Weekly grant alerts.", "dateModified": "2026-10-08", "keywords": "eu funding tenders portal api, horizon europe calls export, eu grants database csv, cascade funding open calls, eu grant alerts", "about": {"@type": "SoftwareApplication", "name": "EU Grants Scraper - Horizon Europe & EU Funding Calls", "url": "https://apify.com/tinyrex/eu-grants-scraper", "applicationCategory": "DeveloperApplication", "operatingSystem": "Web"}}, {"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "Does the EU Funding & Tenders Portal have an API?", "acceptedAnswer": {"@type": "Answer", "text": "Yes, the portal's own search API. The actor uses it (no HTML scraping) and flattens budgets and deadlines into simple columns."}}, {"@type": "Question", "name": "Why does the portal show expired calls as open?", "acceptedAnswer": {"@type": "Answer", "text": "Status flags on the portal are often not updated. The actor computes status from the opening date and deadlines and keeps the portal's flag as portalStatus."}}, {"@type": "Question", "name": "What is cascade funding?", "acceptedAnswer": {"@type": "Answer", "text": "EU-funded projects re-grant part of their budget through their own open calls, often EUR 10k to 500k for SMEs and startups. These calls are included."}}]}]</script></head><body>
+<header><a href="../">🦖 TinyRex Data Tools</a><span class="mut">practical guides for web data APIs</span></header>
+<main><h1>How to export open EU funding calls (Horizon Europe, Digital Europe, cascade funding) to CSV or JSON</h1>
+<p class="mut">Updated 2026-10-08 · Tool used: <a href="https://apify.com/tinyrex/eu-grants-scraper">EU Grants Scraper - Horizon Europe &amp; EU Funding Calls</a> on Apify · Price: $3 per 1,000 funding calls; filtered-out and already-seen calls are free</p>
+<p>The EU Funding & Tenders Portal lists every Horizon Europe, Digital Europe, LIFE, Erasmus+ and CEF topic, but its search UI is slow for repeat work, exports are limited, and many calls flagged as <i>open</i> or <i>forthcoming</i> have deadlines that already passed (more than half in our tests).</p><p>This guide shows how to export calls by programme, keyword and deadline window into flat rows (identifier, title, programme, opening date, deadlines, budget, expected grants, EU contribution per project, type of action, link), with the real status computed from the dates, and how to turn it into a weekly funding alert.</p>
+<a class="cta" href="https://apify.com/tinyrex/eu-grants-scraper">Open EU Grants Scraper on Apify →</a>
+<h2>Steps</h2><ol><li>Pick <code>programmes</code> (e.g. <code>HORIZON</code>, <code>DIGITAL</code>) or leave empty for all, and add <code>keywords</code> such as <code>artificial intelligence</code>.</li><li>Keep the default statuses (open + forthcoming) and optionally set <code>deadlineTo</code>.</li><li>Schedule it weekly with <i>Only new calls</i> on and send new calls to email, Slack or a Google Sheet.</li></ol>
+<h2>Example input</h2><pre><code class="language-json">{
+  &quot;programmes&quot;: [
+    &quot;HORIZON&quot;,
+    &quot;DIGITAL&quot;
+  ],
+  &quot;keywords&quot;: [
+    &quot;artificial intelligence&quot;,
+    &quot;robotics&quot;
+  ],
+  &quot;statuses&quot;: [
+    &quot;open&quot;,
+    &quot;forthcoming&quot;
+  ],
+  &quot;deadlineTo&quot;: &quot;2027-06-30&quot;,
+  &quot;maxResults&quot;: 200
+}</code></pre>
+<h2>Example output (one item, shortened)</h2><pre><code class="language-json">{
+  &quot;identifier&quot;: &quot;HORIZON-CL5-2026-10-D2-03&quot;,
+  &quot;title&quot;: &quot;Integrated Production and Product Development for Next-Generation Lithium-based Batteries for Mobility (BATT4EU and Made in Europe Partnerships)&quot;,
+  &quot;callIdentifier&quot;: &quot;HORIZON-CL5-2026-10&quot;,
+  &quot;callTitle&quot;: &quot;BATTERIES and MOBILITY&quot;,
+  &quot;recordType&quot;: &quot;topic&quot;,
+  &quot;programme&quot;: &quot;Horizon Europe (HORIZON)&quot;,
+  &quot;programmeCode&quot;: &quot;HORIZON&quot;,
+  &quot;programmePeriod&quot;: &quot;2021 - 2027&quot;,
+  &quot;status&quot;: &quot;open&quot;,
+  &quot;portalStatus&quot;: &quot;open&quot;,
+  &quot;openingDate&quot;: &quot;2026-06-04T00:00:00Z&quot;,
+  &quot;openingDay&quot;: &quot;2026-06-04&quot;,
+  &quot;deadline&quot;: &quot;2026-10-08T00:00:00Z&quot;,
+  &quot;deadlineDay&quot;: &quot;2026-10-08&quot;,
+  &quot;deadlines&quot;: [
+    &quot;2026-10-08T00:00:00Z&quot;
+  ],
+  &quot;deadlineModel&quot;: &quot;single-stage&quot;,
+  &quot;daysToDeadline&quot;: 1,
+  &quot;typeOfAction&quot;: &quot;HORIZON Innovation Actions&quot;,
+  &quot;typesOfAction&quot;: [
+    &quot;HORIZON Innovation Actions&quot;
+  ],
+  &quot;budget&quot;: 100000000,
+  &quot;budgetCurrency&quot;: &quot;EUR&quot;,
+  &quot;budgetYears&quot;: [
+    &quot;2026&quot;
+  ],
+  &quot;expectedGrants&quot;: 3,
+  &quot;minContribution&quot;: 33300000,
+  &quot;maxContribution&quot;: 33300000,
+  &quot;organiser&quot;: null,
+  &quot;keywords&quot;: [],
+  &quot;crossCuttingPriorities&quot;: [
+    &quot;DigitalAgenda&quot;,
+    &quot;RePowerEU&quot;,
+    &quot;PART-COPROGR&quot;,
+    &quot;...&quot;
+  ],
+  &quot;url&quot;: &quot;https://ec.europa.eu/info/funding-tenders/opportunities/portal/screen/opportunities/topic-details/HORIZON-CL5-2026-10-D2-03&quot;,
+  &quot;description&quot;: &quot;Expected Outcome:\nProposals are expected to contribute to all following points:\n- The projects must fulfil the performance targets, at the cell and system level, corresponding to the specific targeted application, to be ...&quot;
+}</code></pre>
+<p>Every run's dataset can be downloaded as JSON, CSV, Excel, XML or HTML from the Apify Console, or via <code>https://api.apify.com/v2/datasets/&lt;datasetId&gt;/items?format=csv</code>.</p>
+<h2>Run it from code</h2><h3>Python</h3><pre><code class="language-python">from apify_client import ApifyClient  # pip install apify-client
+
+client = ApifyClient(&quot;&lt;YOUR_APIFY_TOKEN&gt;&quot;)
+run_input = {
+  &quot;programmes&quot;: [
+    &quot;HORIZON&quot;,
+    &quot;DIGITAL&quot;
+  ],
+  &quot;keywords&quot;: [
+    &quot;artificial intelligence&quot;,
+    &quot;robotics&quot;
+  ],
+  &quot;statuses&quot;: [
+    &quot;open&quot;,
+    &quot;forthcoming&quot;
+  ],
+  &quot;deadlineTo&quot;: &quot;2027-06-30&quot;,
+  &quot;maxResults&quot;: 200
+}
+run = client.actor(&quot;tinyrex/eu-grants-scraper&quot;).call(run_input=run_input)
+for item in client.dataset(run[&quot;defaultDatasetId&quot;]).iterate_items():
+    print(item)</code></pre><h3>JavaScript / Node.js</h3><pre><code class="language-javascript">import { ApifyClient } from &#x27;apify-client&#x27;; // npm i apify-client
+
+const client = new ApifyClient({ token: process.env.APIFY_TOKEN });
+const run = await client.actor(&#x27;tinyrex/eu-grants-scraper&#x27;).call({
+  &quot;programmes&quot;: [
+    &quot;HORIZON&quot;,
+    &quot;DIGITAL&quot;
+  ],
+  &quot;keywords&quot;: [
+    &quot;artificial intelligence&quot;,
+    &quot;robotics&quot;
+  ],
+  &quot;statuses&quot;: [
+    &quot;open&quot;,
+    &quot;forthcoming&quot;
+  ],
+  &quot;deadlineTo&quot;: &quot;2027-06-30&quot;,
+  &quot;maxResults&quot;: 200
+});
+const { items } = await client.dataset(run.defaultDatasetId).listItems();
+console.log(items);</code></pre><h3>curl (no SDK)</h3><pre><code class="language-bash"># Runs the actor and returns the results directly (CSV here; use format=json for JSON)
+curl -X POST &quot;https://api.apify.com/v2/acts/tinyrex~eu-grants-scraper/run-sync-get-dataset-items?format=csv&quot; \
+  -H &quot;Authorization: Bearer $APIFY_TOKEN&quot; \
+  -H &quot;Content-Type: application/json&quot; \
+  -d &#x27;{&quot;programmes&quot;: [&quot;HORIZON&quot;, &quot;DIGITAL&quot;], &quot;keywords&quot;: [&quot;artificial intelligence&quot;, &quot;robotics&quot;], &quot;statuses&quot;: [&quot;open&quot;, &quot;forthcoming&quot;], &quot;deadlineTo&quot;: &quot;2027-06-30&quot;, &quot;maxResults&quot;: 200}&#x27; &gt; results.csv</code></pre>
+<p>Get your API token in Apify Console → Settings → API &amp; Integrations. The free Apify plan includes monthly credit that is enough to try this.</p>
+<h2>Use it from an AI agent (MCP)</h2>
+<p>The <a href="https://mcp.apify.com">Apify MCP server</a> exposes this actor as a tool for Claude, Cursor, VS Code, n8n and other MCP clients. Add this to your client's MCP config (or use the OAuth flow at mcp.apify.com instead of a token):</p><pre><code class="language-json">{
+  &quot;mcpServers&quot;: {
+    &quot;apify&quot;: {
+      &quot;url&quot;: &quot;https://mcp.apify.com?tools=tinyrex/eu-grants-scraper&quot;,
+      &quot;headers&quot;: {
+        &quot;Authorization&quot;: &quot;Bearer &lt;YOUR_APIFY_TOKEN&gt;&quot;
+      }
+    }
+  }
+}</code></pre>
+<p>Then ask in plain language, e.g. <i>"Eu funding tenders portal api for this list and give me a table"</i>.</p>
+<h2>Pricing</h2><p>Pay per result: $3 per 1,000 funding calls; filtered-out and already-seen calls are free. You can cap the cost of every run in the run options.</p>
+<h2>FAQ</h2><h3>Does the EU Funding &amp; Tenders Portal have an API?</h3><p>Yes, the portal's own search API. The actor uses it (no HTML scraping) and flattens budgets and deadlines into simple columns.</p><h3>Why does the portal show expired calls as open?</h3><p>Status flags on the portal are often not updated. The actor computes <code>status</code> from the opening date and deadlines and keeps the portal's flag as <code>portalStatus</code>.</p><h3>What is cascade funding?</h3><p>EU-funded projects re-grant part of their budget through their own open calls, often EUR 10k to 500k for SMEs and startups. These calls are included.</p>
+<a class="cta" href="https://apify.com/tinyrex/eu-grants-scraper">Try it on Apify →</a>
+<h2>More guides</h2><ul><li><a href="../bulk-tech-stack-lookup-wappalyzer-alternative/">Bulk tech stack lookup: a Wappalyzer / BuiltWith alternative for thousands of domains</a></li><li><a href="../scrape-greenhouse-lever-ashby-jobs/">How to scrape Greenhouse, Lever and Ashby jobs (plus Personio, Teamtailor, Recruitee)</a></li><li><a href="../export-shopify-store-products-to-csv/">How to export all products from any Shopify store to CSV or JSON</a></li><li><a href="../scrape-workday-jobs-myworkdayjobs/">How to scrape jobs from Workday career sites (myworkdayjobs.com)</a></li><li><a href="../export-woocommerce-store-products-to-csv/">How to export products from any WooCommerce store to CSV or JSON</a></li><li><a href="../ted-tenders-api-export/">How to export EU public tenders from TED (Tenders Electronic Daily) to CSV or JSON</a></li><li><a href="../arbeitsagentur-jobs-api/">How to export jobs from the Bundesagentur für Arbeit (Arbeitsagentur) and EURES</a></li><li><a href="../remote-jobs-api-himalayas-remoteok-weworkremotely/">How to scrape remote jobs from Himalayas, Remote OK, We Work Remotely and more in one run</a></li><li><a href="../scrape-apple-app-store-reviews/">How to scrape Apple App Store reviews for any app and country (CSV, JSON, API)</a></li></ul></main>
+<footer>TinyRex Data Tools. Guides and examples for <a href="https://apify.com/tinyrex">TinyRex actors on Apify</a>. Only public data; respect each site's terms. Source on <a href="https://github.com/emirmrkaljevic/tinyrex-data-tools">GitHub</a>.</footer></body></html>

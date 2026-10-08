@@ -125,6 +125,55 @@ G = {
   faq=[("Does the Arbeitsagentur have an official jobs API?","Yes, the public Jobsuche API that powers arbeitsagentur.de. The actor uses it (and the EURES public search), so results match the official portals."),
        ("Can I get jobs in Austria and Switzerland?","Yes, through EURES, which aggregates vacancies from the AMS and other European public employment services."),
        ("Are full descriptions included?","Yes, at the same price of $1 per 1,000 jobs.")]),
+ "remote-jobs-scraper": dict(
+  slug="remote-jobs-api-himalayas-remoteok-weworkremotely",
+  ptitle="Remote Jobs API: Scrape Himalayas, Remote OK & We Work Remotely to CSV/JSON",
+  h1="How to scrape remote jobs from Himalayas, Remote OK, We Work Remotely and more in one run",
+  desc="Get remote jobs from Himalayas, Remote OK, We Work Remotely, Working Nomads and Arbeitnow as one deduplicated JSON/CSV dataset with salary, location rules and full descriptions.",
+  kw=["remote jobs api","scrape remote ok jobs","himalayas jobs api","we work remotely scraper","remote jobs dataset csv"],
+  short="Remote jobs from 5 boards (Himalayas, Remote OK, We Work Remotely, Working Nomads, Arbeitnow) in one deduplicated schema, with salary and location rules.",
+  price="$0.80 per 1,000 jobs with full descriptions; filtered-out, duplicate and already-seen jobs are free",
+  intro=["Remote job boards each have their own feed format: Himalayas has a search API, Remote OK a JSON feed, We Work Remotely and Working Nomads RSS, Arbeitnow a paged API. Combining them by hand means five parsers and a lot of duplicates, because the same job is often posted on several boards.",
+         "This guide shows how to search all five boards by keyword in one run and get one clean, deduplicated dataset: title, company, who can apply (country and timezone restrictions), employment type, seniority, salary where published, tags and the full description."],
+  steps=["Add job titles or skills to <code>keywords</code> (e.g. <code>python</code>, <code>customer support</code>), or leave it empty for the newest remote jobs.",
+         "Filter by candidate <code>countries</code>, <code>publishedWithinDays</code>, employment type, seniority or only jobs with a salary (filtered jobs are free).",
+         "Schedule it daily with <i>Only new jobs</i> on to build a remote job feed for a newsletter, Slack channel or job board."],
+  faq=[("Is there a free remote jobs API?","Several boards publish free public feeds (Himalayas, Remote OK, We Work Remotely RSS, Arbeitnow). The actor reads those official feeds, merges them into one schema and removes duplicates, so you do not have to maintain five integrations."),
+       ("Can I get only jobs open to candidates in my country?","Yes. Set <code>countries</code> (e.g. <code>[\"Germany\"]</code>) and choose whether to keep worldwide jobs with <code>includeWorldwide</code>."),
+       ("Can I republish the jobs on my own site?","The boards ask for attribution and a link back to the original job; <code>url</code> and <code>sourceName</code> are included for that. Himalayas and Remote OK do not allow resubmitting their jobs to aggregators such as Google Jobs or LinkedIn.")]),
+ "app-store-reviews-scraper": dict(
+  slug="scrape-apple-app-store-reviews",
+  ptitle="Scrape Apple App Store Reviews to CSV/JSON (Any App, 150+ Countries)",
+  h1="How to scrape Apple App Store reviews for any app and country (CSV, JSON, API)",
+  desc="Export Apple App Store reviews (stars, title, text, app version, date) for any iPhone/iPad app in 150+ countries via Apple's official feed. Filters, monitoring and app details.",
+  kw=["scrape app store reviews","app store reviews api","export ios app reviews to csv","apple app store review scraper python","app store reviews sentiment analysis dataset"],
+  short="Apple App Store reviews for any app in 150+ countries from Apple's official feed: stars, title, text, version and date, plus app details.",
+  price="$0.08 per 1,000 reviews ($1 per 1,000 apps in app details mode); filtered and already-seen reviews are free",
+  intro=["App Store Connect only shows reviews of your own apps, and the App Store website shows a handful per page. For competitor research, product feedback analysis or review monitoring you need the reviews of any app, per country, in a spreadsheet or JSON.",
+         "This guide shows how to pull reviews for any iPhone/iPad app by URL, ID or name, across one or many countries, filter them by stars, date or keywords, and schedule daily monitoring. It uses Apple's official public customer reviews feed and the iTunes Lookup API; reviewer names are not collected."],
+  steps=["Add <code>apps</code> as App Store URLs, numeric IDs or app names.",
+         "Pick <code>countries</code> (e.g. <code>us, gb, de</code> or <code>all</code>) and the sort order (<code>both</code> = most recent + most helpful).",
+         "Optionally keep only 1 to 2 star reviews, reviews since a date or reviews mentioning words like <i>crash</i> or <i>subscription</i>, then export to CSV or feed them to an LLM for sentiment analysis."],
+  faq=[("Does Apple have an App Store reviews API?","Apple publishes a public customer reviews RSS/JSON feed per app and country. The actor uses it plus the iTunes Search/Lookup API, so there is no browser and no login."),
+       ("How many reviews can I get per app?","Apple's feed returns up to 500 reviews per app, country and sort order. Combine both sort orders, several countries and a daily monitoring schedule to build a full history over time."),
+       ("Is it GDPR-friendly?","Reviewer names and profile links are intentionally not collected, only the review content, rating, version and date.")]),
+ "eu-grants-scraper": dict(
+  slug="eu-funding-calls-horizon-europe-api",
+  ptitle="EU Funding Calls API: Export Horizon Europe & EU Grants to CSV/JSON",
+  h1="How to export open EU funding calls (Horizon Europe, Digital Europe, cascade funding) to CSV or JSON",
+  desc="Export open and upcoming EU funding calls from the official EU Funding & Tenders Portal: deadlines, budgets, EU contribution per project and real status. Weekly grant alerts.",
+  kw=["eu funding tenders portal api","horizon europe calls export","eu grants database csv","cascade funding open calls","eu grant alerts"],
+  short="Open and upcoming EU funding calls (Horizon Europe, Digital Europe, LIFE, Erasmus+, cascade funding) with deadlines, budgets and real status.",
+  price="$3 per 1,000 funding calls; filtered-out and already-seen calls are free",
+  intro=["The EU Funding & Tenders Portal lists every Horizon Europe, Digital Europe, LIFE, Erasmus+ and CEF topic, but its search UI is slow for repeat work, exports are limited, and many calls flagged as <i>open</i> or <i>forthcoming</i> have deadlines that already passed (more than half in our tests).",
+         "This guide shows how to export calls by programme, keyword and deadline window into flat rows (identifier, title, programme, opening date, deadlines, budget, expected grants, EU contribution per project, type of action, link), with the real status computed from the dates, and how to turn it into a weekly funding alert."],
+  steps=["Pick <code>programmes</code> (e.g. <code>HORIZON</code>, <code>DIGITAL</code>) or leave empty for all, and add <code>keywords</code> such as <code>artificial intelligence</code>.",
+         "Keep the default statuses (open + forthcoming) and optionally set <code>deadlineTo</code>.",
+         "Schedule it weekly with <i>Only new calls</i> on and send new calls to email, Slack or a Google Sheet."],
+  faq=[("Does the EU Funding & Tenders Portal have an API?","Yes, the portal's own search API. The actor uses it (no HTML scraping) and flattens budgets and deadlines into simple columns."),
+       ("Why does the portal show expired calls as open?","Status flags on the portal are often not updated. The actor computes <code>status</code> from the opening date and deadlines and keeps the portal's flag as <code>portalStatus</code>."),
+       ("What is cascade funding?","EU-funded projects re-grant part of their budget through their own open calls, often EUR 10k to 500k for SMEs and startups. These calls are included.")]),
+
 }
 
 PRIVATE_KEYS = re.compile(r"(email|phone|telefon|contact|kontakt|fax)", re.I)
@@ -227,13 +276,13 @@ curl -X POST "https://api.apify.com/v2/acts/{tid}/run-sync-get-dataset-items?for
 def index(actors):
     cards = "".join(f'<div class="card"><h3><a href="{a["slug"]}/">{E(a["title"].split(" - ")[0])}</a></h3><p>{E(a["short"])}</p><p class="mut">{E(a["price"])}</p><p><a href="{a["slug"]}/">Guide</a> · <a href="{STORE}{a["name"]}">Apify Store</a></p></div>' for a in actors)
     body = f"""<h1>Practical guides for pulling clean data from the web</h1>
-<p>TinyRex builds small, cheap, API-first data tools on <a href="https://apify.com/tinyrex">Apify</a>: bulk tech stack lookup, job postings from ATS and public employment services, e-commerce product catalogs and EU public tenders. Every tool returns clean JSON/CSV, charges only per delivered result, and works from Python, JavaScript, plain HTTP, no-code tools and AI agents (via the Apify MCP server).</p>
+<p>TinyRex builds small, cheap, API-first data tools on <a href="https://apify.com/tinyrex">Apify</a>: bulk tech stack lookup, job postings from ATS, remote job boards and public employment services, e-commerce product catalogs, App Store reviews, EU public tenders and EU funding calls. Every tool returns clean JSON/CSV, charges only per delivered result, and works from Python, JavaScript, plain HTTP, no-code tools and AI agents (via the Apify MCP server).</p>
 <p>Each guide below has a working example input, real sample output and copy-paste code.</p>
 <div class="cards">{cards}</div>
 <h2>Use any of these tools from an AI agent</h2>
 <p>Connect Claude, Cursor or n8n to <code>https://mcp.apify.com?tools={','.join('tinyrex/'+a['name'] for a in actors)}</code> and the agent can call every tool above directly.</p>"""
     ld = {"@context": "https://schema.org", "@type": "ItemList", "itemListElement": [{"@type": "ListItem", "position": i+1, "url": f"{BASE}/{a['slug']}/", "name": a["title"]} for i, a in enumerate(actors)]}
-    return page("", "TinyRex Data Tools: Web Data APIs & Scraper Guides (Jobs, E-commerce, Tenders)", "Guides with working examples for bulk tech stack lookup, Greenhouse/Workday/Arbeitsagentur job APIs, Shopify/WooCommerce product export and TED EU tenders.", body, ld)
+    return page("", "TinyRex Data Tools: Web Data APIs & Scraper Guides (Jobs, E-commerce, Tenders)", "Guides with working examples for bulk tech stack lookup, Greenhouse/Workday/Arbeitsagentur and remote job APIs, Shopify/WooCommerce product export, App Store reviews, TED EU tenders and EU grants.", body, ld)
 
 def main():
     actors = load_actors()
