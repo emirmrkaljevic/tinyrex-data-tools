@@ -16,7 +16,6 @@ Every guide includes a working input example, real sample output, and Python, Ja
 | [How to scrape jobs from Workday career sites (myworkdayjobs.com)](https://emirmrkaljevic.github.io/tinyrex-data-tools/scrape-workday-jobs-myworkdayjobs/) | [workday-jobs-scraper](https://apify.com/tinyrex/workday-jobs-scraper) | $0.80 per 1,000 jobs with full descriptions; inputs without a Workday site are free |
 | [How to export products from any WooCommerce store to CSV or JSON](https://emirmrkaljevic.github.io/tinyrex-data-tools/export-woocommerce-store-products-to-csv/) | [woocommerce-products-scraper](https://apify.com/tinyrex/woocommerce-products-scraper) | $0.60 per 1,000 products |
 | [How to export EU public tenders from TED (Tenders Electronic Daily) to CSV or JSON](https://emirmrkaljevic.github.io/tinyrex-data-tools/ted-tenders-api-export/) | [ted-tenders-scraper](https://apify.com/tinyrex/ted-tenders-scraper) | $2.50 per 1,000 notices; already-seen notices in alert mode are free |
-| [How to export jobs from the Bundesagentur für Arbeit (Arbeitsagentur) and EURES](https://emirmrkaljevic.github.io/tinyrex-data-tools/arbeitsagentur-jobs-api/) | [dach-jobs-scraper](https://apify.com/tinyrex/dach-jobs-scraper) | $1 per 1,000 jobs with full descriptions |
 | [How to scrape remote jobs from Himalayas, Remote OK, We Work Remotely and more in one run](https://emirmrkaljevic.github.io/tinyrex-data-tools/remote-jobs-api-himalayas-remoteok-weworkremotely/) | [remote-jobs-scraper](https://apify.com/tinyrex/remote-jobs-scraper) | $0.80 per 1,000 jobs with full descriptions; filtered-out, duplicate and already-seen jobs are free |
 | [How to scrape Apple App Store reviews for any app and country (CSV, JSON, API)](https://emirmrkaljevic.github.io/tinyrex-data-tools/scrape-apple-app-store-reviews/) | [app-store-reviews-scraper](https://apify.com/tinyrex/app-store-reviews-scraper) | $0.08 per 1,000 reviews; filtered and already-seen reviews are free |
 | [How to export open EU funding calls (Horizon Europe, Digital Europe, cascade funding) to CSV or JSON](https://emirmrkaljevic.github.io/tinyrex-data-tools/eu-funding-calls-horizon-europe-api/) | [eu-grants-scraper](https://apify.com/tinyrex/eu-grants-scraper) | $3 per 1,000 funding calls; filtered-out and already-seen calls are free |
@@ -39,7 +38,7 @@ print(list(client.dataset(run["defaultDatasetId"]).iterate_items())[:3])
 ### Use from an AI agent (MCP)
 
 ```json
-{ "mcpServers": { "apify": { "url": "https://mcp.apify.com?tools=tinyrex/tech-stack-detector,tinyrex/ats-jobs-scraper,tinyrex/shopify-products-scraper,tinyrex/workday-jobs-scraper,tinyrex/woocommerce-products-scraper,tinyrex/ted-tenders-scraper,tinyrex/dach-jobs-scraper,tinyrex/remote-jobs-scraper,tinyrex/app-store-reviews-scraper,tinyrex/eu-grants-scraper" } } }
+{ "mcpServers": { "apify": { "url": "https://mcp.apify.com?tools=tinyrex/tech-stack-detector,tinyrex/ats-jobs-scraper,tinyrex/shopify-products-scraper,tinyrex/workday-jobs-scraper,tinyrex/woocommerce-products-scraper,tinyrex/ted-tenders-scraper,tinyrex/remote-jobs-scraper,tinyrex/app-store-reviews-scraper,tinyrex/eu-grants-scraper" } } }
 ```
 
 ## Rebuilding the site / adding a new actor

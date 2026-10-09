@@ -109,22 +109,6 @@ G = {
   faq=[("Is there an official TED API?","Yes, the TED Search API (api.ted.europa.eu). The actor uses it, so there is no HTML scraping and no blocking, and flattens the results for you."),
        ("Can I get contract award winners?","Yes. Use <code>noticeCategories: [\"result\"]</code> to get awarded values, winners and award dates."),
        ("How do I get daily tender alerts?","Enable the only-new-notices option and create an Apify schedule; each run returns only notices you have not seen before.")]),
- "dach-jobs-scraper": dict(
-  slug="arbeitsagentur-jobs-api",
-  ptitle="Bundesagentur für Arbeit Jobs API: Export Arbeitsagentur & EURES Jobs",
-  h1="How to export jobs from the Bundesagentur für Arbeit (Arbeitsagentur) and EURES",
-  desc="Export jobs from the Bundesagentur für Arbeit Jobsuche API and EURES (Germany, Austria, Switzerland, EU) to CSV/JSON with full descriptions and salary.",
-  kw=["bundesagentur für arbeit jobs api","arbeitsagentur jobsuche api","arbeitsagentur scraper","eures jobs api","austria switzerland jobs dataset"],
-  short="Jobs from the Bundesagentur für Arbeit (Germany) and EURES (Austria, Switzerland, EU) with full descriptions, salary and location.",
-  price="$1 per 1,000 jobs with full descriptions",
-  intro=["The Bundesagentur für Arbeit runs Germany's largest job database (over a million listings) and has a public Jobsuche API, but it needs specific headers, paging and a separate call per job for the description. EURES adds vacancies from Austria (AMS), Switzerland and the rest of the EU in a different format.",
-         "This guide shows how to search both by keyword and location and get one normalized dataset with full descriptions, salary (when published), postal code, coordinates, working time and contract type."],
-  steps=["Enter <code>keywords</code> (e.g. <code>Elektriker</code>, <code>Data Analyst</code>) and pick <code>sources</code>.",
-         "Set Arbeitsagentur locations and radius, and EURES country codes (<code>at</code>, <code>ch</code>...).",
-         "Export to CSV/JSON, or schedule with <code>publishedWithinDays</code> for a daily feed of new jobs."],
-  faq=[("Does the Arbeitsagentur have an official jobs API?","Yes, the public Jobsuche API that powers arbeitsagentur.de. The actor uses it (and the EURES public search), so results match the official portals."),
-       ("Can I get jobs in Austria and Switzerland?","Yes, through EURES, which aggregates vacancies from the AMS and other European public employment services."),
-       ("Are full descriptions included?","Yes, at the same price of $1 per 1,000 jobs.")]),
  "remote-jobs-scraper": dict(
   slug="remote-jobs-api-himalayas-remoteok-weworkremotely",
   ptitle="Remote Jobs API: Scrape Himalayas, Remote OK & We Work Remotely to CSV/JSON",
@@ -173,7 +157,70 @@ G = {
   faq=[("Does the EU Funding & Tenders Portal have an API?","Yes, the portal's own search API. The actor uses it (no HTML scraping) and flattens budgets and deadlines into simple columns."),
        ("Why does the portal show expired calls as open?","Status flags on the portal are often not updated. The actor computes <code>status</code> from the opening date and deadlines and keeps the portal's flag as <code>portalStatus</code>."),
        ("What is cascade funding?","EU-funded projects re-grant part of their budget through their own open calls, often EUR 10k to 500k for SMEs and startups. These calls are included.")]),
-
+ "luma-events-scraper": dict(
+  slug="scrape-luma-events-lu-ma-api",
+  ptitle="Scrape Luma (lu.ma) Events by City & Category to CSV/JSON (API)",
+  h1="How to scrape Luma (lu.ma) events by city, category or calendar (CSV, JSON, API)",
+  desc="Export events from Luma (lu.ma) by city, category, coordinates or organizer calendar: dates, venue, ticket prices, guest count and organizer links, as CSV or JSON.",
+  kw=["scrape luma events","lu.ma events api","luma events export csv","tech events dataset by city","ai meetups list scraper"],
+  short="Luma (lu.ma) events by city, category, coordinates or calendar: dates, venue, ticket prices, guest count, organizer and full description.",
+  price="$1 per 1,000 events with description and ticket types; filtered, duplicate and already-seen events are free",
+  intro=["Luma has become the default platform for AI, tech, startup and community events, but it has no public export and its own search needs a login. If you build an event newsletter, look for sponsorship or sales leads, or track the AI meetup scene in a few cities, copying events by hand does not scale.",
+         "This guide shows how to export Luma events for cities, categories, any coordinates or specific organizer calendars into flat rows (title, start and end time, venue, address, coordinates, prices, ticket types, sold-out status, guest count, organizer website and socials). Host names and guest lists are not collected."],
+  steps=["Pick <code>cities</code> (e.g. <code>san-francisco</code>, <code>london</code>) and/or <code>categories</code> (e.g. <code>ai</code>, <code>crypto</code>), or add calendar and event URLs.",
+         "Narrow it with <code>keywords</code> and a date window (<code>startDateFrom</code>, <code>startDateTo</code>).",
+         "Schedule it weekly with <i>Only new events</i> on to feed a newsletter, a Slack channel or a Google Sheet."],
+  faq=[("Does Luma have a public events API?","Luma's official API is only for managing your own calendar. Public event pages and discovery pages are served as JSON to every visitor; the actor reads those, without a browser and without logging in."),
+       ("Can I get events for a city that Luma doesn't list?","Yes. Pass latitude/longitude and the actor returns events near that point."),
+       ("Do I get attendee data?","No. Only public event data and the organizing company or community. Guest lists and host personal profiles are deliberately excluded.")]),
+ "polymarket-scraper": dict(
+  slug="polymarket-api-odds-scraper",
+  ptitle="Polymarket API: Export Odds, Volume & Price History to CSV/JSON",
+  h1="How to get Polymarket odds, volume and price history as CSV or JSON",
+  desc="Export Polymarket prediction markets via the official public API: live odds, volume, liquidity, price changes, price history and resolved winners, as CSV or JSON.",
+  kw=["polymarket api","polymarket odds data csv","polymarket price history download","prediction market data api","polymarket scraper python"],
+  short="Polymarket prediction markets from the official public API: live odds, volume, liquidity, price changes, price history and resolved winners.",
+  price="$0.70 per 1,000 markets (+$0.30 per 1,000 for price history); filtered and already-seen markets are free",
+  intro=["Polymarket's Gamma and CLOB APIs are public, but turning them into a usable table means paging through events, parsing outcome prices stored as JSON strings, joining token IDs to price history and handling closed markets. Most people just want a spreadsheet of markets with their current odds.",
+         "This guide shows how to export markets by keyword, category tag or event URL into one row per market (question, outcomes, probabilities, best bid/ask, 24h/1w/1m price change, volume, liquidity, end date, winner for resolved markets), optionally with price history, and how to monitor new markets on a schedule."],
+  steps=["Add <code>searchTerms</code> (e.g. <code>fed</code>, <code>election</code>) and/or <code>tags</code> (e.g. <code>politics</code>, <code>crypto</code>), or paste event URLs.",
+         "Choose <code>status</code> (open, closed or all), sort order and filters like <code>minVolume24h</code> or <code>endsWithinDays</code>.",
+         "Turn on <code>includePriceHistory</code> for charts or backtests, then export to CSV/JSON or schedule it with <i>Only new markets</i>."],
+  faq=[("Does Polymarket have a public API?","Yes. The Gamma API (markets and events) and the CLOB API (prices and history) are public and need no key for reading. The actor uses only these official endpoints."),
+       ("Can I get historical prices?","Yes. With <code>includePriceHistory</code> you get the price series for each outcome at the interval and resolution you choose."),
+       ("Does it collect trader data?","No. It collects market data only: no wallet addresses, positions or trader profiles.")]),
+ "rss-feed-scraper": dict(
+  slug="rss-feed-to-json-csv-api",
+  ptitle="RSS Feed to JSON/CSV: Bulk RSS & Atom Feed Reader API",
+  h1="How to turn any RSS or Atom feed into JSON or CSV (bulk, with monitoring)",
+  desc="Convert RSS, Atom and JSON feeds (or any website, feeds auto-discovered) to clean JSON/CSV: titles, links, dates, authors, full text, images and podcast enclosures.",
+  kw=["rss to json","rss feed to csv","rss feed reader api","atom feed parser online","monitor rss feeds keywords"],
+  short="Any RSS, Atom or JSON Feed, or a website with auto-discovered feeds, as clean JSON/CSV with keyword filters, dedupe and monitoring.",
+  price="$0.30 per 1,000 feed items; failed feeds, filtered, duplicate and already-seen items are free",
+  intro=["RSS and Atom are still the cheapest way to follow news sites, blogs, podcasts, YouTube channels and changelogs, but every feed is slightly different: RSS 2.0, RDF, Atom, JSON Feed, HTML inside descriptions, emails in author fields, missing dates. Most online RSS-to-JSON converters handle one feed at a time.",
+         "This guide shows how to read hundreds of feeds in one run (or just paste website URLs and let the feeds be discovered), get one normalized row per item (title, link, publish date, author, summary, full text, image, categories, enclosure), filter by keywords and date, and receive only new items on a schedule."],
+  steps=["Add <code>feeds</code>: feed URLs or plain website URLs (the actor finds their feeds).",
+         "Optionally set <code>keywords</code>, <code>excludeKeywords</code> and <code>publishedWithinDays</code>.",
+         "Schedule it with <i>Only new items</i> on and send new items to Slack, email, a Google Sheet or an LLM summary."],
+  faq=[("Can I convert RSS to JSON for free?","Apify's free plan includes monthly platform credit, which covers thousands of feed items at $0.30 per 1,000. Feeds that fail are not charged."),
+       ("Does it find the feed if I only have the website?","Yes. It reads the site's feed links and tries the common feed paths (/feed, /rss, /atom.xml and others)."),
+       ("Does it work for podcasts and YouTube?","Yes. Podcast enclosures (audio URL, length, type, duration) and YouTube channel feeds are supported.")]),
+ "app-store-scraper": dict(
+  slug="app-store-top-charts-search-rankings-api",
+  ptitle="App Store Scraper: Top Charts & Keyword Rankings to CSV/JSON",
+  h1="How to scrape App Store search rankings and top charts (CSV, JSON, API)",
+  desc="Export Apple App Store top charts by category, keyword search rankings, app details and developer apps in 175 countries: ratings, price, version, category.",
+  kw=["app store top charts api","app store keyword ranking tracker","scrape app store search results","itunes search api export csv","top grossing apps by category data"],
+  short="Apple App Store search rankings, top free/paid/grossing charts by category, app details and developer apps in 175 countries.",
+  price="$0.80 per 1,000 apps with full details; filtered, duplicate and already-seen apps are free",
+  intro=["ASO tools charge monthly fees for keyword rankings and chart history, and the App Store itself only shows a few results at a time. If you want to know who ranks for <i>habit tracker</i> in the US and Germany, or which finance apps are top grossing this week, you need the data as a table.",
+         "This guide shows how to export keyword search rankings, top charts per category and country, full details for lists of app IDs or bundle IDs, and every app of a developer, using Apple's official iTunes Search/Lookup API and chart feeds. Every row has the rank, ratings, rating count, price, version, release dates and category."],
+  steps=["Add <code>searchTerms</code> for keyword rankings, and/or <code>charts</code> (e.g. <code>topgrossing</code>) with <code>chartGenres</code> (e.g. <code>Games</code>, <code>Finance</code>).",
+         "Pick <code>countries</code> and optional filters (<code>minRating</code>, <code>minRatingCount</code>, free/paid).",
+         "Schedule it daily to build your own ranking history, and pass the app IDs to the App Store Reviews Scraper for reviews."],
+  faq=[("Does Apple have an App Store API?","Apple's iTunes Search and Lookup APIs and its top-chart feeds are public and need no key. The actor uses only these, so there is no browser and no login."),
+       ("How many results per keyword?","Apple returns at most 200 results per keyword and country, and charts have at most 200 apps."),
+       ("Can I get downloads or revenue?","No, Apple does not publish them. Rank in the top grossing chart over time is the usual proxy.")]),
 }
 
 PRIVATE_KEYS = re.compile(r"(email|phone|telefon|contact|kontakt|fax)", re.I)
@@ -276,13 +323,13 @@ curl -X POST "https://api.apify.com/v2/acts/{tid}/run-sync-get-dataset-items?for
 def index(actors):
     cards = "".join(f'<div class="card"><h3><a href="{a["slug"]}/">{E(a["title"].split(" - ")[0])}</a></h3><p>{E(a["short"])}</p><p class="mut">{E(a["price"])}</p><p><a href="{a["slug"]}/">Guide</a> · <a href="{STORE}{a["name"]}">Apify Store</a></p></div>' for a in actors)
     body = f"""<h1>Practical guides for pulling clean data from the web</h1>
-<p>TinyRex builds small, cheap, API-first data tools on <a href="https://apify.com/tinyrex">Apify</a>: bulk tech stack lookup, job postings from ATS, remote job boards and public employment services, e-commerce product catalogs, App Store reviews, EU public tenders and EU funding calls. Every tool returns clean JSON/CSV, charges only per delivered result, and works from Python, JavaScript, plain HTTP, no-code tools and AI agents (via the Apify MCP server).</p>
+<p>TinyRex builds small, cheap, API-first data tools on <a href="https://apify.com/tinyrex">Apify</a>: bulk tech stack lookup, job postings from ATS and remote job boards, e-commerce product catalogs, App Store reviews, EU public tenders and EU funding calls. Every tool returns clean JSON/CSV, charges only per delivered result, and works from Python, JavaScript, plain HTTP, no-code tools and AI agents (via the Apify MCP server).</p>
 <p>Each guide below has a working example input, real sample output and copy-paste code.</p>
 <div class="cards">{cards}</div>
 <h2>Use any of these tools from an AI agent</h2>
 <p>Connect Claude, Cursor or n8n to <code>https://mcp.apify.com?tools={','.join('tinyrex/'+a['name'] for a in actors)}</code> and the agent can call every tool above directly.</p>"""
     ld = {"@context": "https://schema.org", "@type": "ItemList", "itemListElement": [{"@type": "ListItem", "position": i+1, "url": f"{BASE}/{a['slug']}/", "name": a["title"]} for i, a in enumerate(actors)]}
-    return page("", "TinyRex Data Tools: Web Data APIs & Scraper Guides (Jobs, E-commerce, Tenders)", "Guides with working examples for bulk tech stack lookup, Greenhouse/Workday/Arbeitsagentur and remote job APIs, Shopify/WooCommerce product export, App Store reviews, TED EU tenders and EU grants.", body, ld)
+    return page("", "TinyRex Data Tools: Web Data APIs & Scraper Guides (Jobs, E-commerce, Tenders)", "Guides with working examples for bulk tech stack lookup, Greenhouse/Workday and remote job APIs, Shopify/WooCommerce product export, App Store reviews, TED EU tenders and EU grants.", body, ld)
 
 def main():
     actors = load_actors()
