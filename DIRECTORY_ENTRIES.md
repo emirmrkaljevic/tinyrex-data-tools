@@ -1,4 +1,13 @@
-# Directory / awesome-list entries (prepared, NOT submitted)
+# Directory / awesome-list entries
+
+## Status (9 Oct 2026)
+- jivoi/awesome-osint PR #1262 (Tech Stack Detector): CLOSED without merge by maintainer on 8 Oct, no comment. Do not resubmit.
+- serpapi/awesome-seo-tools PR #418 (Sitemap Scraper): open, https://github.com/serpapi/awesome-seo-tools/pull/418
+- AboutRSS/ALL-about-RSS PR #159 (RSS Feed Scraper): open, https://github.com/AboutRSS/ALL-about-RSS/pull/159
+- Skipped: julionc/awesome-shopify (only open-source entries), foxck016077/awesome-apify-actors (wants 10k+ runs).
+- AgentsAPI/awesome-agent-apis auto-lists all 9 older public actors (snapshot 8 Oct; still shows dach-jobs-scraper, should drop on the next daily refresh). RSS + Sitemap should appear on the next refresh.
+
+# Prepared entries
 
 ## 1. jivoi/awesome-osint (best fit; CONTRIBUTING allows self-promo with up-front disclosure, one PR per entry, alphabetical)
 Section: "Domain and IP Research", insert between `[StatsCrop]` and `[TinyScan]`:
