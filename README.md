@@ -1,6 +1,6 @@
 # TinyRex Data Tools: web data APIs and scraper guides
 
-Practical, copy-paste guides for pulling clean, structured data from the public web with small, pay-per-result tools on [Apify](https://apify.com/tinyrex): **bulk tech stack lookup (Wappalyzer / BuiltWith alternative)**, **job postings from Greenhouse, Lever, Ashby, Personio and Workday**, **Shopify and WooCommerce product export to CSV**, **remote jobs from Himalayas, Remote OK and We Work Remotely**, **Apple App Store reviews**, **RSS/Atom feeds to JSON/CSV**, **all URLs from XML sitemaps (with broken link check)**, **EU public tenders from TED** and **EU funding calls (Horizon Europe)**.
+Practical, copy-paste guides for pulling clean, structured data from the public web with small, pay-per-result tools on [Apify](https://apify.com/tinyrex): **bulk tech stack lookup (Wappalyzer / BuiltWith alternative)**, **job postings from Greenhouse, Lever, Ashby, Personio and Workday**, **Shopify and WooCommerce product export to CSV**, **remote jobs from Himalayas, Remote OK and We Work Remotely**, **RSS/Atom feeds to JSON/CSV**, **all URLs from XML sitemaps (with broken link check)**, **EU public tenders from TED** and **EU funding calls (Horizon Europe)**.
 
 **Website:** https://emirmrkaljevic.github.io/tinyrex-data-tools/
 
@@ -17,7 +17,6 @@ Every guide includes a working input example, real sample output, and Python, Ja
 | [How to export products from any WooCommerce store to CSV or JSON](https://emirmrkaljevic.github.io/tinyrex-data-tools/export-woocommerce-store-products-to-csv/) | [woocommerce-products-scraper](https://apify.com/tinyrex/woocommerce-products-scraper) | $0.60 per 1,000 products |
 | [How to export EU public tenders from TED (Tenders Electronic Daily) to CSV or JSON](https://emirmrkaljevic.github.io/tinyrex-data-tools/ted-tenders-api-export/) | [ted-tenders-scraper](https://apify.com/tinyrex/ted-tenders-scraper) | $2.50 per 1,000 notices; already-seen notices in alert mode are free |
 | [How to scrape remote jobs from Himalayas, Remote OK, We Work Remotely and more in one run](https://emirmrkaljevic.github.io/tinyrex-data-tools/remote-jobs-api-himalayas-remoteok-weworkremotely/) | [remote-jobs-scraper](https://apify.com/tinyrex/remote-jobs-scraper) | $0.80 per 1,000 jobs with full descriptions; filtered-out, duplicate and already-seen jobs are free |
-| [How to scrape Apple App Store reviews for any app and country (CSV, JSON, API)](https://emirmrkaljevic.github.io/tinyrex-data-tools/scrape-apple-app-store-reviews/) | [app-store-reviews-scraper](https://apify.com/tinyrex/app-store-reviews-scraper) | $0.08 per 1,000 reviews; filtered and already-seen reviews are free |
 | [How to export open EU funding calls (Horizon Europe, Digital Europe, cascade funding) to CSV or JSON](https://emirmrkaljevic.github.io/tinyrex-data-tools/eu-funding-calls-horizon-europe-api/) | [eu-grants-scraper](https://apify.com/tinyrex/eu-grants-scraper) | $3 per 1,000 funding calls; filtered-out and already-seen calls are free |
 | [How to turn any RSS or Atom feed into JSON or CSV (bulk, with monitoring)](https://emirmrkaljevic.github.io/tinyrex-data-tools/rss-feed-to-json-csv-api/) | [rss-feed-scraper](https://apify.com/tinyrex/rss-feed-scraper) | $0.30 per 1,000 feed items; failed feeds, filtered, duplicate and already-seen items are free |
 | [How to extract all URLs from a website's sitemap (and find broken links)](https://emirmrkaljevic.github.io/tinyrex-data-tools/extract-all-urls-from-sitemap/) | [sitemap-scraper](https://apify.com/tinyrex/sitemap-scraper) | $0.20 per 1,000 URLs ($0.50 per 1,000 status checks); sites without a sitemap are free |
@@ -49,7 +48,7 @@ print(list(client.dataset(run["defaultDatasetId"]).iterate_items())[:3])
 ### Use from an AI agent (MCP)
 
 ```json
-{ "mcpServers": { "apify": { "url": "https://mcp.apify.com?tools=tinyrex/tech-stack-detector,tinyrex/ats-jobs-scraper,tinyrex/shopify-products-scraper,tinyrex/workday-jobs-scraper,tinyrex/woocommerce-products-scraper,tinyrex/ted-tenders-scraper,tinyrex/remote-jobs-scraper,tinyrex/app-store-reviews-scraper,tinyrex/eu-grants-scraper,tinyrex/rss-feed-scraper,tinyrex/sitemap-scraper" } } }
+{ "mcpServers": { "apify": { "url": "https://mcp.apify.com?tools=tinyrex/tech-stack-detector,tinyrex/ats-jobs-scraper,tinyrex/shopify-products-scraper,tinyrex/workday-jobs-scraper,tinyrex/woocommerce-products-scraper,tinyrex/ted-tenders-scraper,tinyrex/remote-jobs-scraper,tinyrex/eu-grants-scraper,tinyrex/rss-feed-scraper,tinyrex/sitemap-scraper" } } }
 ```
 
 ## Rebuilding the site / adding a new actor
