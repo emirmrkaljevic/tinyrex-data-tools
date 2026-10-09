@@ -125,22 +125,6 @@ G = {
   faq=[("Is there a free remote jobs API?","Several boards publish free public feeds (Himalayas, Remote OK, We Work Remotely RSS, Arbeitnow). The actor reads those official feeds, merges them into one schema and removes duplicates, so you do not have to maintain five integrations."),
        ("Can I get only jobs open to candidates in my country?","Yes. Set <code>countries</code> (e.g. <code>[\"Germany\"]</code>) and choose whether to keep worldwide jobs with <code>includeWorldwide</code>."),
        ("Can I republish the jobs on my own site?","The boards ask for attribution and a link back to the original job; <code>url</code> and <code>sourceName</code> are included for that. Himalayas and Remote OK do not allow resubmitting their jobs to aggregators such as Google Jobs or LinkedIn.")]),
- "app-store-reviews-scraper": dict(
-  slug="scrape-apple-app-store-reviews",
-  ptitle="Scrape Apple App Store Reviews to CSV/JSON (Any App, 150+ Countries)",
-  h1="How to scrape Apple App Store reviews for any app and country (CSV, JSON, API)",
-  desc="Export Apple App Store reviews (stars, title, text, app version, date) for any iPhone/iPad app in 150+ countries via Apple's official feed. Filters, monitoring and app details.",
-  kw=["scrape app store reviews","app store reviews api","export ios app reviews to csv","apple app store review scraper python","app store reviews sentiment analysis dataset"],
-  short="Apple App Store reviews for any app in 150+ countries from Apple's official feed: stars, title, text, version and date, plus app details.",
-  price="$0.08 per 1,000 reviews ($1 per 1,000 apps in app details mode); filtered and already-seen reviews are free",
-  intro=["App Store Connect only shows reviews of your own apps, and the App Store website shows a handful per page. For competitor research, product feedback analysis or review monitoring you need the reviews of any app, per country, in a spreadsheet or JSON.",
-         "This guide shows how to pull reviews for any iPhone/iPad app by URL, ID or name, across one or many countries, filter them by stars, date or keywords, and schedule daily monitoring. It uses Apple's official public customer reviews feed and the iTunes Lookup API; reviewer names are not collected."],
-  steps=["Add <code>apps</code> as App Store URLs, numeric IDs or app names.",
-         "Pick <code>countries</code> (e.g. <code>us, gb, de</code> or <code>all</code>) and the sort order (<code>both</code> = most recent + most helpful).",
-         "Optionally keep only 1 to 2 star reviews, reviews since a date or reviews mentioning words like <i>crash</i> or <i>subscription</i>, then export to CSV or feed them to an LLM for sentiment analysis."],
-  faq=[("Does Apple have an App Store reviews API?","Apple publishes a public customer reviews RSS/JSON feed per app and country. The actor uses it plus the iTunes Search/Lookup API, so there is no browser and no login."),
-       ("How many reviews can I get per app?","Apple's feed returns up to 500 reviews per app, country and sort order. Combine both sort orders, several countries and a daily monitoring schedule to build a full history over time."),
-       ("Is it GDPR-friendly?","Reviewer names and profile links are intentionally not collected, only the review content, rating, version and date.")]),
  "eu-grants-scraper": dict(
   slug="eu-funding-calls-horizon-europe-api",
   ptitle="EU Funding Calls API: Export Horizon Europe & EU Grants to CSV/JSON",
@@ -217,7 +201,7 @@ G = {
          "This guide shows how to export keyword search rankings, top charts per category and country, full details for lists of app IDs or bundle IDs, and every app of a developer, using Apple's official iTunes Search/Lookup API and chart feeds. Every row has the rank, ratings, rating count, price, version, release dates and category."],
   steps=["Add <code>searchTerms</code> for keyword rankings, and/or <code>charts</code> (e.g. <code>topgrossing</code>) with <code>chartGenres</code> (e.g. <code>Games</code>, <code>Finance</code>).",
          "Pick <code>countries</code> and optional filters (<code>minRating</code>, <code>minRatingCount</code>, free/paid).",
-         "Schedule it daily to build your own ranking history, and pass the app IDs to the App Store Reviews Scraper for reviews."],
+         "Schedule it daily to build your own ranking history so you can track keyword and chart movements over time."],
   faq=[("Does Apple have an App Store API?","Apple's iTunes Search and Lookup APIs and its top-chart feeds are public and need no key. The actor uses only these, so there is no browser and no login."),
        ("How many results per keyword?","Apple returns at most 200 results per keyword and country, and charts have at most 200 apps."),
        ("Can I get downloads or revenue?","No, Apple does not publish them. Rank in the top grossing chart over time is the usual proxy.")]),
@@ -427,14 +411,14 @@ curl -X POST "https://api.apify.com/v2/acts/{tid}/run-sync-get-dataset-items?for
 def index(actors, tuts=()):
     cards = "".join(f'<div class="card"><h3><a href="{a["slug"]}/">{E(a["title"].split(" - ")[0])}</a></h3><p>{E(a["short"])}</p><p class="mut">{E(a["price"])}</p><p><a href="{a["slug"]}/">Guide</a> · <a href="{STORE}{a["name"]}">Apify Store</a></p></div>' for a in actors)
     body = f"""<h1>Practical guides for pulling clean data from the web</h1>
-<p>TinyRex builds small, cheap, API-first data tools on <a href="https://apify.com/tinyrex">Apify</a>: bulk tech stack lookup, job postings from ATS and remote job boards, e-commerce product catalogs, App Store reviews, RSS feeds, website sitemaps, EU public tenders and EU funding calls. Every tool returns clean JSON/CSV, charges only per delivered result, and works from Python, JavaScript, plain HTTP, no-code tools and AI agents (via the Apify MCP server).</p>
+<p>TinyRex builds small, cheap, API-first data tools on <a href="https://apify.com/tinyrex">Apify</a>: bulk tech stack lookup, job postings from ATS and remote job boards, e-commerce product catalogs, RSS feeds, website sitemaps, EU public tenders and EU funding calls. Every tool returns clean JSON/CSV, charges only per delivered result, and works from Python, JavaScript, plain HTTP, no-code tools and AI agents (via the Apify MCP server).</p>
 <p>Each guide below has a working example input, real sample output and copy-paste code.</p>
 <div class="cards">{cards}</div>
 {('<h2>Tutorials</h2><ul>' + ''.join(f'<li><a href="{t["slug"]}/">{E(t["h1"])}</a></li>' for t in tuts) + '</ul>') if tuts else ''}
 <h2>Use any of these tools from an AI agent</h2>
 <p>Connect Claude, Cursor or n8n to <code>https://mcp.apify.com?tools={','.join('tinyrex/'+a['name'] for a in actors)}</code> and the agent can call every tool above directly.</p>"""
     ld = {"@context": "https://schema.org", "@type": "ItemList", "itemListElement": [{"@type": "ListItem", "position": i+1, "url": f"{BASE}/{a['slug']}/", "name": a["title"]} for i, a in enumerate(actors)]}
-    return page("", "TinyRex Data Tools: Web Data APIs & Scraper Guides (Jobs, E-commerce, Tenders)", "Guides with working examples for bulk tech stack lookup, Greenhouse/Workday and remote job APIs, Shopify/WooCommerce product export, App Store reviews, RSS feeds, sitemaps, TED EU tenders and EU grants.", body, ld)
+    return page("", "TinyRex Data Tools: Web Data APIs & Scraper Guides (Jobs, E-commerce, Tenders)", "Guides with working examples for bulk tech stack lookup, Greenhouse/Workday and remote job APIs, Shopify/WooCommerce product export, RSS feeds, sitemaps, TED EU tenders and EU grants.", body, ld)
 
 def main():
     actors = load_actors()
