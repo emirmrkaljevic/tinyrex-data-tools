@@ -221,7 +221,111 @@ G = {
   faq=[("Does Apple have an App Store API?","Apple's iTunes Search and Lookup APIs and its top-chart feeds are public and need no key. The actor uses only these, so there is no browser and no login."),
        ("How many results per keyword?","Apple returns at most 200 results per keyword and country, and charts have at most 200 apps."),
        ("Can I get downloads or revenue?","No, Apple does not publish them. Rank in the top grossing chart over time is the usual proxy.")]),
+ "sitemap-scraper": dict(
+  slug="extract-all-urls-from-sitemap",
+  ptitle="Extract All URLs from a Sitemap to CSV (+ Broken Link Check)",
+  h1="How to extract all URLs from a website's sitemap (and find broken links)",
+  desc="Get every URL from any website's XML sitemaps as CSV or JSON: auto-discovery via robots.txt, sitemap indexes, .gz, lastmod, images, hreflang, plus an optional HTTP status check.",
+  kw=["extract urls from sitemap","sitemap to csv","get all urls of a website","sitemap url extractor","find broken links in sitemap"],
+  short="Every URL from any website's XML sitemaps (robots.txt discovery, indexes, .gz) with lastmod, images and hreflang, plus optional status/redirect check.",
+  price="$0.20 per 1,000 URLs ($0.50 per 1,000 status checks); sites without a sitemap are free",
+  intro=["Sitemaps are the fastest way to get a complete list of a website's pages: no crawling, no guessing. But big sites split them into sitemap indexes, gzip files and image or news sitemaps, and online sitemap viewers stop after a few hundred URLs.",
+         "This guide shows how to turn the sitemaps of one or hundreds of websites into a flat table (URL, lastmod, change frequency, priority, images, hreflang alternates), filter it by URL pattern or date, optionally check the HTTP status of every URL to find broken and redirected pages, and get only new URLs on a schedule."],
+  steps=["Add <code>startUrls</code>: domains, sitemap URLs or robots.txt URLs. Sitemaps are discovered from robots.txt and common paths.",
+         "Optionally filter with <code>includeUrlPatterns</code> (e.g. <code>/blog/</code>) and <code>lastModifiedWithinDays</code>.",
+         "Turn on <code>checkStatus</code> for a broken link and redirect audit, or <i>Only new URLs</i> to monitor a competitor's new pages."],
+  faq=[("How do I get all URLs of a website?","If the site has a sitemap (most do), reading it is the fastest and most complete way. Enter the domain; the actor finds the sitemaps through robots.txt and the usual paths and follows sitemap indexes."),
+       ("Can it find broken links in my sitemap?","Yes. With <code>checkStatus</code> every URL is requested once and you get the status code, final status after redirects and the redirect chain. Filter for 4xx/5xx to find pages that should not be in the sitemap."),
+       ("What if a site has no sitemap?","It is reported in the SITES record and costs nothing. Use a crawler for sites without sitemaps.")]),
 }
+
+# Use-case tutorials (long-tail "how to get X into a spreadsheet" searches). Rendered only when the actor is public.
+SHEETS_STEPS = ["To get the rows into Google Sheets: download the run's dataset as CSV and import it, or, for automatic updates, add an integration on the actor's <i>Integrations</i> tab (Apify's Google Sheets Import &amp; Export actor, Make, Zapier or n8n) so every finished run appends its rows to your sheet.",
+                "Alternatively, in Google Sheets use <code>=IMPORTDATA(\"https://api.apify.com/v2/acts/{tid}/runs/last/dataset/items?format=csv&amp;status=SUCCEEDED&amp;token=YOUR_TOKEN\")</code>. Anyone with edit access to the sheet can see the token, so only do this in private sheets (or use a scoped token).",
+                "Add a <i>Schedule</i> in Apify (daily or weekly) so the sheet stays fresh."]
+UC = [
+ dict(slug="shopify-products-to-google-sheets", actor="shopify-products-scraper",
+  ptitle="How to Export Shopify Products to Google Sheets (Prices, Stock, Variants)",
+  h1="How to get any Shopify store's products into Google Sheets (and keep prices updated)",
+  desc="Step-by-step: export all products, variants, prices and stock of any Shopify store to Google Sheets or Excel, and refresh them daily for price monitoring.",
+  intro=["Competitor price tracking, dropshipping research and catalog migrations all start with the same table: every product of a Shopify store with its variants, SKUs, prices, compare-at prices and stock. Copying it by hand stops working after 20 products.",
+         "Most Shopify stores expose their public catalog in a structured way, so you can get the whole catalog in seconds without a browser. Here is how to get it into a spreadsheet and keep it updated."],
+  input={"stores": ["https://www.allbirds.com"], "maxProductsPerStore": 500},
+  steps=["Open the Shopify Products Scraper, paste one or more store URLs into <code>stores</code> and run it.", "@SHEETS", "To track price changes, turn on the monitoring option so each run only returns changed products."],
+  faq=[("Does this need access to the store's admin?","No. It only reads the public catalog that any visitor can see."),
+       ("Can I get one row per variant?","Yes, every variant (size, color) with its own SKU, price and availability is included.")]),
+ dict(slug="find-shopify-stores-from-domain-list", actor="tech-stack-detector",
+  ptitle="How to Find Which Websites Use Shopify in a List of Domains (Free Tool)",
+  h1="How to find which websites in a list use Shopify, WooCommerce or HubSpot",
+  desc="Filter a list of thousands of domains down to the ones that use Shopify, WooCommerce, HubSpot or any of 7,600+ technologies. CSV in, CSV out, about $4 per 1,000 domains.",
+  intro=["Agencies, app developers and SaaS sales teams often have a list of domains (from a CRM, a trade show, a directory) and need to know which of them run on a specific platform. Opening each site with a browser extension does not scale.",
+         "A bulk technology lookup answers it in minutes: give it the list, tell it which technology you care about, and keep only the matches."],
+  input={"domains": ["allbirds.com", "gymshark.com", "wordpress.org", "example.com"], "onlyIfUses": ["Shopify"]},
+  steps=["Paste your domains into <code>domains</code> (URLs and duplicates are cleaned up automatically).", "Set <code>onlyIfUses</code> to <code>[\"Shopify\"]</code> (or WooCommerce, HubSpot, Klaviyo...). Non-matching domains are not saved.", "@SHEETS"],
+  faq=[("How accurate is it?","It uses an open-source Wappalyzer-compatible fingerprint database and checks the HTML, headers, cookies and scripts of each homepage. Platforms like Shopify and WooCommerce are detected very reliably."),
+       ("What does it cost?","About $4 per 1,000 analyzed domains; unreachable domains are free.")]),
+ dict(slug="eu-tender-alerts-google-sheets-slack", actor="ted-tenders-scraper",
+  ptitle="Free EU Tender Alerts: New TED Tenders to Google Sheets, Email or Slack",
+  h1="How to get daily alerts for new EU public tenders (TED) by CPV code and country",
+  desc="Set up daily alerts for new EU public tenders from TED, filtered by CPV code, country and keywords, delivered to Google Sheets, email or Slack. Official TED API, $2.50 per 1,000 notices.",
+  intro=["Paid tender alert services cost hundreds of euros per year, yet the underlying data, TED (Tenders Electronic Daily), is the EU's official open data. With a scheduled run you get only new notices that match your CPV codes, countries and keywords.",
+         "This tutorial sets up a daily alert in about five minutes."],
+  input={"cpvCodes": ["72000000"], "countries": ["DE", "AT"], "publishedWithinDays": 1, "onlyNew": True},
+  steps=["Open the TED Tenders Scraper and set your CPV codes (e.g. <code>72000000</code> for IT services), buyer countries and optional keywords.", "Turn on the <i>only new notices</i> mode so each run returns only notices you have not seen.", "Create a daily Schedule, then add an integration: Google Sheets, email or Slack (Integrations tab of the actor or task).", "@SHEETS"],
+  faq=[("Is TED data free to reuse?","Yes, TED is official EU open data published by the Publications Office of the EU and may be reused, including commercially, with attribution."),
+       ("What is a CPV code?","The EU's Common Procurement Vocabulary: an 8-digit code for what is being bought, e.g. 45000000 construction work or 72000000 IT services.")]),
+ dict(slug="remote-jobs-to-google-sheets", actor="remote-jobs-scraper",
+  ptitle="How to Get Remote Job Listings into a Spreadsheet (5 Job Boards, Daily)",
+  h1="How to get remote job listings from 5 job boards into one spreadsheet",
+  desc="Collect remote jobs from Himalayas, Remote OK, We Work Remotely, Working Nomads and Arbeitnow into Google Sheets or CSV daily, deduplicated, with salary and location rules.",
+  intro=["Job seekers, recruiters and job board owners all end up checking the same five remote job boards every day. A single deduplicated table with title, company, salary, location restrictions and the full description saves that time and makes filtering easy.",
+         "The data comes from the boards' official public APIs and RSS feeds."],
+  input={"keywords": ["python", "data engineer"], "maxResultsPerSearch": 300, "onlyNewJobs": True},
+  steps=["Open the Remote Jobs Scraper, add keywords (or leave empty for everything) and pick the boards.", "Turn on the option for only new jobs if you schedule it daily.", "@SHEETS"],
+  faq=[("Are duplicates removed?","Yes, the same job posted on several boards appears once."),
+       ("Do I get salaries?","When the board publishes them, yes, as min/max/currency columns.")]),
+ dict(slug="rss-feeds-to-google-sheets-slack", actor="rss-feed-scraper",
+  ptitle="RSS to Google Sheets or Slack: Monitor Many Feeds with Keywords",
+  h1="How to send new items from many RSS feeds to Google Sheets or Slack (with keyword filters)",
+  desc="Monitor dozens of RSS, Atom or JSON feeds, keep only items matching your keywords, and send new items to Google Sheets or Slack on a schedule. $0.30 per 1,000 items.",
+  intro=["Google Sheets' IMPORTFEED handles one feed at a time and breaks easily, and most RSS-to-Slack tools charge per feed. If you follow 30 company blogs, changelogs or industry news sources, you want one deduplicated stream filtered by your keywords.",
+         "Here is how to set that up with a scheduled run."],
+  input={"feeds": ["https://blog.cloudflare.com/rss/", "https://github.com/apify/crawlee/releases.atom", "https://www.nasa.gov/feed/"], "keywords": ["ai", "release"], "onlyNewItems": True},
+  steps=["Paste feed URLs or plain website URLs into <code>feeds</code> (feeds are discovered automatically).", "Add <code>keywords</code> and turn on <i>Only new items</i>.", "Schedule it hourly or daily and add the Slack or Google Sheets integration.", "@SHEETS"],
+  faq=[("Can I use any feed?","Technically yes, but check each publisher's terms: some news feeds allow only personal, non-commercial use."),
+       ("Does it get the full article?","It returns the full text when the feed includes it; it does not open article pages.")]),
+ dict(slug="find-broken-links-in-sitemap", actor="sitemap-scraper",
+  ptitle="How to Find Broken Links and Redirects in Your Sitemap (Free Check)",
+  h1="How to find broken pages and redirects in your XML sitemap",
+  desc="Check every URL in your XML sitemap for 404s, 5xx errors and redirects, and export the results to CSV. Works for sitemap indexes and large sites. $0.50 per 1,000 checked URLs.",
+  intro=["Search engines expect a sitemap to list only live, canonical URLs. After migrations or product deletions, sitemaps often contain 404s and redirected URLs, which waste crawl budget and show up as errors in Search Console.",
+         "This tutorial checks every URL in a sitemap and gives you a CSV of the problems."],
+  input={"startUrls": ["https://crawlee.dev"], "checkStatus": True, "maxUrlsPerSite": 5000},
+  steps=["Open the Sitemap Scraper and enter your domain (or the sitemap URL).", "Turn on <code>checkStatus</code>. URLs disallowed by robots.txt are skipped by default.", "Run it, then filter the dataset for <code>finalStatusCode</code> 400 and above, or rows with a non-empty <code>redirectChain</code>.", "@SHEETS"],
+  faq=[("Will it overload my server?","No. It sends one request per URL with low concurrency per site (3 by default, adjustable)."),
+       ("Does it crawl links on the pages?","No, it checks only the URLs listed in the sitemap.")]),
+]
+
+def tutorial(t, a, actors):
+    store = STORE + a["name"]; tid = f"tinyrex~{a['name']}"
+    steps = []
+    for st in t["steps"]:
+        steps += [x.replace("{tid}", tid) for x in SHEETS_STEPS] if st == "@SHEETS" else [st]
+    inp = json.dumps(t["input"], indent=2)
+    faq = "".join(f"<h3>{E(q)}</h3><p>{ans}</p>" for q, ans in t["faq"])
+    body = f"""<h1>{E(t['h1'])}</h1>
+<p class="mut">Updated {TODAY} · Tool: <a href="{store}">{E(a['title'])}</a> · {E(a['price'])}</p>
+{''.join(f'<p>{p}</p>' for p in t['intro'])}
+<a class="cta" href="{store}">Open the tool on Apify →</a>
+<h2>Step by step</h2><ol>{''.join(f'<li>{x}</li>' for x in steps)}</ol>
+<h2>Example input</h2>{code(inp,'json')}
+<p>Same thing from the command line (returns CSV directly):</p>{code(f"curl -X POST 'https://api.apify.com/v2/acts/{tid}/run-sync-get-dataset-items?format=csv' -H 'Authorization: Bearer $APIFY_TOKEN' -H 'Content-Type: application/json' -d '{json.dumps(t['input'])}' > results.csv",'bash')}
+<p>More code examples (Python, JavaScript, MCP for AI agents) are in the <a href="../{a['slug']}/">full guide</a>.</p>
+<h2>FAQ</h2>{faq}
+<a class="cta" href="{store}">Try it on Apify →</a>"""
+    ld = [{"@context": "https://schema.org", "@type": "HowTo", "name": t["h1"], "description": t["desc"], "step": [{"@type": "HowToStep", "position": i+1, "text": re.sub('<[^>]+>', '', x)} for i, x in enumerate(steps)]},
+          {"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": q, "acceptedAnswer": {"@type": "Answer", "text": re.sub('<[^>]+>', '', ans)}} for q, ans in t["faq"]]}]
+    return page(f"{t['slug']}/", t["ptitle"], t["desc"], body, ld)
 
 PRIVATE_KEYS = re.compile(r"(email|phone|telefon|contact|kontakt|fax)", re.I)
 
@@ -320,30 +424,35 @@ curl -X POST "https://api.apify.com/v2/acts/{tid}/run-sync-get-dataset-items?for
           {"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": q, "acceptedAnswer": {"@type": "Answer", "text": re.sub('<[^>]+>', '', ans)}} for q, ans in a["faq"]]}]
     return page(f"{a['slug']}/", a["ptitle"], a["desc"], body, ld)
 
-def index(actors):
+def index(actors, tuts=()):
     cards = "".join(f'<div class="card"><h3><a href="{a["slug"]}/">{E(a["title"].split(" - ")[0])}</a></h3><p>{E(a["short"])}</p><p class="mut">{E(a["price"])}</p><p><a href="{a["slug"]}/">Guide</a> · <a href="{STORE}{a["name"]}">Apify Store</a></p></div>' for a in actors)
     body = f"""<h1>Practical guides for pulling clean data from the web</h1>
-<p>TinyRex builds small, cheap, API-first data tools on <a href="https://apify.com/tinyrex">Apify</a>: bulk tech stack lookup, job postings from ATS and remote job boards, e-commerce product catalogs, App Store reviews, EU public tenders and EU funding calls. Every tool returns clean JSON/CSV, charges only per delivered result, and works from Python, JavaScript, plain HTTP, no-code tools and AI agents (via the Apify MCP server).</p>
+<p>TinyRex builds small, cheap, API-first data tools on <a href="https://apify.com/tinyrex">Apify</a>: bulk tech stack lookup, job postings from ATS and remote job boards, e-commerce product catalogs, App Store reviews, RSS feeds, website sitemaps, EU public tenders and EU funding calls. Every tool returns clean JSON/CSV, charges only per delivered result, and works from Python, JavaScript, plain HTTP, no-code tools and AI agents (via the Apify MCP server).</p>
 <p>Each guide below has a working example input, real sample output and copy-paste code.</p>
 <div class="cards">{cards}</div>
+{('<h2>Tutorials</h2><ul>' + ''.join(f'<li><a href="{t["slug"]}/">{E(t["h1"])}</a></li>' for t in tuts) + '</ul>') if tuts else ''}
 <h2>Use any of these tools from an AI agent</h2>
 <p>Connect Claude, Cursor or n8n to <code>https://mcp.apify.com?tools={','.join('tinyrex/'+a['name'] for a in actors)}</code> and the agent can call every tool above directly.</p>"""
     ld = {"@context": "https://schema.org", "@type": "ItemList", "itemListElement": [{"@type": "ListItem", "position": i+1, "url": f"{BASE}/{a['slug']}/", "name": a["title"]} for i, a in enumerate(actors)]}
-    return page("", "TinyRex Data Tools: Web Data APIs & Scraper Guides (Jobs, E-commerce, Tenders)", "Guides with working examples for bulk tech stack lookup, Greenhouse/Workday and remote job APIs, Shopify/WooCommerce product export, App Store reviews, TED EU tenders and EU grants.", body, ld)
+    return page("", "TinyRex Data Tools: Web Data APIs & Scraper Guides (Jobs, E-commerce, Tenders)", "Guides with working examples for bulk tech stack lookup, Greenhouse/Workday and remote job APIs, Shopify/WooCommerce product export, App Store reviews, RSS feeds, sitemaps, TED EU tenders and EU grants.", body, ld)
 
 def main():
     actors = load_actors()
     shutil.rmtree(OUT, ignore_errors=True); os.makedirs(OUT)
     w = lambda p, s: (os.makedirs(os.path.dirname(os.path.join(OUT, p)), exist_ok=True), open(os.path.join(OUT, p), "w").write(s))
-    w("index.html", index(actors)); w("style.css", CSS); w(".nojekyll", "")
+    by = {a["name"]: a for a in actors}
+    tuts = [t for t in UC if t["actor"] in by]
+    w("index.html", index(actors, tuts)); w("style.css", CSS); w(".nojekyll", "")
     for a in actors:
         w(f"{a['slug']}/index.html", guide(a, actors))
-    urls = [f"{BASE}/"] + [f"{BASE}/{a['slug']}/" for a in actors]
+    for t in tuts:
+        w(f"{t['slug']}/index.html", tutorial(t, by[t["actor"]], actors))
+    urls = [f"{BASE}/"] + [f"{BASE}/{a['slug']}/" for a in actors] + [f"{BASE}/{t['slug']}/" for t in tuts]
     w("sitemap.xml", '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' + "".join(f"  <url><loc>{u}</loc><lastmod>{TODAY}</lastmod></url>\n" for u in urls) + "</urlset>\n")
     w("robots.txt", f"User-agent: *\nAllow: /\nSitemap: {BASE}/sitemap.xml\n")
     w("404.html", page("", "Page not found | TinyRex Data Tools", "Page not found", '<h1>Page not found</h1><p><a href="./">Back to all guides</a></p>').replace('href="style.css"', f'href="{BASE}/style.css"'))
     json.dump([{"name": a["name"], "slug": a["slug"], "url": f"{BASE}/{a['slug']}/"} for a in actors], open(os.path.join(ROOT, "pages.json"), "w"), indent=1)
-    print("built", len(actors), "guides:", [a["slug"] for a in actors])
+    print("built", len(actors), "guides:", [a["slug"] for a in actors], "tutorials:", [t["slug"] for t in tuts])
 
 if __name__ == "__main__":
     main()

@@ -1,0 +1,91 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Extract All URLs from a Sitemap to CSV (+ Broken Link Check)</title><meta name="description" content="Get every URL from any website&#x27;s XML sitemaps as CSV or JSON: auto-discovery via robots.txt, sitemap indexes, .gz, lastmod, images, hreflang, plus an optional HTTP status check."><link rel="canonical" href="https://emirmrkaljevic.github.io/tinyrex-data-tools/extract-all-urls-from-sitemap/">
+<meta property="og:title" content="Extract All URLs from a Sitemap to CSV (+ Broken Link Check)"><meta property="og:description" content="Get every URL from any website&#x27;s XML sitemaps as CSV or JSON: auto-discovery via robots.txt, sitemap indexes, .gz, lastmod, images, hreflang, plus an optional HTTP status check."><meta property="og:type" content="article"><meta property="og:url" content="https://emirmrkaljevic.github.io/tinyrex-data-tools/extract-all-urls-from-sitemap/">
+<link rel="stylesheet" href="../style.css"><script type="application/ld+json">[{"@context": "https://schema.org", "@type": "TechArticle", "headline": "How to extract all URLs from a website's sitemap (and find broken links)", "description": "Get every URL from any website's XML sitemaps as CSV or JSON: auto-discovery via robots.txt, sitemap indexes, .gz, lastmod, images, hreflang, plus an optional HTTP status check.", "dateModified": "2026-10-09", "keywords": "extract urls from sitemap, sitemap to csv, get all urls of a website, sitemap url extractor, find broken links in sitemap", "about": {"@type": "SoftwareApplication", "name": "Sitemap Scraper - All URLs from XML Sitemaps + Status Check", "url": "https://apify.com/tinyrex/sitemap-scraper", "applicationCategory": "DeveloperApplication", "operatingSystem": "Web"}}, {"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "How do I get all URLs of a website?", "acceptedAnswer": {"@type": "Answer", "text": "If the site has a sitemap (most do), reading it is the fastest and most complete way. Enter the domain; the actor finds the sitemaps through robots.txt and the usual paths and follows sitemap indexes."}}, {"@type": "Question", "name": "Can it find broken links in my sitemap?", "acceptedAnswer": {"@type": "Answer", "text": "Yes. With checkStatus every URL is requested once and you get the status code, final status after redirects and the redirect chain. Filter for 4xx/5xx to find pages that should not be in the sitemap."}}, {"@type": "Question", "name": "What if a site has no sitemap?", "acceptedAnswer": {"@type": "Answer", "text": "It is reported in the SITES record and costs nothing. Use a crawler for sites without sitemaps."}}]}]</script></head><body>
+<header><a href="../">🦖 TinyRex Data Tools</a><span class="mut">practical guides for web data APIs</span></header>
+<main><h1>How to extract all URLs from a website&#x27;s sitemap (and find broken links)</h1>
+<p class="mut">Updated 2026-10-09 · Tool used: <a href="https://apify.com/tinyrex/sitemap-scraper">Sitemap Scraper - All URLs from XML Sitemaps + Status Check</a> on Apify · Price: $0.20 per 1,000 URLs ($0.50 per 1,000 status checks); sites without a sitemap are free</p>
+<p>Sitemaps are the fastest way to get a complete list of a website's pages: no crawling, no guessing. But big sites split them into sitemap indexes, gzip files and image or news sitemaps, and online sitemap viewers stop after a few hundred URLs.</p><p>This guide shows how to turn the sitemaps of one or hundreds of websites into a flat table (URL, lastmod, change frequency, priority, images, hreflang alternates), filter it by URL pattern or date, optionally check the HTTP status of every URL to find broken and redirected pages, and get only new URLs on a schedule.</p>
+<a class="cta" href="https://apify.com/tinyrex/sitemap-scraper">Open Sitemap Scraper on Apify →</a>
+<h2>Steps</h2><ol><li>Add <code>startUrls</code>: domains, sitemap URLs or robots.txt URLs. Sitemaps are discovered from robots.txt and common paths.</li><li>Optionally filter with <code>includeUrlPatterns</code> (e.g. <code>/blog/</code>) and <code>lastModifiedWithinDays</code>.</li><li>Turn on <code>checkStatus</code> for a broken link and redirect audit, or <i>Only new URLs</i> to monitor a competitor's new pages.</li></ol>
+<h2>Example input</h2><pre><code class="language-json">{
+  &quot;startUrls&quot;: [
+    &quot;https://apify.com&quot;,
+    &quot;https://crawlee.dev&quot;
+  ],
+  &quot;maxUrlsPerSite&quot;: 300,
+  &quot;includeUrlPatterns&quot;: [],
+  &quot;checkStatus&quot;: true
+}</code></pre>
+<h2>Example output (one item, shortened)</h2><pre><code class="language-json">{
+  &quot;site&quot;: &quot;crawlee.dev&quot;,
+  &quot;url&quot;: &quot;https://crawlee.dev/python/blog&quot;,
+  &quot;lastmod&quot;: null,
+  &quot;changefreq&quot;: &quot;weekly&quot;,
+  &quot;priority&quot;: 0.5,
+  &quot;sitemapUrl&quot;: &quot;https://crawlee.dev/python/sitemap.xml&quot;,
+  &quot;imageCount&quot;: 0,
+  &quot;images&quot;: [],
+  &quot;videos&quot;: [],
+  &quot;alternates&quot;: [],
+  &quot;news&quot;: null,
+  &quot;statusCode&quot;: 200,
+  &quot;finalStatusCode&quot;: 200,
+  &quot;finalUrl&quot;: &quot;https://crawlee.dev/python/blog&quot;,
+  &quot;redirectChain&quot;: [],
+  &quot;responseTimeMs&quot;: 581,
+  &quot;contentType&quot;: &quot;text/html&quot;,
+  &quot;checkError&quot;: null,
+  &quot;scrapedAt&quot;: &quot;2026-10-09T00:50:05.814Z&quot;
+}</code></pre>
+<p>Every run's dataset can be downloaded as JSON, CSV, Excel, XML or HTML from the Apify Console, or via <code>https://api.apify.com/v2/datasets/&lt;datasetId&gt;/items?format=csv</code>.</p>
+<h2>Run it from code</h2><h3>Python</h3><pre><code class="language-python">from apify_client import ApifyClient  # pip install apify-client
+
+client = ApifyClient(&quot;&lt;YOUR_APIFY_TOKEN&gt;&quot;)
+run_input = {
+  &quot;startUrls&quot;: [
+    &quot;https://apify.com&quot;,
+    &quot;https://crawlee.dev&quot;
+  ],
+  &quot;maxUrlsPerSite&quot;: 300,
+  &quot;includeUrlPatterns&quot;: [],
+  &quot;checkStatus&quot;: true
+}
+run = client.actor(&quot;tinyrex/sitemap-scraper&quot;).call(run_input=run_input)
+for item in client.dataset(run[&quot;defaultDatasetId&quot;]).iterate_items():
+    print(item)</code></pre><h3>JavaScript / Node.js</h3><pre><code class="language-javascript">import { ApifyClient } from &#x27;apify-client&#x27;; // npm i apify-client
+
+const client = new ApifyClient({ token: process.env.APIFY_TOKEN });
+const run = await client.actor(&#x27;tinyrex/sitemap-scraper&#x27;).call({
+  &quot;startUrls&quot;: [
+    &quot;https://apify.com&quot;,
+    &quot;https://crawlee.dev&quot;
+  ],
+  &quot;maxUrlsPerSite&quot;: 300,
+  &quot;includeUrlPatterns&quot;: [],
+  &quot;checkStatus&quot;: true
+});
+const { items } = await client.dataset(run.defaultDatasetId).listItems();
+console.log(items);</code></pre><h3>curl (no SDK)</h3><pre><code class="language-bash"># Runs the actor and returns the results directly (CSV here; use format=json for JSON)
+curl -X POST &quot;https://api.apify.com/v2/acts/tinyrex~sitemap-scraper/run-sync-get-dataset-items?format=csv&quot; \
+  -H &quot;Authorization: Bearer $APIFY_TOKEN&quot; \
+  -H &quot;Content-Type: application/json&quot; \
+  -d &#x27;{&quot;startUrls&quot;: [&quot;https://apify.com&quot;, &quot;https://crawlee.dev&quot;], &quot;maxUrlsPerSite&quot;: 300, &quot;includeUrlPatterns&quot;: [], &quot;checkStatus&quot;: true}&#x27; &gt; results.csv</code></pre>
+<p>Get your API token in Apify Console → Settings → API &amp; Integrations. The free Apify plan includes monthly credit that is enough to try this.</p>
+<h2>Use it from an AI agent (MCP)</h2>
+<p>The <a href="https://mcp.apify.com">Apify MCP server</a> exposes this actor as a tool for Claude, Cursor, VS Code, n8n and other MCP clients. Add this to your client's MCP config (or use the OAuth flow at mcp.apify.com instead of a token):</p><pre><code class="language-json">{
+  &quot;mcpServers&quot;: {
+    &quot;apify&quot;: {
+      &quot;url&quot;: &quot;https://mcp.apify.com?tools=tinyrex/sitemap-scraper&quot;,
+      &quot;headers&quot;: {
+        &quot;Authorization&quot;: &quot;Bearer &lt;YOUR_APIFY_TOKEN&gt;&quot;
+      }
+    }
+  }
+}</code></pre>
+<p>Then ask in plain language, e.g. <i>"Extract urls from sitemap for this list and give me a table"</i>.</p>
+<h2>Pricing</h2><p>Pay per result: $0.20 per 1,000 URLs ($0.50 per 1,000 status checks); sites without a sitemap are free. You can cap the cost of every run in the run options.</p>
+<h2>FAQ</h2><h3>How do I get all URLs of a website?</h3><p>If the site has a sitemap (most do), reading it is the fastest and most complete way. Enter the domain; the actor finds the sitemaps through robots.txt and the usual paths and follows sitemap indexes.</p><h3>Can it find broken links in my sitemap?</h3><p>Yes. With <code>checkStatus</code> every URL is requested once and you get the status code, final status after redirects and the redirect chain. Filter for 4xx/5xx to find pages that should not be in the sitemap.</p><h3>What if a site has no sitemap?</h3><p>It is reported in the SITES record and costs nothing. Use a crawler for sites without sitemaps.</p>
+<a class="cta" href="https://apify.com/tinyrex/sitemap-scraper">Try it on Apify →</a>
+<h2>More guides</h2><ul><li><a href="../bulk-tech-stack-lookup-wappalyzer-alternative/">Bulk tech stack lookup: a Wappalyzer / BuiltWith alternative for thousands of domains</a></li><li><a href="../scrape-greenhouse-lever-ashby-jobs/">How to scrape Greenhouse, Lever and Ashby jobs (plus Personio, Teamtailor, Recruitee)</a></li><li><a href="../export-shopify-store-products-to-csv/">How to export all products from any Shopify store to CSV or JSON</a></li><li><a href="../scrape-workday-jobs-myworkdayjobs/">How to scrape jobs from Workday career sites (myworkdayjobs.com)</a></li><li><a href="../export-woocommerce-store-products-to-csv/">How to export products from any WooCommerce store to CSV or JSON</a></li><li><a href="../ted-tenders-api-export/">How to export EU public tenders from TED (Tenders Electronic Daily) to CSV or JSON</a></li><li><a href="../remote-jobs-api-himalayas-remoteok-weworkremotely/">How to scrape remote jobs from Himalayas, Remote OK, We Work Remotely and more in one run</a></li><li><a href="../scrape-apple-app-store-reviews/">How to scrape Apple App Store reviews for any app and country (CSV, JSON, API)</a></li><li><a href="../eu-funding-calls-horizon-europe-api/">How to export open EU funding calls (Horizon Europe, Digital Europe, cascade funding) to CSV or JSON</a></li><li><a href="../rss-feed-to-json-csv-api/">How to turn any RSS or Atom feed into JSON or CSV (bulk, with monitoring)</a></li></ul></main>
+<footer>TinyRex Data Tools. Guides and examples for <a href="https://apify.com/tinyrex">TinyRex actors on Apify</a>. Only public data; respect each site's terms. Source on <a href="https://github.com/emirmrkaljevic/tinyrex-data-tools">GitHub</a>.</footer></body></html>

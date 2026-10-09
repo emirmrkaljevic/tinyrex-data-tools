@@ -1,0 +1,112 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>RSS Feed to JSON/CSV: Bulk RSS &amp; Atom Feed Reader API</title><meta name="description" content="Convert RSS, Atom and JSON feeds (or any website, feeds auto-discovered) to clean JSON/CSV: titles, links, dates, authors, full text, images and podcast enclosures."><link rel="canonical" href="https://emirmrkaljevic.github.io/tinyrex-data-tools/rss-feed-to-json-csv-api/">
+<meta property="og:title" content="RSS Feed to JSON/CSV: Bulk RSS &amp; Atom Feed Reader API"><meta property="og:description" content="Convert RSS, Atom and JSON feeds (or any website, feeds auto-discovered) to clean JSON/CSV: titles, links, dates, authors, full text, images and podcast enclosures."><meta property="og:type" content="article"><meta property="og:url" content="https://emirmrkaljevic.github.io/tinyrex-data-tools/rss-feed-to-json-csv-api/">
+<link rel="stylesheet" href="../style.css"><script type="application/ld+json">[{"@context": "https://schema.org", "@type": "TechArticle", "headline": "How to turn any RSS or Atom feed into JSON or CSV (bulk, with monitoring)", "description": "Convert RSS, Atom and JSON feeds (or any website, feeds auto-discovered) to clean JSON/CSV: titles, links, dates, authors, full text, images and podcast enclosures.", "dateModified": "2026-10-09", "keywords": "rss to json, rss feed to csv, rss feed reader api, atom feed parser online, monitor rss feeds keywords", "about": {"@type": "SoftwareApplication", "name": "RSS Feed Scraper - RSS, Atom & JSON Feed Reader to JSON/CSV", "url": "https://apify.com/tinyrex/rss-feed-scraper", "applicationCategory": "DeveloperApplication", "operatingSystem": "Web"}}, {"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "Can I convert RSS to JSON for free?", "acceptedAnswer": {"@type": "Answer", "text": "Apify's free plan includes monthly platform credit, which covers thousands of feed items at $0.30 per 1,000. Feeds that fail are not charged."}}, {"@type": "Question", "name": "Does it find the feed if I only have the website?", "acceptedAnswer": {"@type": "Answer", "text": "Yes. It reads the site's feed links and tries the common feed paths (/feed, /rss, /atom.xml and others)."}}, {"@type": "Question", "name": "Does it work for podcasts and YouTube?", "acceptedAnswer": {"@type": "Answer", "text": "Yes. Podcast enclosures (audio URL, length, type, duration) and YouTube channel feeds are supported."}}]}]</script></head><body>
+<header><a href="../">🦖 TinyRex Data Tools</a><span class="mut">practical guides for web data APIs</span></header>
+<main><h1>How to turn any RSS or Atom feed into JSON or CSV (bulk, with monitoring)</h1>
+<p class="mut">Updated 2026-10-09 · Tool used: <a href="https://apify.com/tinyrex/rss-feed-scraper">RSS Feed Scraper - RSS, Atom &amp; JSON Feed Reader to JSON/CSV</a> on Apify · Price: $0.30 per 1,000 feed items; failed feeds, filtered, duplicate and already-seen items are free</p>
+<p>RSS and Atom are still the cheapest way to follow news sites, blogs, podcasts, YouTube channels and changelogs, but every feed is slightly different: RSS 2.0, RDF, Atom, JSON Feed, HTML inside descriptions, emails in author fields, missing dates. Most online RSS-to-JSON converters handle one feed at a time.</p><p>This guide shows how to read hundreds of feeds in one run (or just paste website URLs and let the feeds be discovered), get one normalized row per item (title, link, publish date, author, summary, full text, image, categories, enclosure), filter by keywords and date, and receive only new items on a schedule.</p>
+<a class="cta" href="https://apify.com/tinyrex/rss-feed-scraper">Open RSS Feed Scraper on Apify →</a>
+<h2>Steps</h2><ol><li>Add <code>feeds</code>: feed URLs or plain website URLs (the actor finds their feeds).</li><li>Optionally set <code>keywords</code>, <code>excludeKeywords</code> and <code>publishedWithinDays</code>.</li><li>Schedule it with <i>Only new items</i> on and send new items to Slack, email, a Google Sheet or an LLM summary.</li></ol>
+<h2>Example input</h2><pre><code class="language-json">{
+  &quot;feeds&quot;: [
+    &quot;https://www.nasa.gov/feed/&quot;,
+    &quot;blog.cloudflare.com&quot;,
+    &quot;https://github.com/apify/crawlee/releases.atom&quot;
+  ],
+  &quot;keywords&quot;: [
+    &quot;ai&quot;,
+    &quot;openai&quot;,
+    &quot;nvidia&quot;
+  ],
+  &quot;publishedWithinDays&quot;: 2,
+  &quot;maxItemsPerFeed&quot;: 50,
+  &quot;includeContent&quot;: true
+}</code></pre>
+<h2>Example output (one item, shortened)</h2><pre><code class="language-json">{
+  &quot;feedUrl&quot;: &quot;https://techcrunch.com/feed/&quot;,
+  &quot;feedTitle&quot;: &quot;TechCrunch&quot;,
+  &quot;feedLink&quot;: &quot;https://techcrunch.com/&quot;,
+  &quot;feedType&quot;: &quot;rss&quot;,
+  &quot;language&quot;: &quot;en-US&quot;,
+  &quot;itemId&quot;: &quot;https://techcrunch.com/?p=3175496&quot;,
+  &quot;title&quot;: &quot;India rejects Elon Musk’s claim of discrimination over Starlink launch&quot;,
+  &quot;link&quot;: &quot;https://techcrunch.com/2026/10/07/india-rejects-elon-musks-claim-of-discrimination-over-starlink-launch/&quot;,
+  &quot;publishedAt&quot;: &quot;2026-10-08T06:14:11.000Z&quot;,
+  &quot;updatedAt&quot;: null,
+  &quot;author&quot;: &quot;Jagmeet Singh&quot;,
+  &quot;categories&quot;: [
+    &quot;Government &amp; Policy&quot;,
+    &quot;Space&quot;,
+    &quot;SpaceX&quot;,
+    &quot;...&quot;
+  ],
+  &quot;summary&quot;: &quot;Starlink is still awaiting security clearance before it can seek spectrum and begin commercial services in India....&quot;,
+  &quot;contentText&quot;: null,
+  &quot;image&quot;: null,
+  &quot;enclosures&quot;: [],
+  &quot;scrapedAt&quot;: &quot;2026-10-08T09:35:33.760Z&quot;
+}</code></pre>
+<p>Every run's dataset can be downloaded as JSON, CSV, Excel, XML or HTML from the Apify Console, or via <code>https://api.apify.com/v2/datasets/&lt;datasetId&gt;/items?format=csv</code>.</p>
+<h2>Run it from code</h2><h3>Python</h3><pre><code class="language-python">from apify_client import ApifyClient  # pip install apify-client
+
+client = ApifyClient(&quot;&lt;YOUR_APIFY_TOKEN&gt;&quot;)
+run_input = {
+  &quot;feeds&quot;: [
+    &quot;https://www.nasa.gov/feed/&quot;,
+    &quot;blog.cloudflare.com&quot;,
+    &quot;https://github.com/apify/crawlee/releases.atom&quot;
+  ],
+  &quot;keywords&quot;: [
+    &quot;ai&quot;,
+    &quot;openai&quot;,
+    &quot;nvidia&quot;
+  ],
+  &quot;publishedWithinDays&quot;: 2,
+  &quot;maxItemsPerFeed&quot;: 50,
+  &quot;includeContent&quot;: true
+}
+run = client.actor(&quot;tinyrex/rss-feed-scraper&quot;).call(run_input=run_input)
+for item in client.dataset(run[&quot;defaultDatasetId&quot;]).iterate_items():
+    print(item)</code></pre><h3>JavaScript / Node.js</h3><pre><code class="language-javascript">import { ApifyClient } from &#x27;apify-client&#x27;; // npm i apify-client
+
+const client = new ApifyClient({ token: process.env.APIFY_TOKEN });
+const run = await client.actor(&#x27;tinyrex/rss-feed-scraper&#x27;).call({
+  &quot;feeds&quot;: [
+    &quot;https://www.nasa.gov/feed/&quot;,
+    &quot;blog.cloudflare.com&quot;,
+    &quot;https://github.com/apify/crawlee/releases.atom&quot;
+  ],
+  &quot;keywords&quot;: [
+    &quot;ai&quot;,
+    &quot;openai&quot;,
+    &quot;nvidia&quot;
+  ],
+  &quot;publishedWithinDays&quot;: 2,
+  &quot;maxItemsPerFeed&quot;: 50,
+  &quot;includeContent&quot;: true
+});
+const { items } = await client.dataset(run.defaultDatasetId).listItems();
+console.log(items);</code></pre><h3>curl (no SDK)</h3><pre><code class="language-bash"># Runs the actor and returns the results directly (CSV here; use format=json for JSON)
+curl -X POST &quot;https://api.apify.com/v2/acts/tinyrex~rss-feed-scraper/run-sync-get-dataset-items?format=csv&quot; \
+  -H &quot;Authorization: Bearer $APIFY_TOKEN&quot; \
+  -H &quot;Content-Type: application/json&quot; \
+  -d &#x27;{&quot;feeds&quot;: [&quot;https://www.nasa.gov/feed/&quot;, &quot;blog.cloudflare.com&quot;, &quot;https://github.com/apify/crawlee/releases.atom&quot;], &quot;keywords&quot;: [&quot;ai&quot;, &quot;openai&quot;, &quot;nvidia&quot;], &quot;publishedWithinDays&quot;: 2, &quot;maxItemsPerFeed&quot;: 50, &quot;includeContent&quot;: true}&#x27; &gt; results.csv</code></pre>
+<p>Get your API token in Apify Console → Settings → API &amp; Integrations. The free Apify plan includes monthly credit that is enough to try this.</p>
+<h2>Use it from an AI agent (MCP)</h2>
+<p>The <a href="https://mcp.apify.com">Apify MCP server</a> exposes this actor as a tool for Claude, Cursor, VS Code, n8n and other MCP clients. Add this to your client's MCP config (or use the OAuth flow at mcp.apify.com instead of a token):</p><pre><code class="language-json">{
+  &quot;mcpServers&quot;: {
+    &quot;apify&quot;: {
+      &quot;url&quot;: &quot;https://mcp.apify.com?tools=tinyrex/rss-feed-scraper&quot;,
+      &quot;headers&quot;: {
+        &quot;Authorization&quot;: &quot;Bearer &lt;YOUR_APIFY_TOKEN&gt;&quot;
+      }
+    }
+  }
+}</code></pre>
+<p>Then ask in plain language, e.g. <i>"Rss to json for this list and give me a table"</i>.</p>
+<h2>Pricing</h2><p>Pay per result: $0.30 per 1,000 feed items; failed feeds, filtered, duplicate and already-seen items are free. You can cap the cost of every run in the run options.</p>
+<h2>FAQ</h2><h3>Can I convert RSS to JSON for free?</h3><p>Apify's free plan includes monthly platform credit, which covers thousands of feed items at $0.30 per 1,000. Feeds that fail are not charged.</p><h3>Does it find the feed if I only have the website?</h3><p>Yes. It reads the site's feed links and tries the common feed paths (/feed, /rss, /atom.xml and others).</p><h3>Does it work for podcasts and YouTube?</h3><p>Yes. Podcast enclosures (audio URL, length, type, duration) and YouTube channel feeds are supported.</p>
+<a class="cta" href="https://apify.com/tinyrex/rss-feed-scraper">Try it on Apify →</a>
+<h2>More guides</h2><ul><li><a href="../bulk-tech-stack-lookup-wappalyzer-alternative/">Bulk tech stack lookup: a Wappalyzer / BuiltWith alternative for thousands of domains</a></li><li><a href="../scrape-greenhouse-lever-ashby-jobs/">How to scrape Greenhouse, Lever and Ashby jobs (plus Personio, Teamtailor, Recruitee)</a></li><li><a href="../export-shopify-store-products-to-csv/">How to export all products from any Shopify store to CSV or JSON</a></li><li><a href="../scrape-workday-jobs-myworkdayjobs/">How to scrape jobs from Workday career sites (myworkdayjobs.com)</a></li><li><a href="../export-woocommerce-store-products-to-csv/">How to export products from any WooCommerce store to CSV or JSON</a></li><li><a href="../ted-tenders-api-export/">How to export EU public tenders from TED (Tenders Electronic Daily) to CSV or JSON</a></li><li><a href="../remote-jobs-api-himalayas-remoteok-weworkremotely/">How to scrape remote jobs from Himalayas, Remote OK, We Work Remotely and more in one run</a></li><li><a href="../scrape-apple-app-store-reviews/">How to scrape Apple App Store reviews for any app and country (CSV, JSON, API)</a></li><li><a href="../eu-funding-calls-horizon-europe-api/">How to export open EU funding calls (Horizon Europe, Digital Europe, cascade funding) to CSV or JSON</a></li><li><a href="../extract-all-urls-from-sitemap/">How to extract all URLs from a website&#x27;s sitemap (and find broken links)</a></li></ul></main>
+<footer>TinyRex Data Tools. Guides and examples for <a href="https://apify.com/tinyrex">TinyRex actors on Apify</a>. Only public data; respect each site's terms. Source on <a href="https://github.com/emirmrkaljevic/tinyrex-data-tools">GitHub</a>.</footer></body></html>
