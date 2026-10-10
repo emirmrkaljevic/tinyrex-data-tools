@@ -5,3 +5,6 @@ pre{background:#0f1720;color:#e6edf3;padding:14px;border-radius:8px;overflow:aut
 .cta{display:inline-block;background:var(--acc);color:#fff;padding:10px 18px;border-radius:8px;text-decoration:none;font-weight:600;margin:8px 0}
 .cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:16px}.card{border:1px solid #e3e7ec;border-radius:10px;padding:16px}.card h3{margin:0 0 6px;font-size:1.05rem}
 .mut{color:var(--mut)}footer{margin-top:60px;padding:20px;border-top:1px solid #e3e7ec;color:var(--mut);font-size:.9rem}details{margin:6px 0}
+.cta.sec{background:#fff;color:var(--acc);border:2px solid var(--acc)}.cta.row{margin-right:10px}
+table.sample{width:100%;border-collapse:collapse;font-size:.9rem;margin:1em 0}table.sample th,table.sample td{border:1px solid #e3e7ec;padding:8px 10px;text-align:left;vertical-align:top}table.sample th{background:var(--code)}
+.pricebox{border:1px solid #e3e7ec;border-radius:10px;padding:16px;margin:12px 0}

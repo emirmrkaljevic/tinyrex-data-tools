@@ -3,6 +3,7 @@
 Usage: APIFY_TOKEN=... python3 build.py  -> regenerates ./docs from public tinyrex actors that have an entry in G.
 To add an actor: add it to G below, rebuild, commit and push (see README "Rebuilding the site")."""
 import json, os, re, html, datetime, urllib.request, shutil
+from _product_landing import PRODUCTS, PREVIEW_CSV_NAME, restore_static, extra_public_actors, render_product_page
 ROOT = os.path.dirname(os.path.abspath(__file__))
 ACT = "/workspace/zarada/actors"
 OUT = os.path.join(ROOT, "docs")
@@ -299,7 +300,10 @@ h1{font-size:2rem;line-height:1.25;margin:.8em 0 .4em}h2{margin-top:1.8em}a{colo
 pre{background:#0f1720;color:#e6edf3;padding:14px;border-radius:8px;overflow:auto;font-size:.82rem;line-height:1.45}pre code{background:none;padding:0}
 .cta{display:inline-block;background:var(--acc);color:#fff;padding:10px 18px;border-radius:8px;text-decoration:none;font-weight:600;margin:8px 0}
 .cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:16px}.card{border:1px solid #e3e7ec;border-radius:10px;padding:16px}.card h3{margin:0 0 6px;font-size:1.05rem}
-.mut{color:var(--mut)}footer{margin-top:60px;padding:20px;border-top:1px solid #e3e7ec;color:var(--mut);font-size:.9rem}details{margin:6px 0}"""
+.mut{color:var(--mut)}footer{margin-top:60px;padding:20px;border-top:1px solid #e3e7ec;color:var(--mut);font-size:.9rem}details{margin:6px 0}
+.cta.sec{background:#fff;color:var(--acc);border:2px solid var(--acc)}.cta.row{margin-right:10px}
+table.sample{width:100%;border-collapse:collapse;font-size:.9rem;margin:1em 0}table.sample th,table.sample td{border:1px solid #e3e7ec;padding:8px 10px;text-align:left;vertical-align:top}table.sample th{background:var(--code)}
+.pricebox{border:1px solid #e3e7ec;border-radius:10px;padding:16px;margin:12px 0}"""
 
 def page(path, title, desc, body, ld=None):
     url = f"{BASE}/{path}"
@@ -367,6 +371,7 @@ def index(actors, tuts=()):
 <p>Each guide below has a working example input, real sample output and copy-paste code.</p>
 <div class="cards">{cards}</div>
 {('<h2>Tutorials</h2><ul>' + ''.join(f'<li><a href="{t["slug"]}/">{E(t["h1"])}</a></li>' for t in tuts) + '</ul>') if tuts else ''}
+{('<h2>Data products</h2><ul>' + ''.join(f'<li><a href="{p["slug"]}/">{E(p["h1"])}</a> — free preview + weekly Excel on Gumroad</li>' for p in PRODUCTS) + '</ul>') if PRODUCTS else ''}
 <h2>Use any of these tools from an AI agent</h2>
 <p>Connect Claude, Cursor or n8n to <code>https://mcp.apify.com?tools={','.join('tinyrex/'+a['name'] for a in actors)}</code> and the agent can call every tool above directly.</p>"""
     ld = {"@context": "https://schema.org", "@type": "ItemList", "itemListElement": [{"@type": "ListItem", "position": i+1, "url": f"{BASE}/{a['slug']}/", "name": a["title"]} for i, a in enumerate(actors)]}
@@ -375,20 +380,42 @@ def index(actors, tuts=()):
 def main():
     actors = load_actors()
     shutil.rmtree(OUT, ignore_errors=True); os.makedirs(OUT)
-    w = lambda p, s: (os.makedirs(os.path.dirname(os.path.join(OUT, p)), exist_ok=True), open(os.path.join(OUT, p), "w").write(s))
+    def w(path, s):
+        full = os.path.join(OUT, path)
+        os.makedirs(os.path.dirname(full) or OUT, exist_ok=True)
+        open(full, "w").write(s)
     by = {a["name"]: a for a in actors}
-    tuts = [t for t in UC if t["actor"] in by]
+    try:
+        for name, info in extra_public_actors(os.environ["APIFY_TOKEN"]).items():
+            if name not in by:
+                by[name] = info
+    except Exception as ex:
+        print("warn: could not list extra public actors:", ex)
+    tuts = [t for t in UC if t["actor"] in by and by[t["actor"]].get("slug")]
+    restore_static(OUT)  # CSV + logos + IndexNow before product pages that read the CSV
     w("index.html", index(actors, tuts)); w("style.css", CSS); w(".nojekyll", "")
     for a in actors:
         w(f"{a['slug']}/index.html", guide(a, actors))
     for t in tuts:
         w(f"{t['slug']}/index.html", tutorial(t, by[t["actor"]], actors))
-    urls = [f"{BASE}/"] + [f"{BASE}/{a['slug']}/" for a in actors] + [f"{BASE}/{t['slug']}/" for t in tuts]
-    w("sitemap.xml", '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' + "".join(f"  <url><loc>{u}</loc><lastmod>{TODAY}</lastmod></url>\n" for u in urls) + "</urlset>\n")
+    for prod in PRODUCTS:
+        w(f"{prod['slug']}/index.html", render_product_page(prod, by, OUT, page, STORE, TODAY, E))
+    urls = ([f"{BASE}/"]
+            + [f"{BASE}/{a['slug']}/" for a in actors]
+            + [f"{BASE}/{t['slug']}/" for t in tuts]
+            + [f"{BASE}/{prod['slug']}/" for prod in PRODUCTS]
+            + [f"{BASE}/data/{PREVIEW_CSV_NAME}"])
+    w("sitemap.xml", '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
+      + "".join(f"  <url><loc>{u}</loc><lastmod>{TODAY}</lastmod></url>\n" for u in urls) + "</urlset>\n")
     w("robots.txt", f"User-agent: *\nAllow: /\nSitemap: {BASE}/sitemap.xml\n")
-    w("404.html", page("", "Page not found | TinyRex Data Tools", "Page not found", '<h1>Page not found</h1><p><a href="./">Back to all guides</a></p>').replace('href="style.css"', f'href="{BASE}/style.css"'))
-    json.dump([{"name": a["name"], "slug": a["slug"], "url": f"{BASE}/{a['slug']}/"} for a in actors], open(os.path.join(ROOT, "pages.json"), "w"), indent=1)
-    print("built", len(actors), "guides:", [a["slug"] for a in actors], "tutorials:", [t["slug"] for t in tuts])
+    w("404.html", page("", "Page not found | TinyRex Data Tools", "Page not found",
+                       '<h1>Page not found</h1><p><a href="./">Back to all guides</a></p>')
+               .replace('href="style.css"', f'href="{BASE}/style.css"'))
+    pages = [{"name": a["name"], "slug": a["slug"], "url": f"{BASE}/{a['slug']}/"} for a in actors]
+    pages += [{"name": prod["slug"], "slug": prod["slug"], "url": f"{BASE}/{prod['slug']}/", "type": "product"} for prod in PRODUCTS]
+    json.dump(pages, open(os.path.join(ROOT, "pages.json"), "w"), indent=1)
+    print("built", len(actors), "guides:", [a["slug"] for a in actors],
+          "tutorials:", [t["slug"] for t in tuts], "products:", [prod["slug"] for prod in PRODUCTS])
 
 if __name__ == "__main__":
     main()
