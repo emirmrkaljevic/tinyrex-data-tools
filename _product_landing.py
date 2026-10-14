@@ -7,7 +7,8 @@ import urllib.request
 
 ACT = "/workspace/zarada/actors"
 INDEXNOW_KEY = "8dd125fabb85f1a3eeea6180838b441b"
-PREVIEW_CSV_SRC = "/workspace/zarada/data-products/eu-it-tenders-grants-weekly/issues/2026-10-09/free-preview-20-tenders-2026-10-09.csv"
+from _country_pages import latest_preview_csv
+PREVIEW_CSV_SRC = latest_preview_csv() or "/workspace/zarada/data-products/eu-it-tenders-grants-weekly/issues/2026-10-09/free-preview-20-tenders-2026-10-09.csv"
 PREVIEW_CSV_NAME = "eu-it-tenders-free-preview.csv"
 
 PRODUCTS = [

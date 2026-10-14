@@ -3,6 +3,7 @@
 Usage: APIFY_TOKEN=... python3 build.py  -> regenerates ./docs from public tinyrex actors that have an entry in G.
 To add an actor: add it to G below, rebuild, commit and push (see README "Rebuilding the site")."""
 import json, os, re, html, datetime, urllib.request, shutil
+from _country_pages import country_pages, render_country_page
 from _product_landing import PRODUCTS, PREVIEW_CSV_NAME, restore_static, extra_public_actors, render_product_page
 ROOT = os.path.dirname(os.path.abspath(__file__))
 ACT = "/workspace/zarada/actors"
@@ -364,7 +365,7 @@ curl -X POST "https://api.apify.com/v2/acts/{tid}/run-sync-get-dataset-items?for
           {"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": q, "acceptedAnswer": {"@type": "Answer", "text": re.sub('<[^>]+>', '', ans)}} for q, ans in a["faq"]]}]
     return page(f"{a['slug']}/", a["ptitle"], a["desc"], body, ld)
 
-def index(actors, tuts=()):
+def index(actors, tuts=(), cps=()):
     cards = "".join(f'<div class="card"><h3><a href="{a["slug"]}/">{E(a["title"].split(" - ")[0])}</a></h3><p>{E(a["short"])}</p><p class="mut">{E(a["price"])}</p><p><a href="{a["slug"]}/">Guide</a> · <a href="{STORE}{a["name"]}">Apify Store</a></p></div>' for a in actors)
     body = f"""<h1>Practical guides for pulling clean data from the web</h1>
 <p>TinyRex builds small, cheap, API-first data tools on <a href="https://apify.com/tinyrex">Apify</a>: bulk tech stack lookup, job postings from ATS and remote job boards, e-commerce product catalogs, RSS feeds, website sitemaps, EU public tenders and EU funding calls. Every tool returns clean JSON/CSV, charges only per delivered result, and works from Python, JavaScript, plain HTTP, no-code tools and AI agents (via the Apify MCP server).</p>
@@ -372,6 +373,7 @@ def index(actors, tuts=()):
 <div class="cards">{cards}</div>
 {('<h2>Tutorials</h2><ul>' + ''.join(f'<li><a href="{t["slug"]}/">{E(t["h1"])}</a></li>' for t in tuts) + '</ul>') if tuts else ''}
 {('<h2>Data products</h2><ul>' + ''.join(f'<li><a href="{p["slug"]}/">{E(p["h1"])}</a> — free preview + weekly Excel on Gumroad</li>' for p in PRODUCTS) + '</ul>') if PRODUCTS else ''}
+{('<p>Open IT tenders this week by country: ' + ' · '.join(f'<a href="{c["slug"]}/">{E(c["country"])}</a>' for c in cps) + '</p>') if cps else ''}
 <h2>Use any of these tools from an AI agent</h2>
 <p>Connect Claude, Cursor or n8n to <code>https://mcp.apify.com?tools={','.join('tinyrex/'+a['name'] for a in actors)}</code> and the agent can call every tool above directly.</p>"""
     ld = {"@context": "https://schema.org", "@type": "ItemList", "itemListElement": [{"@type": "ListItem", "position": i+1, "url": f"{BASE}/{a['slug']}/", "name": a["title"]} for i, a in enumerate(actors)]}
@@ -393,17 +395,26 @@ def main():
         print("warn: could not list extra public actors:", ex)
     tuts = [t for t in UC if t["actor"] in by and by[t["actor"]].get("slug")]
     restore_static(OUT)  # CSV + logos + IndexNow before product pages that read the CSV
-    w("index.html", index(actors, tuts)); w("style.css", CSS); w(".nojekyll", "")
+    cps = country_pages()
+    w("index.html", index(actors, tuts, cps)); w("style.css", CSS); w(".nojekyll", "")
     for a in actors:
         w(f"{a['slug']}/index.html", guide(a, actors))
     for t in tuts:
         w(f"{t['slug']}/index.html", tutorial(t, by[t["actor"]], actors))
     for prod in PRODUCTS:
-        w(f"{prod['slug']}/index.html", render_product_page(prod, by, OUT, page, STORE, TODAY, E))
+        html_ = render_product_page(prod, by, OUT, page, STORE, TODAY, E)
+        if cps:
+            html_ = html_.replace("<h2>Sources and licence</h2>", "<h2>Open IT tenders this week by country</h2><p>"
+                + " · ".join(f'<a href="../{c["slug"]}/">{E(c["country"])} ({len(c["rows"])})</a>' for c in cps)
+                + "</p>\n<h2>Sources and licence</h2>", 1)
+        w(f"{prod['slug']}/index.html", html_)
+    for cp in cps:
+        w(f"{cp['slug']}/index.html", render_country_page(cp, cps, page, TODAY, E))
     urls = ([f"{BASE}/"]
             + [f"{BASE}/{a['slug']}/" for a in actors]
             + [f"{BASE}/{t['slug']}/" for t in tuts]
             + [f"{BASE}/{prod['slug']}/" for prod in PRODUCTS]
+            + [f"{BASE}/{cp['slug']}/" for cp in cps]
             + [f"{BASE}/data/{PREVIEW_CSV_NAME}"])
     w("sitemap.xml", '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
       + "".join(f"  <url><loc>{u}</loc><lastmod>{TODAY}</lastmod></url>\n" for u in urls) + "</urlset>\n")
@@ -413,6 +424,7 @@ def main():
                .replace('href="style.css"', f'href="{BASE}/style.css"'))
     pages = [{"name": a["name"], "slug": a["slug"], "url": f"{BASE}/{a['slug']}/"} for a in actors]
     pages += [{"name": prod["slug"], "slug": prod["slug"], "url": f"{BASE}/{prod['slug']}/", "type": "product"} for prod in PRODUCTS]
+    pages += [{"name": cp["slug"], "slug": cp["slug"], "url": f"{BASE}/{cp['slug']}/", "type": "country-tenders"} for cp in cps]
     json.dump(pages, open(os.path.join(ROOT, "pages.json"), "w"), indent=1)
     print("built", len(actors), "guides:", [a["slug"] for a in actors],
           "tutorials:", [t["slug"] for t in tuts], "products:", [prod["slug"] for prod in PRODUCTS])

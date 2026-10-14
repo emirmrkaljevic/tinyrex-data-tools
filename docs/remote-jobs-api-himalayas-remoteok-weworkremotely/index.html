@@ -1,31 +1,47 @@
 <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Remote Jobs API: Scrape Himalayas, Remote OK &amp; We Work Remotely to CSV/JSON</title><meta name="description" content="Get remote jobs from Himalayas, Remote OK, We Work Remotely, Working Nomads and Arbeitnow as one deduplicated JSON/CSV dataset with salary, location rules and full descriptions."><link rel="canonical" href="https://emirmrkaljevic.github.io/tinyrex-data-tools/remote-jobs-api-himalayas-remoteok-weworkremotely/">
 <meta property="og:title" content="Remote Jobs API: Scrape Himalayas, Remote OK &amp; We Work Remotely to CSV/JSON"><meta property="og:description" content="Get remote jobs from Himalayas, Remote OK, We Work Remotely, Working Nomads and Arbeitnow as one deduplicated JSON/CSV dataset with salary, location rules and full descriptions."><meta property="og:type" content="article"><meta property="og:url" content="https://emirmrkaljevic.github.io/tinyrex-data-tools/remote-jobs-api-himalayas-remoteok-weworkremotely/">
-<link rel="stylesheet" href="../style.css"><script type="application/ld+json">[{"@context": "https://schema.org", "@type": "TechArticle", "headline": "How to scrape remote jobs from Himalayas, Remote OK, We Work Remotely and more in one run", "description": "Get remote jobs from Himalayas, Remote OK, We Work Remotely, Working Nomads and Arbeitnow as one deduplicated JSON/CSV dataset with salary, location rules and full descriptions.", "dateModified": "2026-10-10", "keywords": "remote jobs api, scrape remote ok jobs, himalayas jobs api, we work remotely scraper, remote jobs dataset csv", "about": {"@type": "SoftwareApplication", "name": "Remote Jobs Scraper - Himalayas, Remote OK, We Work Remotely", "url": "https://apify.com/tinyrex/remote-jobs-scraper", "applicationCategory": "DeveloperApplication", "operatingSystem": "Web"}}, {"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "Is there a free remote jobs API?", "acceptedAnswer": {"@type": "Answer", "text": "Several boards publish free public feeds (Himalayas, Remote OK, We Work Remotely RSS, Arbeitnow). The actor reads those official feeds, merges them into one schema and removes duplicates, so you do not have to maintain five integrations."}}, {"@type": "Question", "name": "Can I get only jobs open to candidates in my country?", "acceptedAnswer": {"@type": "Answer", "text": "Yes. Set countries (e.g. [\"Germany\"]) and choose whether to keep worldwide jobs with includeWorldwide."}}, {"@type": "Question", "name": "Can I republish the jobs on my own site?", "acceptedAnswer": {"@type": "Answer", "text": "The boards ask for attribution and a link back to the original job; url and sourceName are included for that. Himalayas and Remote OK do not allow resubmitting their jobs to aggregators such as Google Jobs or LinkedIn."}}]}]</script></head><body>
+<link rel="stylesheet" href="../style.css"><script type="application/ld+json">[{"@context": "https://schema.org", "@type": "TechArticle", "headline": "How to scrape remote jobs from Himalayas, Remote OK, We Work Remotely and more in one run", "description": "Get remote jobs from Himalayas, Remote OK, We Work Remotely, Working Nomads and Arbeitnow as one deduplicated JSON/CSV dataset with salary, location rules and full descriptions.", "dateModified": "2026-10-14", "keywords": "remote jobs api, scrape remote ok jobs, himalayas jobs api, we work remotely scraper, remote jobs dataset csv", "about": {"@type": "SoftwareApplication", "name": "Remote Jobs Scraper - Himalayas, Remote OK, We Work Remotely", "url": "https://apify.com/tinyrex/remote-jobs-scraper", "applicationCategory": "DeveloperApplication", "operatingSystem": "Web"}}, {"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "Is there a free remote jobs API?", "acceptedAnswer": {"@type": "Answer", "text": "Several boards publish free public feeds (Himalayas, Remote OK, We Work Remotely RSS, Arbeitnow). The actor reads those official feeds, merges them into one schema and removes duplicates, so you do not have to maintain five integrations."}}, {"@type": "Question", "name": "Can I get only jobs open to candidates in my country?", "acceptedAnswer": {"@type": "Answer", "text": "Yes. Set countries (e.g. [\"Germany\"]) and choose whether to keep worldwide jobs with includeWorldwide."}}, {"@type": "Question", "name": "Can I republish the jobs on my own site?", "acceptedAnswer": {"@type": "Answer", "text": "The boards ask for attribution and a link back to the original job; url and sourceName are included for that. Himalayas and Remote OK do not allow resubmitting their jobs to aggregators such as Google Jobs or LinkedIn."}}]}]</script></head><body>
 <header><a href="../">🦖 TinyRex Data Tools</a><span class="mut">practical guides for web data APIs</span></header>
 <main><h1>How to scrape remote jobs from Himalayas, Remote OK, We Work Remotely and more in one run</h1>
-<p class="mut">Updated 2026-10-10 · Tool used: <a href="https://apify.com/tinyrex/remote-jobs-scraper">Remote Jobs Scraper - Himalayas, Remote OK, We Work Remotely</a> on Apify · Price: $0.80 per 1,000 jobs with full descriptions; filtered-out, duplicate and already-seen jobs are free</p>
+<p class="mut">Updated 2026-10-14 · Tool used: <a href="https://apify.com/tinyrex/remote-jobs-scraper">Remote Jobs Scraper - Himalayas, Remote OK, We Work Remotely</a> on Apify · Price: $0.80 per 1,000 jobs with full descriptions; filtered-out, duplicate and already-seen jobs are free</p>
 <p>Remote job boards each have their own feed format: Himalayas has a search API, Remote OK a JSON feed, We Work Remotely and Working Nomads RSS, Arbeitnow a paged API. Combining them by hand means five parsers and a lot of duplicates, because the same job is often posted on several boards.</p><p>This guide shows how to search all five boards by keyword in one run and get one clean, deduplicated dataset: title, company, who can apply (country and timezone restrictions), employment type, seniority, salary where published, tags and the full description.</p>
 <a class="cta" href="https://apify.com/tinyrex/remote-jobs-scraper">Open Remote Jobs Scraper on Apify →</a>
 <h2>Steps</h2><ol><li>Add job titles or skills to <code>keywords</code> (e.g. <code>python</code>, <code>customer support</code>), or leave it empty for the newest remote jobs.</li><li>Filter by candidate <code>countries</code>, <code>publishedWithinDays</code>, employment type, seniority or only jobs with a salary (filtered jobs are free).</li><li>Schedule it daily with <i>Only new jobs</i> on to build a remote job feed for a newsletter, Slack channel or job board.</li></ol>
 <h2>Example input</h2><pre><code class="language-json">{
-  &quot;keywords&quot;: [
+  &quot;source&quot;: &quot;himalayas&quot;,
+  &quot;sourceName&quot;: &quot;Himalayas&quot;,
+  &quot;jobId&quot;: &quot;senior-python-engineer-1234&quot;,
+  &quot;title&quot;: &quot;Senior Python Engineer&quot;,
+  &quot;company&quot;: &quot;Acme&quot;,
+  &quot;location&quot;: &quot;Germany, Austria&quot;,
+  &quot;locationRestrictions&quot;: [
+    &quot;Germany&quot;,
+    &quot;Austria&quot;
+  ],
+  &quot;timezoneRestrictions&quot;: [
+    0,
+    1,
+    2
+  ],
+  &quot;employmentType&quot;: &quot;fulltime&quot;,
+  &quot;seniority&quot;: [
+    &quot;Senior&quot;
+  ],
+  &quot;tags&quot;: [
     &quot;python&quot;,
-    &quot;customer support&quot;
+    &quot;django&quot;
   ],
-  &quot;sources&quot;: [
-    &quot;himalayas&quot;,
-    &quot;remoteok&quot;,
-    &quot;weworkremotely&quot;,
-    &quot;workingnomads&quot;,
-    &quot;arbeitnow&quot;
-  ],
-  &quot;countries&quot;: [
-    &quot;Germany&quot;
-  ],
-  &quot;includeWorldwide&quot;: true,
-  &quot;publishedWithinDays&quot;: 7,
-  &quot;maxResultsPerSearch&quot;: 200
+  &quot;salary&quot;: {
+    &quot;min&quot;: 90000,
+    &quot;max&quot;: 120000,
+    &quot;currency&quot;: &quot;USD&quot;,
+    &quot;period&quot;: &quot;year&quot;
+  },
+  &quot;postedAt&quot;: &quot;2026-10-06T19:35:42.000Z&quot;,
+  &quot;url&quot;: &quot;https://himalayas.app/companies/acme/jobs/senior-python-engineer-1234&quot;,
+  &quot;applyUrl&quot;: &quot;https://acme.com/careers/123&quot;,
+  &quot;descriptionText&quot;: &quot;About the role ...&quot;
 }</code></pre>
 <h2>Example output (one item, shortened)</h2><pre><code class="language-json">{
   &quot;source&quot;: &quot;himalayas&quot;,
@@ -76,23 +92,39 @@
 
 client = ApifyClient(&quot;&lt;YOUR_APIFY_TOKEN&gt;&quot;)
 run_input = {
-  &quot;keywords&quot;: [
+  &quot;source&quot;: &quot;himalayas&quot;,
+  &quot;sourceName&quot;: &quot;Himalayas&quot;,
+  &quot;jobId&quot;: &quot;senior-python-engineer-1234&quot;,
+  &quot;title&quot;: &quot;Senior Python Engineer&quot;,
+  &quot;company&quot;: &quot;Acme&quot;,
+  &quot;location&quot;: &quot;Germany, Austria&quot;,
+  &quot;locationRestrictions&quot;: [
+    &quot;Germany&quot;,
+    &quot;Austria&quot;
+  ],
+  &quot;timezoneRestrictions&quot;: [
+    0,
+    1,
+    2
+  ],
+  &quot;employmentType&quot;: &quot;fulltime&quot;,
+  &quot;seniority&quot;: [
+    &quot;Senior&quot;
+  ],
+  &quot;tags&quot;: [
     &quot;python&quot;,
-    &quot;customer support&quot;
+    &quot;django&quot;
   ],
-  &quot;sources&quot;: [
-    &quot;himalayas&quot;,
-    &quot;remoteok&quot;,
-    &quot;weworkremotely&quot;,
-    &quot;workingnomads&quot;,
-    &quot;arbeitnow&quot;
-  ],
-  &quot;countries&quot;: [
-    &quot;Germany&quot;
-  ],
-  &quot;includeWorldwide&quot;: true,
-  &quot;publishedWithinDays&quot;: 7,
-  &quot;maxResultsPerSearch&quot;: 200
+  &quot;salary&quot;: {
+    &quot;min&quot;: 90000,
+    &quot;max&quot;: 120000,
+    &quot;currency&quot;: &quot;USD&quot;,
+    &quot;period&quot;: &quot;year&quot;
+  },
+  &quot;postedAt&quot;: &quot;2026-10-06T19:35:42.000Z&quot;,
+  &quot;url&quot;: &quot;https://himalayas.app/companies/acme/jobs/senior-python-engineer-1234&quot;,
+  &quot;applyUrl&quot;: &quot;https://acme.com/careers/123&quot;,
+  &quot;descriptionText&quot;: &quot;About the role ...&quot;
 }
 run = client.actor(&quot;tinyrex/remote-jobs-scraper&quot;).call(run_input=run_input)
 for item in client.dataset(run[&quot;defaultDatasetId&quot;]).iterate_items():
@@ -100,30 +132,46 @@ for item in client.dataset(run[&quot;defaultDatasetId&quot;]).iterate_items():
 
 const client = new ApifyClient({ token: process.env.APIFY_TOKEN });
 const run = await client.actor(&#x27;tinyrex/remote-jobs-scraper&#x27;).call({
-  &quot;keywords&quot;: [
+  &quot;source&quot;: &quot;himalayas&quot;,
+  &quot;sourceName&quot;: &quot;Himalayas&quot;,
+  &quot;jobId&quot;: &quot;senior-python-engineer-1234&quot;,
+  &quot;title&quot;: &quot;Senior Python Engineer&quot;,
+  &quot;company&quot;: &quot;Acme&quot;,
+  &quot;location&quot;: &quot;Germany, Austria&quot;,
+  &quot;locationRestrictions&quot;: [
+    &quot;Germany&quot;,
+    &quot;Austria&quot;
+  ],
+  &quot;timezoneRestrictions&quot;: [
+    0,
+    1,
+    2
+  ],
+  &quot;employmentType&quot;: &quot;fulltime&quot;,
+  &quot;seniority&quot;: [
+    &quot;Senior&quot;
+  ],
+  &quot;tags&quot;: [
     &quot;python&quot;,
-    &quot;customer support&quot;
+    &quot;django&quot;
   ],
-  &quot;sources&quot;: [
-    &quot;himalayas&quot;,
-    &quot;remoteok&quot;,
-    &quot;weworkremotely&quot;,
-    &quot;workingnomads&quot;,
-    &quot;arbeitnow&quot;
-  ],
-  &quot;countries&quot;: [
-    &quot;Germany&quot;
-  ],
-  &quot;includeWorldwide&quot;: true,
-  &quot;publishedWithinDays&quot;: 7,
-  &quot;maxResultsPerSearch&quot;: 200
+  &quot;salary&quot;: {
+    &quot;min&quot;: 90000,
+    &quot;max&quot;: 120000,
+    &quot;currency&quot;: &quot;USD&quot;,
+    &quot;period&quot;: &quot;year&quot;
+  },
+  &quot;postedAt&quot;: &quot;2026-10-06T19:35:42.000Z&quot;,
+  &quot;url&quot;: &quot;https://himalayas.app/companies/acme/jobs/senior-python-engineer-1234&quot;,
+  &quot;applyUrl&quot;: &quot;https://acme.com/careers/123&quot;,
+  &quot;descriptionText&quot;: &quot;About the role ...&quot;
 });
 const { items } = await client.dataset(run.defaultDatasetId).listItems();
 console.log(items);</code></pre><h3>curl (no SDK)</h3><pre><code class="language-bash"># Runs the actor and returns the results directly (CSV here; use format=json for JSON)
 curl -X POST &quot;https://api.apify.com/v2/acts/tinyrex~remote-jobs-scraper/run-sync-get-dataset-items?format=csv&quot; \
   -H &quot;Authorization: Bearer $APIFY_TOKEN&quot; \
   -H &quot;Content-Type: application/json&quot; \
-  -d &#x27;{&quot;keywords&quot;: [&quot;python&quot;, &quot;customer support&quot;], &quot;sources&quot;: [&quot;himalayas&quot;, &quot;remoteok&quot;, &quot;weworkremotely&quot;, &quot;workingnomads&quot;, &quot;arbeitnow&quot;], &quot;countries&quot;: [&quot;Germany&quot;], &quot;includeWorldwide&quot;: true, &quot;publishedWithinDays&quot;: 7, &quot;maxResultsPerSearch&quot;: 200}&#x27; &gt; results.csv</code></pre>
+  -d &#x27;{&quot;source&quot;: &quot;himalayas&quot;, &quot;sourceName&quot;: &quot;Himalayas&quot;, &quot;jobId&quot;: &quot;senior-python-engineer-1234&quot;, &quot;title&quot;: &quot;Senior Python Engineer&quot;, &quot;company&quot;: &quot;Acme&quot;, &quot;location&quot;: &quot;Germany, Austria&quot;, &quot;locationRestrictions&quot;: [&quot;Germany&quot;, &quot;Austria&quot;], &quot;timezoneRestrictions&quot;: [0, 1, 2], &quot;employmentType&quot;: &quot;fulltime&quot;, &quot;seniority&quot;: [&quot;Senior&quot;], &quot;tags&quot;: [&quot;python&quot;, &quot;django&quot;], &quot;salary&quot;: {&quot;min&quot;: 90000, &quot;max&quot;: 120000, &quot;currency&quot;: &quot;USD&quot;, &quot;period&quot;: &quot;year&quot;}, &quot;postedAt&quot;: &quot;2026-10-06T19:35:42.000Z&quot;, &quot;url&quot;: &quot;https://himalayas.app/companies/acme/jobs/senior-python-engineer-1234&quot;, &quot;applyUrl&quot;: &quot;https://acme.com/careers/123&quot;, &quot;descriptionText&quot;: &quot;About the role ...&quot;}&#x27; &gt; results.csv</code></pre>
 <p>Get your API token in Apify Console → Settings → API &amp; Integrations. The free Apify plan includes monthly credit that is enough to try this.</p>
 <h2>Use it from an AI agent (MCP)</h2>
 <p>The <a href="https://mcp.apify.com">Apify MCP server</a> exposes this actor as a tool for Claude, Cursor, VS Code, n8n and other MCP clients. Add this to your client's MCP config (or use the OAuth flow at mcp.apify.com instead of a token):</p><pre><code class="language-json">{
