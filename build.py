@@ -315,7 +315,7 @@ def page(path, title, desc, body, ld=None):
 <link rel="stylesheet" href="{'../' if path else ''}style.css">{ldj}</head><body>
 <header><a href="{'../' if path else './'}">🦖 TinyRex Data Tools</a><span class="mut">practical guides for web data APIs</span></header>
 <main>{body}</main>
-<footer>TinyRex Data Tools. Guides and examples for <a href="https://apify.com/tinyrex">TinyRex actors on Apify</a>. Only public data; respect each site's terms. Source on <a href="https://github.com/emirmrkaljevic/tinyrex-data-tools">GitHub</a>.</footer></body></html>"""
+<footer>TinyRex Data Tools. Guides and examples for <a href="https://apify.com/tinyrex">TinyRex actors on Apify</a>. Only public data; respect each site's terms. Copy-paste Python, Node.js and curl code in <a href="https://github.com/emirmrkaljevic/tinyrex-examples">tinyrex-examples</a>. Source on <a href="https://github.com/emirmrkaljevic/tinyrex-data-tools">GitHub</a>.</footer></body></html>"""
 
 def code(s, lang=""):
     return f'<pre><code class="language-{lang}">{E(s)}</code></pre>'
