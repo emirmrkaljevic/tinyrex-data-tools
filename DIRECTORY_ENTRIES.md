@@ -7,6 +7,25 @@
 - Skipped: julionc/awesome-shopify (only open-source entries), foxck016077/awesome-apify-actors (wants 10k+ runs).
 - AgentsAPI/awesome-agent-apis auto-lists all 9 older public actors (snapshot 8 Oct; still shows dach-jobs-scraper, should drop on the next daily refresh). RSS + Sitemap should appear on the next refresh.
 
+## Status (16 Oct 2026)
+- serpapi/awesome-seo-tools #418 and AboutRSS/ALL-about-RSS #159: still OPEN, no comments/reviews (last update 9 Oct).
+- NEW teles/awesome-seo PR #224 (SEO On-Page Audit, 💰 badge, disclosure): https://github.com/teles/awesome-seo/pull/224 (fork emirmrkaljevic/awesome-seo, branch add-seo-on-page-audit).
+
+## D2 shortlist (16 Oct 2026): lists that accept paid / hosted tools
+One PR per list, disclosure in the PR body, neutral one-line entry, no mass self-promo.
+1. serpapi/awesome-seo-tools (1.1k★, active) – PR #418 open (sitemap-scraper). Wait.
+2. AboutRSS/ALL-about-RSS – PR #159 open (rss-feed-scraper). Wait.
+3. teles/awesome-seo (885★) – README legend has 💰 paid badge; maintainer batch-reviews open PRs (last batch 30 Sep, flags "mass self-promotion"). Alphabetical, `- [Name](url) - Desc. <badge>`. → PR #224 opened 16 Oct (seo-on-page-audit).
+4. bekatom/awesome-growth-hacking (538★) – merges single "Add X to Tools" PRs (3 merged 26 Aug), SaaS allowed, no CONTRIBUTING. Candidate: contact-details-extractor or tech-stack-detector in Tools. → next PR (D6).
+5. dariubs/awesome-lead-generation (86★) – CONTRIBUTING allows paid if marked "(paid)", one entry/PR, neutral text, no affiliate links. Caveat: ~15 open PRs, maintainer closes some, merges rarely (pushes directly). Candidate: contact-details-extractor in Prospecting & Data Enrichment (another Apify actor PR already pending there). Low odds.
+6. marketingtoolslist/awesome-marketing (484★) – "send a PR, put it alphabetically"; has Technical SEO / On-Page SEO / Competitor Analysis sections; last merges Aug 2025 (slow). Candidate: broken-link-checker in Technical SEO.
+7. YuzeHao2023/Awesome-MCP-Servers (1.1k★) – categories incl. Research & Data, Search & Web; open-source servers. Candidate: tinyrex-mcp (repo is MIT). Merges are rare.
+8. punkpeye/awesome-mcp-servers – tinyrex-mcp now qualifies (open-source repo), but this account already has 3 open PRs there (mesh2cad, behave, usb-rea from other projects). Wait until one is merged before adding a 4th (D10).
+9. Germey/AwesomeWebScraping (265★) – has web_services.md "Web data extraction services" (a PR adding four Apify actors is pending). Follows lorien CONTRIBUTING, which restricts services → only one entry, if at all.
+10. Lead-Orchestra/awesome-b2b-leads (25★) – sections No-Code Scraping Tools / Enrichment; simple CONTRIBUTING; no merges visible since Dec 2025. Low priority.
+
+Checked 16 Oct and NOT suitable: bmpi-dev/awesome-seo (SaaS only with industry recognition + 2 third-party refs), lukasz-madon/awesome-remote-job and tramcar/awesome-job-boards (job boards only), iAmCorey/awesome-indie-hacker-tools (indie-dev stack, Chinese), ScrapeRouter/awesome-scraping (open-source libraries), restyler/awesome-n8n (n8n nodes only), makegov/awesome-procurement-data (unmaintained).
+
 # Prepared entries
 
 ## 1. jivoi/awesome-osint (best fit; CONTRIBUTING allows self-promo with up-front disclosure, one PR per entry, alphabetical)

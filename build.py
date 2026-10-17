@@ -159,6 +159,24 @@ G = {
   faq=[("Can I convert RSS to JSON for free?","Apify's free plan includes monthly platform credit, which covers thousands of feed items at $0.30 per 1,000. Feeds that fail are not charged."),
        ("Does it find the feed if I only have the website?","Yes. It reads the site's feed links and tries the common feed paths (/feed, /rss, /atom.xml and others)."),
        ("Does it work for podcasts and YouTube?","Yes. Podcast enclosures (audio URL, length, type, duration) and YouTube channel feeds are supported.")]),
+ "contact-details-extractor": dict(
+  slug="extract-emails-socials-from-domain-list",
+  ptitle="Contact Info Scraper Alternative: Extract Emails, Phones & Socials from a Domain List",
+  h1="How to extract emails, phone numbers and social links from a list of company domains",
+  desc="Bulk-enrich a list of company websites with public emails (role vs personal flags), phones, LinkedIn/X/Facebook links and addresses. CSV in, CSV out, ~$2 per 1,000 domains with a contact; empty domains are free.",
+  kw=["contact info scraper alternative","extract emails from list of websites","bulk email finder from domains","scrape contact details from website","get linkedin company page from domain"],
+  short="Public emails (role/personal flags), phones, LinkedIn/X/Facebook/Instagram/YouTube/GitHub/TikTok links and addresses for a list of company domains.",
+  price="about $2 per 1,000 domains with a contact found; domains with no contact, unreachable or blocked hosts are free",
+  input={"domains": ["apify.com", "example.com"], "maxPagesPerDomain": 8, "respectRobotsTxt": True},
+  intro=["You already have the companies (a CRM export, a trade-show list, the output of a tech stack lookup), and now you need a way to reach them: the public info@ or sales@ inbox, a phone number and the LinkedIn company page. Opening 500 websites and hunting for the contact page by hand takes days, and many contact info scrapers charge per page or per result even when nothing is found.",
+         "This guide shows how to give a list of domains and get one clean row per company: emails tagged as role/generic (info@, sales@) or personal-looking (first.last@), phones, social profiles, postal addresses and the page each value came from. It reads only the homepage and contact/about/impressum pages on the same host, respects robots.txt and needs no login or browser."],
+  steps=["Paste your company domains or URLs into <code>domains</code> (one per line; URLs and duplicates are normalized).",
+         "Optionally raise <code>maxPagesPerDomain</code> (default 8) for sites with deep contact pages, and keep <code>respectRobotsTxt</code> on.",
+         "Run it, then filter the dataset on <code>hasContact</code> and <code>emails.roleOrGeneric</code> and export as CSV/Excel, or schedule it to refresh contact data monthly."],
+  faq=[("Is this an alternative to the popular contact info scrapers?","Yes, for the common case where you already know the company websites. It does not crawl search engines or directories; it visits only the homepage and contact-looking pages of each domain you give it, which keeps it fast and cheap. You pay about $0.002 per domain where at least one contact was found, and nothing for domains without contacts or that fail."),
+       ("How do I find the email address of a company from its website?","Most companies publish a role inbox (info@, hello@, sales@) on the homepage footer, contact page or impressum. The actor collects every mailto link and on-page address from those pages and flags which ones are role/generic, so you can pick the right inbox per company."),
+       ("Can I get the LinkedIn company page for a list of domains?","Yes. Social links the company itself puts on its site (LinkedIn, X/Twitter, Facebook, Instagram, YouTube, GitHub, TikTok) are returned in the <code>socials</code> object, one column per network in the CSV export."),
+       ("Is it GDPR compliant?","Emails and phone numbers can be personal data. You decide the purpose and act as the controller; the <code>personalLooking</code> flag helps you keep only role/generic addresses for outreach. Check the email-marketing rules of each recipient's country before contacting anyone.")]),
  "sitemap-scraper": dict(
   slug="extract-all-urls-from-sitemap",
   ptitle="Extract All URLs from a Sitemap to CSV (+ Broken Link Check)",
@@ -291,7 +309,8 @@ def load_actors():
         readme = open(f"{ACT}/{n}/README.md").read()
         m = re.findall(r"```json\n(.*?)```", readme, re.S)
         sample = json.load(open(f"{ACT}/{n}/sample-output.json"))
-        res.append(dict(name=n, title=d["title"], input=json.loads(m[0]), sample=trim(sample[0] if isinstance(sample, list) else sample), **G[n]))
+        g = dict(G[n]); inp = g.pop("input", None) or json.loads(m[0])  # explicit input when the README's first JSON block is sample output
+        res.append(dict(name=n, title=d["title"], input=inp, sample=trim(sample[0] if isinstance(sample, list) else sample), **g))
     order = list(G)
     return sorted(res, key=lambda a: order.index(a["name"]))
 
