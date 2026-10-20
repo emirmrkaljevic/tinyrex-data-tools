@@ -60,8 +60,10 @@ def country_pages():
             return datetime.date.fromisoformat(r["Deadline"][:10]) >= today
         except Exception:
             return False
-    rows = [r for r in rows if is_open(r)]
+    # Pick countries from the whole issue so the page set (and URLs) stays stable all week;
+    # only the rows shown are limited to tenders still open on build day.
     top = [c for c, _ in Counter(r["Country"] for r in rows if r.get("Country")).most_common(TOP_N_COUNTRIES)]
+    rows = [r for r in rows if is_open(r)]
     out = []
     for c in top:
         out.append(dict(slug=f"open-it-tenders-{slugify(c)}-this-week", country=c,

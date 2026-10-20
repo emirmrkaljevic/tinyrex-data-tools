@@ -11,6 +11,11 @@
 - serpapi/awesome-seo-tools #418 and AboutRSS/ALL-about-RSS #159: still OPEN, no comments/reviews (last update 9 Oct).
 - NEW teles/awesome-seo PR #224 (SEO On-Page Audit, 💰 badge, disclosure): https://github.com/teles/awesome-seo/pull/224 (fork emirmrkaljevic/awesome-seo, branch add-seo-on-page-audit).
 
+## Status (19 Oct 2026)
+- #418, #159, #224 still OPEN, no comments/reviews.
+- NEW bekatom/awesome-growth-hacking PR #106 (Contact Details Extractor in Tools, disclosure): https://github.com/bekatom/awesome-growth-hacking/pull/106 (fork emirmrkaljevic/awesome-growth-hacking, branch add-contact-details-extractor). Maintainer hasn't merged since 26 Aug; ~15 tool PRs queued ahead.
+- Next D10 PR #3 candidate: marketingtoolslist/awesome-marketing (broken-link-checker, Technical SEO).
+
 ## D2 shortlist (16 Oct 2026): lists that accept paid / hosted tools
 One PR per list, disclosure in the PR body, neutral one-line entry, no mass self-promo.
 1. serpapi/awesome-seo-tools (1.1k★, active) – PR #418 open (sitemap-scraper). Wait.
