@@ -1,0 +1,94 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Y-tunnus Lookup API: Finnish Company Data and B2B Lead Lists from YTJ to CSV</title><meta name="description" content="Bulk Y-tunnus (business ID) and name lookup plus Finnish B2B lists by industry, city, company form and registration date from the official PRH YTJ open data API, with website and VAT status. $1 per 1,000 companies; invalid, no-match and filtered rows are free."><link rel="canonical" href="https://emirmrkaljevic.github.io/tinyrex-data-tools/y-tunnus-lookup-finnish-company-list-ytj-api/">
+<meta property="og:title" content="Y-tunnus Lookup API: Finnish Company Data and B2B Lead Lists from YTJ to CSV"><meta property="og:description" content="Bulk Y-tunnus (business ID) and name lookup plus Finnish B2B lists by industry, city, company form and registration date from the official PRH YTJ open data API, with website and VAT status. $1 per 1,000 companies; invalid, no-match and filtered rows are free."><meta property="og:type" content="article"><meta property="og:url" content="https://emirmrkaljevic.github.io/tinyrex-data-tools/y-tunnus-lookup-finnish-company-list-ytj-api/">
+<link rel="stylesheet" href="../style.css"><script type="application/ld+json">[{"@context": "https://schema.org", "@type": "TechArticle", "headline": "How to look up Finnish companies by Y-tunnus and build B2B lead lists from the YTJ register", "description": "Bulk Y-tunnus (business ID) and name lookup plus Finnish B2B lists by industry, city, company form and registration date from the official PRH YTJ open data API, with website and VAT status. $1 per 1,000 companies; invalid, no-match and filtered rows are free.", "dateModified": "2026-10-26", "keywords": "y-tunnus lookup api, ytj api export, finnish company database csv, list of companies in finland by industry, new companies registered in finland", "about": {"@type": "SoftwareApplication", "name": "Finland Company Search - Y-tunnus Lookup & B2B Leads (YTJ/PRH)", "url": "https://apify.com/tinyrex/finland-company-search", "applicationCategory": "DeveloperApplication", "operatingSystem": "Web"}}, {"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "Is there a free API for Finnish company data?", "acceptedAnswer": {"@type": "Answer", "text": "Yes. PRH publishes the YTJ open data API with no key, under the Creative Commons Attribution 4.0 licence, which allows commercial reuse with attribution. This actor calls it politely and returns flat rows."}}, {"@type": "Question", "name": "How do I get a list of all companies in a Finnish industry or city?", "acceptedAnswer": {"@type": "Answer", "text": "Set industryCodes and cities and run without companies. Only the company's main line of business counts, and matchTotal shows the full count of a search for market sizing."}}, {"@type": "Question", "name": "Does it include emails or phone numbers?", "acceptedAnswer": {"@type": "Answer", "text": "No. The public register has no emails, phones, employee counts or financial statements. Many companies list a website, so you can pass those websites to a contact extractor."}}, {"@type": "Question", "name": "What does it cost?", "acceptedAnswer": {"@type": "Answer", "text": "$0.001 per company returned ($1 per 1,000). Invalid business IDs, names with no match, duplicates and rows skipped by your filters are not charged."}}]}]</script></head><body>
+<header><a href="../">🦖 TinyRex Data Tools</a><span class="mut">practical guides for web data APIs</span></header>
+<main><h1>How to look up Finnish companies by Y-tunnus and build B2B lead lists from the YTJ register</h1>
+<p class="mut">Updated 2026-10-26 · Tool used: <a href="https://apify.com/tinyrex/finland-company-search">Finland Company Search - Y-tunnus Lookup &amp; B2B Leads (YTJ/PRH)</a> on Apify · Price: $0.001 per company ($1 per 1,000); invalid business IDs, no-match searches, duplicates and filtered rows are free</p>
+<p>Every Finnish company has a business ID (Y-tunnus) in YTJ, the business information system run by the Finnish Patent and Registration Office (PRH) and the Tax Administration. It tells you the official name, company form, main line of business, addresses, website, registration date and whether the company is in the VAT, employer and prepayment registers or in bankruptcy or liquidation.</p><p>This guide shows how to read the YTJ open data API in bulk: enrich a CRM list of business IDs, match names to business IDs, or build a lead list such as "IT companies in Tampere and Oulu that are VAT-registered employers with a website" or "every new limited company registered this month". No API key or login is needed.</p>
+<a class="cta" href="https://apify.com/tinyrex/finland-company-search">Open Finland Company Search on Apify →</a>
+<h2>Steps</h2><ol><li>For lookups, paste business IDs or names into <code>companies</code>. <code>0112038-9</code>, <code>01120389</code> and the VAT form <code>FI01120389</code> all work, and the check digit is validated first, so typos come back as free rows.</li><li>For a lead list, leave <code>companies</code> empty and set <code>industryCodes</code> (TOL prefixes, e.g. <code>62</code> for IT), <code>cities</code> (Finnish post office names), postal codes, <code>companyForms</code> (e.g. <code>OY</code>) and <code>registeredFrom</code>, with a <code>maxResults</code> cap.</li><li>Turn on <code>vatRegisteredOnly</code>, <code>employerOnly</code> or <code>withWebsiteOnly</code> to keep only real, active businesses. Skipped rows are free.</li><li>Run it and export the dataset as CSV or Excel. For a weekly feed of new companies, save the input as a task with <code>registeredFrom</code> and add a <i>Schedule</i>.</li></ol>
+<h2>Example input</h2><pre><code class="language-json">{
+  &quot;companies&quot;: [
+    &quot;0112038-9&quot;,
+    &quot;FI23365096&quot;,
+    &quot;Kone&quot;
+  ]
+}</code></pre>
+<h2>Example output (one item, shortened)</h2><pre><code class="language-json">{
+  &quot;query&quot;: &quot;0112038-9&quot;,
+  &quot;queryType&quot;: &quot;businessId&quot;,
+  &quot;found&quot;: true,
+  &quot;businessId&quot;: &quot;0112038-9&quot;,
+  &quot;vatNumber&quot;: &quot;FI01120389&quot;,
+  &quot;name&quot;: &quot;Nokia Oyj&quot;,
+  &quot;parallelNames&quot;: [
+    &quot;Nokia Abp&quot;,
+    &quot;Nokia Corporation&quot;
+  ],
+  &quot;companyForm&quot;: &quot;Public limited company&quot;,
+  &quot;industryCode&quot;: &quot;70100&quot;,
+  &quot;industry&quot;: &quot;Activities of head offices&quot;,
+  &quot;website&quot;: &quot;https://www.nokia.com&quot;,
+  &quot;visitingAddress&quot;: {
+    &quot;street&quot;: &quot;Karakaari 7&quot;,
+    &quot;postalCode&quot;: &quot;02610&quot;,
+    &quot;city&quot;: &quot;ESPOO&quot;,
+    &quot;municipalityCode&quot;: &quot;049&quot;
+  },
+  &quot;registrationDate&quot;: &quot;1896-12-19&quot;,
+  &quot;status&quot;: &quot;Valid&quot;,
+  &quot;active&quot;: true,
+  &quot;bankrupt&quot;: false,
+  &quot;vatRegistered&quot;: true,
+  &quot;employerRegistered&quot;: true,
+  &quot;prepaymentRegistered&quot;: true,
+  &quot;sourceUrl&quot;: &quot;https://avoindata.prh.fi/opendata-ytj-api/v3/companies?businessId=0112038-9&quot;
+}</code></pre>
+<p>Every run's dataset can be downloaded as JSON, CSV, Excel, XML or HTML from the Apify Console, or via <code>https://api.apify.com/v2/datasets/&lt;datasetId&gt;/items?format=csv</code>.</p>
+<h2>Run it from code</h2><h3>Python</h3><pre><code class="language-python">from apify_client import ApifyClient  # pip install apify-client
+
+client = ApifyClient(&quot;&lt;YOUR_APIFY_TOKEN&gt;&quot;)
+run_input = {
+  &quot;companies&quot;: [
+    &quot;0112038-9&quot;,
+    &quot;FI23365096&quot;,
+    &quot;Kone&quot;
+  ]
+}
+run = client.actor(&quot;tinyrex/finland-company-search&quot;).call(run_input=run_input)
+for item in client.dataset(run[&quot;defaultDatasetId&quot;]).iterate_items():
+    print(item)</code></pre><h3>JavaScript / Node.js</h3><pre><code class="language-javascript">import { ApifyClient } from &#x27;apify-client&#x27;; // npm i apify-client
+
+const client = new ApifyClient({ token: process.env.APIFY_TOKEN });
+const run = await client.actor(&#x27;tinyrex/finland-company-search&#x27;).call({
+  &quot;companies&quot;: [
+    &quot;0112038-9&quot;,
+    &quot;FI23365096&quot;,
+    &quot;Kone&quot;
+  ]
+});
+const { items } = await client.dataset(run.defaultDatasetId).listItems();
+console.log(items);</code></pre><h3>curl (no SDK)</h3><pre><code class="language-bash"># Runs the actor and returns the results directly (CSV here; use format=json for JSON)
+curl -X POST &quot;https://api.apify.com/v2/acts/tinyrex~finland-company-search/run-sync-get-dataset-items?format=csv&quot; \
+  -H &quot;Authorization: Bearer $APIFY_TOKEN&quot; \
+  -H &quot;Content-Type: application/json&quot; \
+  -d &#x27;{&quot;companies&quot;: [&quot;0112038-9&quot;, &quot;FI23365096&quot;, &quot;Kone&quot;]}&#x27; &gt; results.csv</code></pre>
+<p>Get your API token in Apify Console → Settings → API &amp; Integrations. The free Apify plan includes monthly credit that is enough to try this.</p>
+<h2>Use it from an AI agent (MCP)</h2>
+<p>The <a href="https://mcp.apify.com">Apify MCP server</a> exposes this actor as a tool for Claude, Cursor, VS Code, n8n and other MCP clients. Add this to your client's MCP config (or use the OAuth flow at mcp.apify.com instead of a token):</p><pre><code class="language-json">{
+  &quot;mcpServers&quot;: {
+    &quot;apify&quot;: {
+      &quot;url&quot;: &quot;https://mcp.apify.com?tools=tinyrex/finland-company-search&quot;,
+      &quot;headers&quot;: {
+        &quot;Authorization&quot;: &quot;Bearer &lt;YOUR_APIFY_TOKEN&gt;&quot;
+      }
+    }
+  }
+}</code></pre>
+<p>Then ask in plain language, e.g. <i>"Y-tunnus lookup api for this list and give me a table"</i>.</p>
+<h2>Pricing</h2><p>Pay per result: $0.001 per company ($1 per 1,000); invalid business IDs, no-match searches, duplicates and filtered rows are free. You can cap the cost of every run in the run options.</p>
+<h2>FAQ</h2><h3>Is there a free API for Finnish company data?</h3><p>Yes. PRH publishes the YTJ open data API with no key, under the Creative Commons Attribution 4.0 licence, which allows commercial reuse with attribution. This actor calls it politely and returns flat rows.</p><h3>How do I get a list of all companies in a Finnish industry or city?</h3><p>Set <code>industryCodes</code> and <code>cities</code> and run without <code>companies</code>. Only the company's main line of business counts, and <code>matchTotal</code> shows the full count of a search for market sizing.</p><h3>Does it include emails or phone numbers?</h3><p>No. The public register has no emails, phones, employee counts or financial statements. Many companies list a website, so you can pass those websites to a contact extractor.</p><h3>What does it cost?</h3><p>$0.001 per company returned ($1 per 1,000). Invalid business IDs, names with no match, duplicates and rows skipped by your filters are not charged.</p>
+<a class="cta" href="https://apify.com/tinyrex/finland-company-search">Try it on Apify →</a>
+<h2>More guides</h2><ul><li><a href="../bulk-tech-stack-lookup-wappalyzer-alternative/">Bulk tech stack lookup: a Wappalyzer / BuiltWith alternative for thousands of domains</a></li><li><a href="../scrape-greenhouse-lever-ashby-jobs/">How to scrape Greenhouse, Lever and Ashby jobs (plus Personio, Teamtailor, Recruitee)</a></li><li><a href="../export-shopify-store-products-to-csv/">How to export all products from any Shopify store to CSV or JSON</a></li><li><a href="../scrape-workday-jobs-myworkdayjobs/">How to scrape jobs from Workday career sites (myworkdayjobs.com)</a></li><li><a href="../export-woocommerce-store-products-to-csv/">How to export products from any WooCommerce store to CSV or JSON</a></li><li><a href="../ted-tenders-api-export/">How to export EU public tenders from TED (Tenders Electronic Daily) to CSV or JSON</a></li><li><a href="../remote-jobs-api-himalayas-remoteok-weworkremotely/">How to scrape remote jobs from Himalayas, Remote OK, We Work Remotely and more in one run</a></li><li><a href="../eu-funding-calls-horizon-europe-api/">How to export open EU funding calls (Horizon Europe, Digital Europe, cascade funding) to CSV or JSON</a></li><li><a href="../rss-feed-to-json-csv-api/">How to turn any RSS or Atom feed into JSON or CSV (bulk, with monitoring)</a></li><li><a href="../extract-emails-socials-from-domain-list/">How to extract emails, phone numbers and social links from a list of company domains</a></li><li><a href="../bulk-website-screenshots-to-csv-google-drive/">How to take bulk website screenshots from a URL list and save them to CSV or Google Drive</a></li><li><a href="../sam-gov-contracts-finder-tenders-api/">How to export US federal (SAM.gov) and UK (Contracts Finder) tenders to CSV or JSON</a></li><li><a href="../siren-siret-lookup-french-company-list-api/">How to look up French companies by SIREN or SIRET and build a B2B list from Sirene</a></li><li><a href="../norway-org-number-lookup-brreg-company-list/">How to look up Norwegian companies by organisation number and build lead lists from Brreg</a></li><li><a href="../sec-edgar-api-download-10-k-8-k-filings-csv/">How to download SEC filings (10-K, 10-Q, 8-K, Form 4) by ticker and search EDGAR full text</a></li><li><a href="../npi-lookup-api-bulk-npi-validation-provider-list/">How to validate NPI numbers in bulk and build US healthcare provider lists from NPPES</a></li><li><a href="../companies-house-api-bulk-uk-company-lookup/">How to look up hundreds of UK companies on Companies House at once (profile, officers, PSC)</a></li><li><a href="../extract-all-urls-from-sitemap/">How to extract all URLs from a website&#x27;s sitemap (and find broken links)</a></li></ul></main>
+<footer>TinyRex Data Tools. Guides and examples for <a href="https://apify.com/tinyrex">TinyRex actors on Apify</a>. Only public data; respect each site's terms. Copy-paste Python, Node.js and curl code in <a href="https://github.com/emirmrkaljevic/tinyrex-examples">tinyrex-examples</a>. Source on <a href="https://github.com/emirmrkaljevic/tinyrex-data-tools">GitHub</a>.</footer></body></html>

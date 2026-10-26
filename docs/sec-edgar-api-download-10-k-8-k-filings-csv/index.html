@@ -1,0 +1,116 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SEC EDGAR API: Download 10-K, 10-Q, 8-K and Form 4 Filings by Ticker to CSV</title><meta name="description" content="Turn a list of tickers or CIKs into a table of SEC filings with direct document links, or search the full text of EDGAR filings since 2001. Official SEC EDGAR APIs, $0.50 per 1,000 filings; unknown tickers and empty searches are free."><link rel="canonical" href="https://emirmrkaljevic.github.io/tinyrex-data-tools/sec-edgar-api-download-10-k-8-k-filings-csv/">
+<meta property="og:title" content="SEC EDGAR API: Download 10-K, 10-Q, 8-K and Form 4 Filings by Ticker to CSV"><meta property="og:description" content="Turn a list of tickers or CIKs into a table of SEC filings with direct document links, or search the full text of EDGAR filings since 2001. Official SEC EDGAR APIs, $0.50 per 1,000 filings; unknown tickers and empty searches are free."><meta property="og:type" content="article"><meta property="og:url" content="https://emirmrkaljevic.github.io/tinyrex-data-tools/sec-edgar-api-download-10-k-8-k-filings-csv/">
+<link rel="stylesheet" href="../style.css"><script type="application/ld+json">[{"@context": "https://schema.org", "@type": "TechArticle", "headline": "How to download SEC filings (10-K, 10-Q, 8-K, Form 4) by ticker and search EDGAR full text", "description": "Turn a list of tickers or CIKs into a table of SEC filings with direct document links, or search the full text of EDGAR filings since 2001. Official SEC EDGAR APIs, $0.50 per 1,000 filings; unknown tickers and empty searches are free.", "dateModified": "2026-10-26", "keywords": "sec edgar api python, download 10-k filings by ticker, 8-k filings feed, edgar full text search api, sec filings to csv", "about": {"@type": "SoftwareApplication", "name": "SEC EDGAR Filings Scraper - 10-K, 10-Q, 8-K by Ticker", "url": "https://apify.com/tinyrex/sec-edgar-filings-scraper", "applicationCategory": "DeveloperApplication", "operatingSystem": "Web"}}, {"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "Does the SEC have a free API for EDGAR filings?", "acceptedAnswer": {"@type": "Answer", "text": "Yes. The SEC runs free JSON APIs on data.sec.gov and a full-text search service, with a fair-use limit of 10 requests per second and a declared User-Agent. This actor stays well under that limit and returns flat rows instead of raw JSON."}}, {"@type": "Question", "name": "How do I get only earnings releases or executive changes from 8-K filings?", "acceptedAnswer": {"@type": "Answer", "text": "Set formTypes to [\"8-K\"] and filter the items column: 2.02 is results of operations (earnings), 5.02 is officer and director changes, 1.01 is a material agreement."}}, {"@type": "Question", "name": "Can I feed the filings into an LLM or RAG pipeline?", "acceptedAnswer": {"@type": "Answer", "text": "Yes. Each row has documentUrl and filingIndexUrl, so you can fetch the main document or exhibits you need. The actor itself returns metadata and links, not the full documents."}}, {"@type": "Question", "name": "What does it cost?", "acceptedAnswer": {"@type": "Answer", "text": "$0.0005 per filing returned ($0.50 per 1,000), cheaper on higher Apify plans. A filing found by two searches is charged once."}}]}]</script></head><body>
+<header><a href="../">🦖 TinyRex Data Tools</a><span class="mut">practical guides for web data APIs</span></header>
+<main><h1>How to download SEC filings (10-K, 10-Q, 8-K, Form 4) by ticker and search EDGAR full text</h1>
+<p class="mut">Updated 2026-10-26 · Tool used: <a href="https://apify.com/tinyrex/sec-edgar-filings-scraper">SEC EDGAR Filings Scraper - 10-K, 10-Q, 8-K by Ticker</a> on Apify · Price: $0.0005 per filing ($0.50 per 1,000); unknown tickers, companies with no matching filings, empty searches and duplicates are free</p>
+<p>The SEC publishes every filing for free, but the EDGAR website shows one company at a time, the JSON APIs need a CIK instead of a ticker, and full-text search is a separate service with its own format. Building a watchlist feed of 8-Ks or a table of the last two years of 10-Qs for 50 companies means stitching all of that together.</p><p>This guide shows how to get one clean row per filing from the official SEC EDGAR APIs: company, CIK, form, filing and report date, accession number, 8-K items as a list, SIC industry, and direct links to the main document and the filing index. The same run can also search the full text of every filing since 2001 for phrases like "going concern" or "cybersecurity incident". No API key is needed.</p>
+<a class="cta" href="https://apify.com/tinyrex/sec-edgar-filings-scraper">Open SEC EDGAR Filings Scraper on Apify →</a>
+<h2>Steps</h2><ol><li>Add tickers (<code>AAPL</code>, <code>BRK-B</code>) or CIKs to <code>companies</code>. Tickers are resolved with the SEC's own ticker list, and unknown ones come back as free rows.</li><li>Pick <code>formTypes</code> (empty means all forms) and an optional <code>dateFrom</code>. Turn on older filings if you need history beyond the latest ~1,000 filings per company.</li><li>For a topic search, set <code>fullTextQuery</code> (e.g. <code>"supply chain" tariff</code>) with form and date filters instead of, or next to, companies.</li><li>Run it and export as CSV or Excel. For a daily feed of new filings for your watchlist, add a <i>Schedule</i> with <code>dateFrom</code> set to yesterday.</li></ol>
+<h2>Example input</h2><pre><code class="language-json">{
+  &quot;companies&quot;: [
+    &quot;AAPL&quot;,
+    &quot;MSFT&quot;,
+    &quot;NVDA&quot;
+  ],
+  &quot;formTypes&quot;: [
+    &quot;10-K&quot;,
+    &quot;10-Q&quot;
+  ],
+  &quot;dateFrom&quot;: &quot;2024-10-01&quot;,
+  &quot;maxFilingsPerCompany&quot;: 20
+}</code></pre>
+<h2>Example output (one item, shortened)</h2><pre><code class="language-json">{
+  &quot;query&quot;: &quot;AAPL&quot;,
+  &quot;queryType&quot;: &quot;company&quot;,
+  &quot;found&quot;: true,
+  &quot;cik&quot;: &quot;0000320193&quot;,
+  &quot;companyName&quot;: &quot;Apple Inc.&quot;,
+  &quot;tickers&quot;: [
+    &quot;AAPL&quot;
+  ],
+  &quot;exchanges&quot;: [
+    &quot;Nasdaq&quot;
+  ],
+  &quot;form&quot;: &quot;8-K&quot;,
+  &quot;filingDate&quot;: &quot;2026-07-30&quot;,
+  &quot;reportDate&quot;: &quot;2026-07-30&quot;,
+  &quot;acceptanceDateTime&quot;: &quot;2026-07-31T00:30:28.000Z&quot;,
+  &quot;accessionNumber&quot;: &quot;0000320193-26-000018&quot;,
+  &quot;items&quot;: [
+    &quot;2.02&quot;,
+    &quot;9.01&quot;
+  ],
+  &quot;primaryDocument&quot;: &quot;aapl-20260730.htm&quot;,
+  &quot;documentUrl&quot;: &quot;https://www.sec.gov/Archives/edgar/data/320193/000032019326000018/aapl-20260730.htm&quot;,
+  &quot;filingIndexUrl&quot;: &quot;https://www.sec.gov/Archives/edgar/data/320193/000032019326000018/0000320193-26-000018-index.htm&quot;,
+  &quot;fileNumber&quot;: &quot;001-36743&quot;,
+  &quot;sizeBytes&quot;: 417360,
+  &quot;isXBRL&quot;: true,
+  &quot;isInlineXBRL&quot;: true,
+  &quot;sic&quot;: &quot;3571&quot;,
+  &quot;sicDescription&quot;: &quot;Electronic Computers&quot;,
+  &quot;stateOfIncorporation&quot;: &quot;CA&quot;,
+  &quot;fiscalYearEnd&quot;: &quot;0926&quot;,
+  &quot;error&quot;: null
+}</code></pre>
+<p>Every run's dataset can be downloaded as JSON, CSV, Excel, XML or HTML from the Apify Console, or via <code>https://api.apify.com/v2/datasets/&lt;datasetId&gt;/items?format=csv</code>.</p>
+<h2>Run it from code</h2><h3>Python</h3><pre><code class="language-python">from apify_client import ApifyClient  # pip install apify-client
+
+client = ApifyClient(&quot;&lt;YOUR_APIFY_TOKEN&gt;&quot;)
+run_input = {
+  &quot;companies&quot;: [
+    &quot;AAPL&quot;,
+    &quot;MSFT&quot;,
+    &quot;NVDA&quot;
+  ],
+  &quot;formTypes&quot;: [
+    &quot;10-K&quot;,
+    &quot;10-Q&quot;
+  ],
+  &quot;dateFrom&quot;: &quot;2024-10-01&quot;,
+  &quot;maxFilingsPerCompany&quot;: 20
+}
+run = client.actor(&quot;tinyrex/sec-edgar-filings-scraper&quot;).call(run_input=run_input)
+for item in client.dataset(run[&quot;defaultDatasetId&quot;]).iterate_items():
+    print(item)</code></pre><h3>JavaScript / Node.js</h3><pre><code class="language-javascript">import { ApifyClient } from &#x27;apify-client&#x27;; // npm i apify-client
+
+const client = new ApifyClient({ token: process.env.APIFY_TOKEN });
+const run = await client.actor(&#x27;tinyrex/sec-edgar-filings-scraper&#x27;).call({
+  &quot;companies&quot;: [
+    &quot;AAPL&quot;,
+    &quot;MSFT&quot;,
+    &quot;NVDA&quot;
+  ],
+  &quot;formTypes&quot;: [
+    &quot;10-K&quot;,
+    &quot;10-Q&quot;
+  ],
+  &quot;dateFrom&quot;: &quot;2024-10-01&quot;,
+  &quot;maxFilingsPerCompany&quot;: 20
+});
+const { items } = await client.dataset(run.defaultDatasetId).listItems();
+console.log(items);</code></pre><h3>curl (no SDK)</h3><pre><code class="language-bash"># Runs the actor and returns the results directly (CSV here; use format=json for JSON)
+curl -X POST &quot;https://api.apify.com/v2/acts/tinyrex~sec-edgar-filings-scraper/run-sync-get-dataset-items?format=csv&quot; \
+  -H &quot;Authorization: Bearer $APIFY_TOKEN&quot; \
+  -H &quot;Content-Type: application/json&quot; \
+  -d &#x27;{&quot;companies&quot;: [&quot;AAPL&quot;, &quot;MSFT&quot;, &quot;NVDA&quot;], &quot;formTypes&quot;: [&quot;10-K&quot;, &quot;10-Q&quot;], &quot;dateFrom&quot;: &quot;2024-10-01&quot;, &quot;maxFilingsPerCompany&quot;: 20}&#x27; &gt; results.csv</code></pre>
+<p>Get your API token in Apify Console → Settings → API &amp; Integrations. The free Apify plan includes monthly credit that is enough to try this.</p>
+<h2>Use it from an AI agent (MCP)</h2>
+<p>The <a href="https://mcp.apify.com">Apify MCP server</a> exposes this actor as a tool for Claude, Cursor, VS Code, n8n and other MCP clients. Add this to your client's MCP config (or use the OAuth flow at mcp.apify.com instead of a token):</p><pre><code class="language-json">{
+  &quot;mcpServers&quot;: {
+    &quot;apify&quot;: {
+      &quot;url&quot;: &quot;https://mcp.apify.com?tools=tinyrex/sec-edgar-filings-scraper&quot;,
+      &quot;headers&quot;: {
+        &quot;Authorization&quot;: &quot;Bearer &lt;YOUR_APIFY_TOKEN&gt;&quot;
+      }
+    }
+  }
+}</code></pre>
+<p>Then ask in plain language, e.g. <i>"Sec edgar api python for this list and give me a table"</i>.</p>
+<h2>Pricing</h2><p>Pay per result: $0.0005 per filing ($0.50 per 1,000); unknown tickers, companies with no matching filings, empty searches and duplicates are free. You can cap the cost of every run in the run options.</p>
+<h2>FAQ</h2><h3>Does the SEC have a free API for EDGAR filings?</h3><p>Yes. The SEC runs free JSON APIs on data.sec.gov and a full-text search service, with a fair-use limit of 10 requests per second and a declared User-Agent. This actor stays well under that limit and returns flat rows instead of raw JSON.</p><h3>How do I get only earnings releases or executive changes from 8-K filings?</h3><p>Set <code>formTypes</code> to <code>["8-K"]</code> and filter the <code>items</code> column: 2.02 is results of operations (earnings), 5.02 is officer and director changes, 1.01 is a material agreement.</p><h3>Can I feed the filings into an LLM or RAG pipeline?</h3><p>Yes. Each row has <code>documentUrl</code> and <code>filingIndexUrl</code>, so you can fetch the main document or exhibits you need. The actor itself returns metadata and links, not the full documents.</p><h3>What does it cost?</h3><p>$0.0005 per filing returned ($0.50 per 1,000), cheaper on higher Apify plans. A filing found by two searches is charged once.</p>
+<a class="cta" href="https://apify.com/tinyrex/sec-edgar-filings-scraper">Try it on Apify →</a>
+<h2>More guides</h2><ul><li><a href="../bulk-tech-stack-lookup-wappalyzer-alternative/">Bulk tech stack lookup: a Wappalyzer / BuiltWith alternative for thousands of domains</a></li><li><a href="../scrape-greenhouse-lever-ashby-jobs/">How to scrape Greenhouse, Lever and Ashby jobs (plus Personio, Teamtailor, Recruitee)</a></li><li><a href="../export-shopify-store-products-to-csv/">How to export all products from any Shopify store to CSV or JSON</a></li><li><a href="../scrape-workday-jobs-myworkdayjobs/">How to scrape jobs from Workday career sites (myworkdayjobs.com)</a></li><li><a href="../export-woocommerce-store-products-to-csv/">How to export products from any WooCommerce store to CSV or JSON</a></li><li><a href="../ted-tenders-api-export/">How to export EU public tenders from TED (Tenders Electronic Daily) to CSV or JSON</a></li><li><a href="../remote-jobs-api-himalayas-remoteok-weworkremotely/">How to scrape remote jobs from Himalayas, Remote OK, We Work Remotely and more in one run</a></li><li><a href="../eu-funding-calls-horizon-europe-api/">How to export open EU funding calls (Horizon Europe, Digital Europe, cascade funding) to CSV or JSON</a></li><li><a href="../rss-feed-to-json-csv-api/">How to turn any RSS or Atom feed into JSON or CSV (bulk, with monitoring)</a></li><li><a href="../extract-emails-socials-from-domain-list/">How to extract emails, phone numbers and social links from a list of company domains</a></li><li><a href="../bulk-website-screenshots-to-csv-google-drive/">How to take bulk website screenshots from a URL list and save them to CSV or Google Drive</a></li><li><a href="../sam-gov-contracts-finder-tenders-api/">How to export US federal (SAM.gov) and UK (Contracts Finder) tenders to CSV or JSON</a></li><li><a href="../siren-siret-lookup-french-company-list-api/">How to look up French companies by SIREN or SIRET and build a B2B list from Sirene</a></li><li><a href="../norway-org-number-lookup-brreg-company-list/">How to look up Norwegian companies by organisation number and build lead lists from Brreg</a></li><li><a href="../npi-lookup-api-bulk-npi-validation-provider-list/">How to validate NPI numbers in bulk and build US healthcare provider lists from NPPES</a></li><li><a href="../companies-house-api-bulk-uk-company-lookup/">How to look up hundreds of UK companies on Companies House at once (profile, officers, PSC)</a></li><li><a href="../y-tunnus-lookup-finnish-company-list-ytj-api/">How to look up Finnish companies by Y-tunnus and build B2B lead lists from the YTJ register</a></li><li><a href="../extract-all-urls-from-sitemap/">How to extract all URLs from a website&#x27;s sitemap (and find broken links)</a></li></ul></main>
+<footer>TinyRex Data Tools. Guides and examples for <a href="https://apify.com/tinyrex">TinyRex actors on Apify</a>. Only public data; respect each site's terms. Copy-paste Python, Node.js and curl code in <a href="https://github.com/emirmrkaljevic/tinyrex-examples">tinyrex-examples</a>. Source on <a href="https://github.com/emirmrkaljevic/tinyrex-data-tools">GitHub</a>.</footer></body></html>
