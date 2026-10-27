@@ -1,0 +1,24 @@
+{
+  "name": "TinyRex remote-jobs",
+  "flow": [
+    {
+      "id": 1,
+      "module": "http:ActionSendData",
+      "version": 3,
+      "parameters": {},
+      "mapper": {
+        "url": "https://api.apify.com/v2/acts/tinyrex~remote-jobs-scraper/run-sync-get-dataset-items?token={{APIFY_TOKEN}}",
+        "method": "post",
+        "bodyType": "raw",
+        "contentType": "application/json",
+        "data": "{\"keywords\": [\"python\"], \"maxResultsPerSearch\": 50}",
+        "parseResponse": true,
+        "timeout": 300
+      }
+    }
+  ],
+  "metadata": {
+    "version": 1,
+    "note": "Replace {{APIFY_TOKEN}} with your token, or use the official Apify app module Run an Actor."
+  }
+}
