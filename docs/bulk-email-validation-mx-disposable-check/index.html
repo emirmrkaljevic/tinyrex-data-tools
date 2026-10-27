@@ -1,0 +1,134 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Bulk Email Validator: Check Email Lists for MX, Disposable, Role and Typos (API, CSV)</title><meta name="description" content="Validate thousands of email addresses without sending mail: syntax, domain and MX check, null MX, disposable and role-based detection, typo fixes (gmial.com), SPF and DMARC. $0.30 per 1,000 emails."><link rel="canonical" href="https://emirmrkaljevic.github.io/tinyrex-data-tools/bulk-email-validation-mx-disposable-check/">
+<meta property="og:title" content="Bulk Email Validator: Check Email Lists for MX, Disposable, Role and Typos (API, CSV)"><meta property="og:description" content="Validate thousands of email addresses without sending mail: syntax, domain and MX check, null MX, disposable and role-based detection, typo fixes (gmial.com), SPF and DMARC. $0.30 per 1,000 emails."><meta property="og:type" content="article"><meta property="og:url" content="https://emirmrkaljevic.github.io/tinyrex-data-tools/bulk-email-validation-mx-disposable-check/">
+<link rel="stylesheet" href="../style.css"><script type="application/ld+json">[{"@context": "https://schema.org", "@type": "TechArticle", "headline": "How to clean an email list before a campaign: bulk MX, disposable and typo check", "description": "Validate thousands of email addresses without sending mail: syntax, domain and MX check, null MX, disposable and role-based detection, typo fixes (gmial.com), SPF and DMARC. $0.30 per 1,000 emails.", "dateModified": "2026-10-27", "keywords": "bulk email validator, email list cleaning, check email mx record bulk, disposable email checker, validate email without sending", "about": {"@type": "SoftwareApplication", "name": "Bulk Email Validator - MX, Disposable, Role & Typo Check", "url": "https://apify.com/tinyrex/bulk-email-validator", "applicationCategory": "DeveloperApplication", "operatingSystem": "Web"}}, {"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "How do I check if an email is valid without sending an email?", "acceptedAnswer": {"@type": "Answer", "text": "The actor checks the syntax and asks DNS whether the domain exists and has a mail server. If either fails, the address cannot receive mail and is marked invalid."}}, {"@type": "Question", "name": "Does it check whether the mailbox exists?", "acceptedAnswer": {"@type": "Answer", "text": "No. There is no SMTP handshake, so it cannot confirm that a specific person's mailbox exists on a domain that accepts mail. Use it to remove dead domains, disposables and typos first, then send the rest to an SMTP verifier if you need mailbox-level certainty."}}, {"@type": "Question", "name": "Should I remove role-based emails like info@?", "acceptedAnswer": {"@type": "Answer", "text": "For cold outreach to people, often yes; for B2B lead lists they are usually fine. They stay valid and are flagged with isRoleBased so you can decide."}}, {"@type": "Question", "name": "Is my list stored or shared?", "acceptedAnswer": {"@type": "Answer", "text": "The emails stay in your own Apify run storage. Lookups go to public DNS over HTTPS, which only sees domain names, never full addresses."}}]}]</script></head><body>
+<header><a href="../">🦖 TinyRex Data Tools</a><span class="mut">practical guides for web data APIs</span></header>
+<main><h1>How to clean an email list before a campaign: bulk MX, disposable and typo check</h1>
+<p class="mut">Updated 2026-10-27 · Tool used: <a href="https://apify.com/tinyrex/bulk-email-validator">Bulk Email Validator - MX, Disposable, Role &amp; Typo Check</a> on Apify · Price: $0.30 per 1,000 emails; bad syntax, duplicates and DNS errors are free</p>
+<p>Old CRM exports, scraped lead lists and signup forms all collect dead domains, typos like <code>gmial.com</code> and throwaway inboxes. Sending to them causes bounces that hurt your sender reputation, and most verification services charge several dollars per 1,000 addresses.</p><p>This guide shows how to run a cheap first pass over thousands of addresses using DNS only: syntax, whether the domain exists and accepts mail (MX, null MX, A fallback), about 10,000 disposable domains, role inboxes such as <code>info@</code>, free webmail and typo suggestions, plus the domain's SPF and DMARC. It does not probe mailboxes over SMTP, which keeps it fast and safe for your list.</p>
+<a class="cta" href="https://apify.com/tinyrex/bulk-email-validator">Open Bulk Email Validator on Apify →</a>
+<h2>Steps</h2><ol><li>Paste addresses into <code>emails</code> (a column copied from Excel or a CRM export works), or set <code>datasetId</code> to pull every email from another run, such as a contact extractor.</li><li>Run it. Each unique address that gets a DNS verdict is one charge; duplicates and bad syntax are free.</li><li>Filter by <code>status</code> and flags such as <code>isRoleBased</code> or <code>isDisposable</code>, then export only the <code>valid</code> rows as CSV.</li></ol>
+<h2>Example input</h2><pre><code class="language-json">{
+  &quot;input&quot;: &quot;jane@gmial.com&quot;,
+  &quot;email&quot;: &quot;jane@gmial.com&quot;,
+  &quot;status&quot;: &quot;risky&quot;,
+  &quot;reason&quot;: &quot;typo-trap domain on the disposable list, did you mean jane@gmail.com?&quot;,
+  &quot;syntaxValid&quot;: true,
+  &quot;domain&quot;: &quot;gmial.com&quot;,
+  &quot;localPart&quot;: &quot;jane&quot;,
+  &quot;isRoleBased&quot;: false,
+  &quot;isFreeProvider&quot;: false,
+  &quot;isDisposable&quot;: true,
+  &quot;didYouMean&quot;: &quot;jane@gmail.com&quot;,
+  &quot;domainExists&quot;: true,
+  &quot;hasMx&quot;: false,
+  &quot;mxRecords&quot;: [],
+  &quot;nullMx&quot;: false,
+  &quot;acceptsMailViaA&quot;: true,
+  &quot;hasSpf&quot;: false,
+  &quot;hasDmarc&quot;: false,
+  &quot;smtpChecked&quot;: false,
+  &quot;charged&quot;: true,
+  &quot;checkedAt&quot;: &quot;2026-10-18T07:03:28.104Z&quot;
+}</code></pre>
+<h2>Example output (one item, shortened)</h2><pre><code class="language-json">{
+  &quot;input&quot;: &quot;jane@gmial.com&quot;,
+  &quot;status&quot;: &quot;risky&quot;,
+  &quot;reason&quot;: &quot;typo-trap domain on the disposable list, did you mean jane@gmail.com?&quot;,
+  &quot;syntaxValid&quot;: true,
+  &quot;domain&quot;: &quot;gmial.com&quot;,
+  &quot;localPart&quot;: &quot;jane&quot;,
+  &quot;isRoleBased&quot;: false,
+  &quot;isFreeProvider&quot;: false,
+  &quot;isDisposable&quot;: true,
+  &quot;didYouMean&quot;: &quot;jane@gmail.com&quot;,
+  &quot;domainExists&quot;: true,
+  &quot;hasMx&quot;: false,
+  &quot;mxRecords&quot;: [],
+  &quot;nullMx&quot;: false,
+  &quot;acceptsMailViaA&quot;: true,
+  &quot;hasSpf&quot;: false,
+  &quot;hasDmarc&quot;: false,
+  &quot;smtpChecked&quot;: false,
+  &quot;charged&quot;: true,
+  &quot;checkedAt&quot;: &quot;2026-10-18T07:03:28.104Z&quot;
+}</code></pre>
+<p>Every run's dataset can be downloaded as JSON, CSV, Excel, XML or HTML from the Apify Console, or via <code>https://api.apify.com/v2/datasets/&lt;datasetId&gt;/items?format=csv</code>.</p>
+<h2>Run it from code</h2><h3>Python</h3><pre><code class="language-python">from apify_client import ApifyClient  # pip install apify-client
+
+client = ApifyClient(&quot;&lt;YOUR_APIFY_TOKEN&gt;&quot;)
+run_input = {
+  &quot;input&quot;: &quot;jane@gmial.com&quot;,
+  &quot;email&quot;: &quot;jane@gmial.com&quot;,
+  &quot;status&quot;: &quot;risky&quot;,
+  &quot;reason&quot;: &quot;typo-trap domain on the disposable list, did you mean jane@gmail.com?&quot;,
+  &quot;syntaxValid&quot;: true,
+  &quot;domain&quot;: &quot;gmial.com&quot;,
+  &quot;localPart&quot;: &quot;jane&quot;,
+  &quot;isRoleBased&quot;: false,
+  &quot;isFreeProvider&quot;: false,
+  &quot;isDisposable&quot;: true,
+  &quot;didYouMean&quot;: &quot;jane@gmail.com&quot;,
+  &quot;domainExists&quot;: true,
+  &quot;hasMx&quot;: false,
+  &quot;mxRecords&quot;: [],
+  &quot;nullMx&quot;: false,
+  &quot;acceptsMailViaA&quot;: true,
+  &quot;hasSpf&quot;: false,
+  &quot;hasDmarc&quot;: false,
+  &quot;smtpChecked&quot;: false,
+  &quot;charged&quot;: true,
+  &quot;checkedAt&quot;: &quot;2026-10-18T07:03:28.104Z&quot;
+}
+run = client.actor(&quot;tinyrex/bulk-email-validator&quot;).call(run_input=run_input)
+for item in client.dataset(run[&quot;defaultDatasetId&quot;]).iterate_items():
+    print(item)</code></pre><h3>JavaScript / Node.js</h3><pre><code class="language-javascript">import { ApifyClient } from &#x27;apify-client&#x27;; // npm i apify-client
+
+const client = new ApifyClient({ token: process.env.APIFY_TOKEN });
+const run = await client.actor(&#x27;tinyrex/bulk-email-validator&#x27;).call({
+  &quot;input&quot;: &quot;jane@gmial.com&quot;,
+  &quot;email&quot;: &quot;jane@gmial.com&quot;,
+  &quot;status&quot;: &quot;risky&quot;,
+  &quot;reason&quot;: &quot;typo-trap domain on the disposable list, did you mean jane@gmail.com?&quot;,
+  &quot;syntaxValid&quot;: true,
+  &quot;domain&quot;: &quot;gmial.com&quot;,
+  &quot;localPart&quot;: &quot;jane&quot;,
+  &quot;isRoleBased&quot;: false,
+  &quot;isFreeProvider&quot;: false,
+  &quot;isDisposable&quot;: true,
+  &quot;didYouMean&quot;: &quot;jane@gmail.com&quot;,
+  &quot;domainExists&quot;: true,
+  &quot;hasMx&quot;: false,
+  &quot;mxRecords&quot;: [],
+  &quot;nullMx&quot;: false,
+  &quot;acceptsMailViaA&quot;: true,
+  &quot;hasSpf&quot;: false,
+  &quot;hasDmarc&quot;: false,
+  &quot;smtpChecked&quot;: false,
+  &quot;charged&quot;: true,
+  &quot;checkedAt&quot;: &quot;2026-10-18T07:03:28.104Z&quot;
+});
+const { items } = await client.dataset(run.defaultDatasetId).listItems();
+console.log(items);</code></pre><h3>curl (no SDK)</h3><pre><code class="language-bash"># Runs the actor and returns the results directly (CSV here; use format=json for JSON)
+curl -X POST &quot;https://api.apify.com/v2/acts/tinyrex~bulk-email-validator/run-sync-get-dataset-items?format=csv&quot; \
+  -H &quot;Authorization: Bearer $APIFY_TOKEN&quot; \
+  -H &quot;Content-Type: application/json&quot; \
+  -d &#x27;{&quot;input&quot;: &quot;jane@gmial.com&quot;, &quot;email&quot;: &quot;jane@gmial.com&quot;, &quot;status&quot;: &quot;risky&quot;, &quot;reason&quot;: &quot;typo-trap domain on the disposable list, did you mean jane@gmail.com?&quot;, &quot;syntaxValid&quot;: true, &quot;domain&quot;: &quot;gmial.com&quot;, &quot;localPart&quot;: &quot;jane&quot;, &quot;isRoleBased&quot;: false, &quot;isFreeProvider&quot;: false, &quot;isDisposable&quot;: true, &quot;didYouMean&quot;: &quot;jane@gmail.com&quot;, &quot;domainExists&quot;: true, &quot;hasMx&quot;: false, &quot;mxRecords&quot;: [], &quot;nullMx&quot;: false, &quot;acceptsMailViaA&quot;: true, &quot;hasSpf&quot;: false, &quot;hasDmarc&quot;: false, &quot;smtpChecked&quot;: false, &quot;charged&quot;: true, &quot;checkedAt&quot;: &quot;2026-10-18T07:03:28.104Z&quot;}&#x27; &gt; results.csv</code></pre>
+<p>Get your API token in Apify Console → Settings → API &amp; Integrations. The free Apify plan includes monthly credit that is enough to try this.</p>
+<h2>Use it from an AI agent (MCP)</h2>
+<p>The <a href="https://mcp.apify.com">Apify MCP server</a> exposes this actor as a tool for Claude, Cursor, VS Code, n8n and other MCP clients. Add this to your client's MCP config (or use the OAuth flow at mcp.apify.com instead of a token):</p><pre><code class="language-json">{
+  &quot;mcpServers&quot;: {
+    &quot;apify&quot;: {
+      &quot;url&quot;: &quot;https://mcp.apify.com?tools=tinyrex/bulk-email-validator&quot;,
+      &quot;headers&quot;: {
+        &quot;Authorization&quot;: &quot;Bearer &lt;YOUR_APIFY_TOKEN&gt;&quot;
+      }
+    }
+  }
+}</code></pre>
+<p>Then ask in plain language, e.g. <i>"Bulk email validator for this list and give me a table"</i>.</p>
+<h2>Pricing</h2><p>Pay per result: $0.30 per 1,000 emails; bad syntax, duplicates and DNS errors are free. You can cap the cost of every run in the run options.</p>
+<h2>FAQ</h2><h3>How do I check if an email is valid without sending an email?</h3><p>The actor checks the syntax and asks DNS whether the domain exists and has a mail server. If either fails, the address cannot receive mail and is marked <code>invalid</code>.</p><h3>Does it check whether the mailbox exists?</h3><p>No. There is no SMTP handshake, so it cannot confirm that a specific person's mailbox exists on a domain that accepts mail. Use it to remove dead domains, disposables and typos first, then send the rest to an SMTP verifier if you need mailbox-level certainty.</p><h3>Should I remove role-based emails like info@?</h3><p>For cold outreach to people, often yes; for B2B lead lists they are usually fine. They stay <code>valid</code> and are flagged with <code>isRoleBased</code> so you can decide.</p><h3>Is my list stored or shared?</h3><p>The emails stay in your own Apify run storage. Lookups go to public DNS over HTTPS, which only sees domain names, never full addresses.</p>
+<a class="cta" href="https://apify.com/tinyrex/bulk-email-validator">Try it on Apify →</a>
+<h2>More guides</h2><ul><li><a href="../bulk-tech-stack-lookup-wappalyzer-alternative/">Bulk tech stack lookup: a Wappalyzer / BuiltWith alternative for thousands of domains</a></li><li><a href="../scrape-greenhouse-lever-ashby-jobs/">How to scrape Greenhouse, Lever and Ashby jobs (plus Personio, Teamtailor, Recruitee)</a></li><li><a href="../export-shopify-store-products-to-csv/">How to export all products from any Shopify store to CSV or JSON</a></li><li><a href="../scrape-workday-jobs-myworkdayjobs/">How to scrape jobs from Workday career sites (myworkdayjobs.com)</a></li><li><a href="../export-woocommerce-store-products-to-csv/">How to export products from any WooCommerce store to CSV or JSON</a></li><li><a href="../ted-tenders-api-export/">How to export EU public tenders from TED (Tenders Electronic Daily) to CSV or JSON</a></li><li><a href="../remote-jobs-api-himalayas-remoteok-weworkremotely/">How to scrape remote jobs from Himalayas, Remote OK, We Work Remotely and more in one run</a></li><li><a href="../eu-funding-calls-horizon-europe-api/">How to export open EU funding calls (Horizon Europe, Digital Europe, cascade funding) to CSV or JSON</a></li><li><a href="../rss-feed-to-json-csv-api/">How to turn any RSS or Atom feed into JSON or CSV (bulk, with monitoring)</a></li><li><a href="../extract-emails-socials-from-domain-list/">How to extract emails, phone numbers and social links from a list of company domains</a></li><li><a href="../bulk-website-screenshots-to-csv-google-drive/">How to take bulk website screenshots from a URL list and save them to CSV or Google Drive</a></li><li><a href="../sam-gov-contracts-finder-tenders-api/">How to export US federal (SAM.gov) and UK (Contracts Finder) tenders to CSV or JSON</a></li><li><a href="../siren-siret-lookup-french-company-list-api/">How to look up French companies by SIREN or SIRET and build a B2B list from Sirene</a></li><li><a href="../norway-org-number-lookup-brreg-company-list/">How to look up Norwegian companies by organisation number and build lead lists from Brreg</a></li><li><a href="../sec-edgar-api-download-10-k-8-k-filings-csv/">How to download SEC filings (10-K, 10-Q, 8-K, Form 4) by ticker and search EDGAR full text</a></li><li><a href="../npi-lookup-api-bulk-npi-validation-provider-list/">How to validate NPI numbers in bulk and build US healthcare provider lists from NPPES</a></li><li><a href="../companies-house-api-bulk-uk-company-lookup/">How to look up hundreds of UK companies on Companies House at once (profile, officers, PSC)</a></li><li><a href="../y-tunnus-lookup-finnish-company-list-ytj-api/">How to look up Finnish companies by Y-tunnus and build B2B lead lists from the YTJ register</a></li><li><a href="../extract-all-urls-from-sitemap/">How to extract all URLs from a website&#x27;s sitemap (and find broken links)</a></li><li><a href="../transcribe-audio-video-to-text-srt-whisper-api/">How to transcribe hundreds of audio and video files to text and subtitles with Whisper</a></li><li><a href="../bulk-pdf-to-text-ocr-scanned-pdf-api/">How to extract text from hundreds of PDFs, including scanned ones, in one run</a></li></ul></main>
+<footer>TinyRex Data Tools. Guides and examples for <a href="https://apify.com/tinyrex">TinyRex actors on Apify</a>. Only public data; respect each site's terms. Copy-paste Python, Node.js and curl code in <a href="https://github.com/emirmrkaljevic/tinyrex-examples">tinyrex-examples</a>. Source on <a href="https://github.com/emirmrkaljevic/tinyrex-data-tools">GitHub</a>.</footer></body></html>
