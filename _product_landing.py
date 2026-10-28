@@ -75,7 +75,7 @@ def render_product_page(p, actors_by_name, out_dir, page_fn, store, today, escap
         try:
             return f"{float(str(v).replace(',', '')):,.0f}"
         except Exception:
-            return v or "—"
+            return v or "-"
 
     rows_html = ""
     if sample_rows:
@@ -121,7 +121,7 @@ def render_product_page(p, actors_by_name, out_dir, page_fn, store, today, escap
 
     body = f"""<h1>{E(p['h1'])}</h1>
 <p class="mut">Updated {today} · Weekly Excel/CSV data product · Built from public TED + EU Funding &amp; Tenders data</p>
-<p>Every week: open public <strong>IT and software tenders</strong> from TED across Europe, plus open and upcoming <strong>EU digital grant calls</strong> (Horizon Europe, Digital Europe and more) — English titles, deadlines, values and direct links, in one Excel file (plus CSV).</p>
+<p>Every week: open public <strong>IT and software tenders</strong> from TED across Europe, plus open and upcoming <strong>EU digital grant calls</strong> (Horizon Europe, Digital Europe and more): English titles, deadlines, values and direct links, in one Excel file (plus CSV).</p>
 <p>Stop checking TED and the Funding &amp; Tenders Portal by hand. Get the filtered, English-ready file every Monday.</p>
 <p>
 <a class="cta row" href="../{E(p['preview_csv'])}">Download free 20-row preview CSV →</a>
@@ -131,9 +131,9 @@ def render_product_page(p, actors_by_name, out_dir, page_fn, store, today, escap
 <div class="pricebox">
 <h2 style="margin-top:0">Get the full weekly file</h2>
 <ul>
-<li><strong>Membership</strong> — <a href="{E(p['membership'])}">$19/month or $149/year</a>: every Monday's Excel + CSV in your Gumroad library (cancel anytime).</li>
-<li><strong>Single issue</strong> — <a href="{E(p['single'])}">$9</a>: buy only this week's file.</li>
-<li><strong>Free preview</strong> — <a href="../{E(p['preview_csv'])}">20 open IT tenders as CSV</a> (same columns as the paid file).</li>
+<li><strong>Membership</strong>: <a href="{E(p['membership'])}">$19/month or $149/year</a>: every Monday's Excel + CSV in your Gumroad library (cancel anytime).</li>
+<li><strong>Single issue</strong>: <a href="{E(p['single'])}">$9</a>: buy only this week's file.</li>
+<li><strong>Free preview</strong>: <a href="../{E(p['preview_csv'])}">20 open IT tenders as CSV</a> (same columns as the paid file).</li>
 </ul>
 </div>
 <h2>What's in the full file</h2>

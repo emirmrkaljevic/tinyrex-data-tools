@@ -60,7 +60,12 @@ G = {
   steps=["Add store domains or collection URLs to <code>stores</code> (custom domains work, headless stores too).",
          "Choose <code>outputMode</code>: one row per product or one row per variant (better for spreadsheets).",
          "Download as CSV/Excel, or schedule daily runs to monitor prices and discounts."],
-  faq=[("Can I export products from a Shopify store that isn't mine?","Yes, as long as the products are publicly visible on the storefront. The actor reads the same public product data that the storefront serves to every visitor."),
+  use_cases=['Competitor price monitoring: schedule daily runs and alert on price or compare-at price changes.', "Dropshipping and reseller catalogs: pull a supplier's full catalog with variants, SKUs and images.", 'Market research: compare assortment, vendors and price bands across many stores in one run.', 'New product tracking: use <code>publishedWithinDays</code> to see only what a store launched recently.'],
+  related=['find-shopify-stores-from-domain-list', 'shopify-products-to-google-sheets', 'export-woocommerce-store-products-to-csv', 'bulk-tech-stack-lookup-wappalyzer-alternative'],
+  automation=True,
+  faq=[('Does it work on stores with a custom domain or a headless frontend?',"Yes. Custom domains work, and for headless stores you can pass the shop's myshopify.com domain if the custom domain does not expose the product feed."),
+       ('How do I get stock levels?','Turn on <code>includeInventory</code>. It costs an extra $0.50 per 1,000 products and only works where the store publishes inventory quantities.'),
+       ("Can I export products from a Shopify store that isn't mine?","Yes, as long as the products are publicly visible on the storefront. The actor reads the same public product data that the storefront serves to every visitor."),
        ("Why not just open /products.json?","It is paginated, limited to 250 items per page, omits some fields and is not available on every store. The actor handles pagination, collections, headless stores and normalization for you."),
        ("How do I monitor competitor prices?","Schedule the actor daily and compare <code>price</code> and <code>compareAtPrice</code> across runs; <code>onSale</code> and <code>discountPercent</code> are calculated for you.")]),
  "workday-jobs-scraper": dict(
@@ -124,7 +129,12 @@ G = {
   steps=["Add job titles or skills to <code>keywords</code> (e.g. <code>python</code>, <code>customer support</code>), or leave it empty for the newest remote jobs.",
          "Filter by candidate <code>countries</code>, <code>publishedWithinDays</code>, employment type, seniority or only jobs with a salary (filtered jobs are free).",
          "Schedule it daily with <i>Only new jobs</i> on to build a remote job feed for a newsletter, Slack channel or job board."],
-  faq=[("Is there a free remote jobs API?","Several boards publish free public feeds (Himalayas, Remote OK, We Work Remotely RSS, Arbeitnow). The actor reads those official feeds, merges them into one schema and removes duplicates, so you do not have to maintain five integrations."),
+  use_cases=['Remote job newsletter or Slack feed: daily run with <i>Only new jobs</i> and post the new rows.', 'Niche job board: seed a board for one skill or region with attribution links back to the source.', 'Hiring market research: count remote roles, salaries and seniority by keyword over time.', 'Personal job alerts: filter by your country and skills and get only fresh postings.'],
+  related=['remote-jobs-to-google-sheets', 'scrape-greenhouse-lever-ashby-jobs', 'scrape-workday-jobs-myworkdayjobs', 'rss-feed-to-json-csv-api'],
+  automation=True,
+  faq=[('How do I avoid getting the same job twice in scheduled runs?','Turn on <code>onlyNewJobs</code> and keep the same <code>stateKey</code>. Jobs already delivered in earlier runs are skipped and not charged.'),
+       ('Which sources are used by default?','Himalayas and Remote OK. Add <code>weworkremotely</code>, <code>workingnomads</code>, <code>arbeitnow</code> or <code>jobicy</code> in <code>sources</code> for more coverage; duplicates across boards are merged.'),
+       ("Is there a free remote jobs API?","Several boards publish free public feeds (Himalayas, Remote OK, We Work Remotely RSS, Arbeitnow, Jobicy). The actor reads those official feeds, merges them into one schema and removes duplicates, so you do not have to maintain six integrations."),
        ("Can I get only jobs open to candidates in my country?","Yes. Set <code>countries</code> (e.g. <code>[\"Germany\"]</code>) and choose whether to keep worldwide jobs with <code>includeWorldwide</code>."),
        ("Can I republish the jobs on my own site?","The boards ask for attribution and a link back to the original job; <code>url</code> and <code>sourceName</code> are included for that. Himalayas and Remote OK do not allow resubmitting their jobs to aggregators such as Google Jobs or LinkedIn.")]),
  "eu-grants-scraper": dict(
@@ -359,7 +369,12 @@ G = {
   steps=["Collect direct file links in <code>mediaUrls</code> (podcast MP3 links, files in cloud storage, CDN links), or set <code>datasetId</code> to read links from another actor run.",
          "Pick <code>model</code>: <code>base</code> is fast and cheap, <code>small</code> is better on accents, noise and non-English. Set <code>language</code> if you know it, or <code>task: \"translate\"</code> for an English transcript of any language.",
          "Run it, export the dataset as CSV or JSON, and download subtitles from <code>srtUrl</code> / <code>vttUrl</code>. Set a max charge per run to cap the cost."],
-  faq=[("Is this a cheaper alternative to the Whisper API?","It runs the same open-source Whisper model family inside the actor for $0.005 per audio minute (base) or $0.01 (small), billed per minute rounded up per file. Failed and silent files cost nothing, and there is no separate API account."),
+  use_cases=['Podcast back catalogues: transcribe every episode for show notes, search and SEO pages.', 'Course and webinar videos: get SRT/VTT subtitles for a whole batch of files.', 'Interview and research recordings: searchable text with timestamps for coding and quotes.', 'RAG and AI pipelines: feed transcripts into a vector store or an LLM summary step.'],
+  related=['rss-feed-to-json-csv-api', 'bulk-pdf-to-text-ocr-scanned-pdf-api', 'rss-feeds-to-google-sheets-slack'],
+  automation=True,
+  faq=[('Can I transcribe podcast episodes straight from an RSS feed?',"Yes. Run the RSS Feed Scraper on the podcast feed, then pass its run's <code>datasetId</code> and set <code>urlField</code> to the enclosure field. Each episode's audio link is transcribed."),
+       ('Which languages are supported?','Whisper supports about 99 languages. Leave <code>language</code> on <code>auto</code> to detect it, or set it for better accuracy on short files.'),
+       ("Is this a cheaper alternative to the Whisper API?","It runs the same open-source Whisper model family inside the actor for $0.005 per audio minute (base) or $0.01 (small), billed per minute rounded up per file. Failed and silent files cost nothing, and there is no separate API account."),
        ("Can I transcribe YouTube, TikTok or Instagram videos?","No. Links to platform pages are refused for free, because downloading from those sites is against their terms. Use files you own or have rights to, such as your own recordings or podcast MP3s."),
        ("Does it add speaker labels?","Not yet. You get timestamped segments and subtitles, without speaker diarization."),
        ("How fast is it?","At the default memory the base model handles about 10 to 12 minutes of audio per minute, the small model about 4. More memory gives more CPU cores; the price per audio minute stays the same.")]),
@@ -582,6 +597,9 @@ curl -X POST "https://api.apify.com/v2/acts/{tid}/run-sync-get-dataset-items?for
   -d '{json.dumps(a["input"], ensure_ascii=False)}' > results.csv'''
     mcp = json.dumps({"mcpServers": {"apify": {"url": f"https://mcp.apify.com?tools={aid}", "headers": {"Authorization": "Bearer <YOUR_APIFY_TOKEN>"}}}}, indent=2)
     others = "".join(f'<li><a href="../{o["slug"]}/">{E(o["h1"])}</a></li>' for o in actors if o is not a)
+    bys = {o["slug"]: o for o in actors}
+    rl = [bys[x] for x in a.get("related", []) if x in bys]
+    related = ('<h2>Related guides</h2><ul>' + ''.join(f'<li><a href="../{o["slug"]}/">{E(o["h1"])}</a></li>' for o in rl) + '</ul>') if rl else ''
     faq = "".join(f"<h3>{E(q)}</h3><p>{ans}</p>" for q, ans in a["faq"])
     body = f"""<h1>{E(a['h1'])}</h1>
 <p class="mut">Updated {TODAY} · Tool used: <a href="{store}">{E(a['title'])}</a> on Apify · Price: {E(a['price'])}</p>
@@ -596,10 +614,12 @@ curl -X POST "https://api.apify.com/v2/acts/{tid}/run-sync-get-dataset-items?for
 <h2>Use it from an AI agent (MCP)</h2>
 <p>The <a href="https://mcp.apify.com">Apify MCP server</a> exposes this actor as a tool for Claude, Cursor, VS Code, n8n and other MCP clients. Add this to your client's MCP config (or use the OAuth flow at mcp.apify.com instead of a token):</p>{code(mcp,'json')}
 <p>Then ask in plain language, e.g. <i>"{E(a['kw'][0].capitalize())} for this list and give me a table"</i>.</p>
+{('<h2>Use cases</h2><ul>'+''.join(f'<li>{u}</li>' for u in a['use_cases'])+'</ul>') if a.get('use_cases') else ''}
+{('<h2>No-code: n8n and Make</h2><p>Ready-to-import <a href="https://github.com/emirmrkaljevic/tinyrex-data-tools/tree/main/examples">n8n and Make example workflows</a> call this actor through the Apify API. Import the JSON, add your Apify token, edit the input and run.</p>') if a.get('automation') else ''}
 <h2>Pricing</h2><p>Pay per result: {E(a['price'])}. You can cap the cost of every run in the run options.</p>
 <h2>FAQ</h2>{faq}
 <a class="cta" href="{store}">Try it on Apify →</a>
-<h2>More guides</h2><ul>{others}</ul>"""
+{related}<h2>More guides</h2><ul>{others}</ul>"""
     ld = [{"@context": "https://schema.org", "@type": "TechArticle", "headline": a["h1"], "description": a["desc"], "dateModified": TODAY, "keywords": ", ".join(a["kw"]), "about": {"@type": "SoftwareApplication", "name": a["title"], "url": store, "applicationCategory": "DeveloperApplication", "operatingSystem": "Web"}},
           {"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": q, "acceptedAnswer": {"@type": "Answer", "text": re.sub('<[^>]+>', '', ans)}} for q, ans in a["faq"]]}]
     return page(f"{a['slug']}/", a["ptitle"], a["desc"], body, ld)
@@ -611,7 +631,7 @@ def index(actors, tuts=(), cps=()):
 <p>Each guide below has a working example input, real sample output and copy-paste code.</p>
 <div class="cards">{cards}</div>
 {('<h2>Tutorials</h2><ul>' + ''.join(f'<li><a href="{t["slug"]}/">{E(t["h1"])}</a></li>' for t in tuts) + '</ul>') if tuts else ''}
-{('<h2>Data products</h2><ul>' + ''.join(f'<li><a href="{p["slug"]}/">{E(p["h1"])}</a> — free preview + weekly Excel on Gumroad</li>' for p in PRODUCTS) + '</ul>') if PRODUCTS else ''}
+{('<h2>Data products</h2><ul>' + ''.join(f'<li><a href="{p["slug"]}/">{E(p["h1"])}</a>: free preview + weekly Excel on Gumroad</li>' for p in PRODUCTS) + '</ul>') if PRODUCTS else ''}
 {('<p>Open IT tenders this week by country: ' + ' · '.join(f'<a href="{c["slug"]}/">{E(c["country"])}</a>' for c in cps) + '</p>') if cps else ''}
 <h2>Use any of these tools from an AI agent</h2>
 <p>Connect Claude, Cursor or n8n to <code>https://mcp.apify.com?tools={','.join('tinyrex/'+a['name'] for a in actors)}</code> and the agent can call every tool above directly.</p>"""

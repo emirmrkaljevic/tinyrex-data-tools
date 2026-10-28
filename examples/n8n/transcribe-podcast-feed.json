@@ -1,0 +1,103 @@
+{
+  "name": "Transcribe audio files to text and subtitles with Apify",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## Audio to text and subtitles\nSends direct audio or video file links to the TinyRex Audio & Video Transcriber (open-source Whisper) and returns text plus SRT/VTT links. Use files you own or have rights to.\n\n## Setup\n1. Create a Query Auth credential: name `token`, value your Apify API token.\n2. Select it in the HTTP node.\n3. Edit the JSON body, then connect the last node to Google Sheets, Slack or email.\n\nApify bills the actor per result on your own Apify account (free plan credit covers a test).",
+        "height": 420,
+        "width": 420
+      },
+      "id": "n0",
+      "name": "Sticky Note",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -460,
+        -120
+      ]
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "days",
+              "triggerAtHour": 7
+            }
+          ]
+        }
+      },
+      "id": "n1",
+      "name": "Every morning",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.apify.com/v2/acts/tinyrex~audio-video-transcriber/run-sync-get-dataset-items?format=json",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpQueryAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\n  \"mediaUrls\": [\n    \"https://upload.wikimedia.org/wikipedia/commons/3/3c/Pope_Simplicius_Spoken_Version.ogg\"\n  ],\n  \"model\": \"base\",\n  \"language\": \"auto\",\n  \"includeSubtitles\": true\n}",
+        "options": {
+          "timeout": 300000
+        }
+      },
+      "id": "n2",
+      "name": "Run TinyRex actor on Apify",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        240,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "return $input.all().map(i => ({json: {url: i.json.url, language: i.json.language, text: i.json.text, srtUrl: i.json.srtUrl, vttUrl: i.json.vttUrl}}));"
+      },
+      "id": "n3",
+      "name": "Shape rows",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        480,
+        0
+      ]
+    }
+  ],
+  "connections": {
+    "Every morning": {
+      "main": [
+        [
+          {
+            "node": "Run TinyRex actor on Apify",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Run TinyRex actor on Apify": {
+      "main": [
+        [
+          {
+            "node": "Shape rows",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "pinData": {}
+}
