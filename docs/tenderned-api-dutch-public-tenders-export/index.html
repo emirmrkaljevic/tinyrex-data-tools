@@ -1,0 +1,93 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>TenderNed API: Export Dutch Public Tenders (Netherlands) to CSV, Excel or JSON</title><meta name="description" content="Search and export Netherlands public procurement notices from the official TenderNed open data API: buyer, deadline, CPV code, NUTS region, procedure and notice link. $2.50 per 1,000 notices; empty runs are free."><link rel="canonical" href="https://emirmrkaljevic.github.io/tinyrex-data-tools/tenderned-api-dutch-public-tenders-export/">
+<meta property="og:title" content="TenderNed API: Export Dutch Public Tenders (Netherlands) to CSV, Excel or JSON"><meta property="og:description" content="Search and export Netherlands public procurement notices from the official TenderNed open data API: buyer, deadline, CPV code, NUTS region, procedure and notice link. $2.50 per 1,000 notices; empty runs are free."><meta property="og:type" content="article"><meta property="og:url" content="https://emirmrkaljevic.github.io/tinyrex-data-tools/tenderned-api-dutch-public-tenders-export/">
+<link rel="stylesheet" href="../style.css"><script type="application/ld+json">[{"@context": "https://schema.org", "@type": "TechArticle", "headline": "How to get Dutch public tenders from TenderNed into a spreadsheet, with daily alerts", "description": "Search and export Netherlands public procurement notices from the official TenderNed open data API: buyer, deadline, CPV code, NUTS region, procedure and notice link. $2.50 per 1,000 notices; empty runs are free.", "dateModified": "2026-10-28", "keywords": "tenderned api, dutch public tenders, netherlands tenders export, aanbestedingen export excel, tenderned tender alerts", "about": {"@type": "SoftwareApplication", "name": "TenderNed Netherlands Tenders Scraper", "url": "https://apify.com/tinyrex/tenderned-tenders-scraper", "applicationCategory": "DeveloperApplication", "operatingSystem": "Web"}}, {"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "Is there a free TenderNed API?", "acceptedAnswer": {"@type": "Answer", "text": "Yes. TenderNed publishes its notices as open data under CC0 through a public JSON API with no key. The actor reads that API, so you get the same data as the website."}}, {"@type": "Question", "name": "Does it include tenders below the EU threshold?", "acceptedAnswer": {"@type": "Answer", "text": "Yes. National notices that are only published on TenderNed are included, which is the main reason to use it next to TED."}}, {"@type": "Question", "name": "Can I get the CPV code and region of each tender?", "acceptedAnswer": {"@type": "Answer", "text": "Yes, with includeDetails on (the default) each notice is enriched with its CPV code and NUTS place of performance. Turn it off for a faster run without those fields."}}, {"@type": "Question", "name": "Can I filter by works, supplies or services?", "acceptedAnswer": {"@type": "Answer", "text": "Set typeOpdracht to W (works), L (supplies) or D (services)."}}]}]</script></head><body>
+<header><a href="../">🦖 TinyRex Data Tools</a><span class="mut">practical guides for web data APIs</span></header>
+<main><h1>How to get Dutch public tenders from TenderNed into a spreadsheet, with daily alerts</h1>
+<p class="mut">Updated 2026-10-28 · Tool used: <a href="https://apify.com/tinyrex/tenderned-tenders-scraper">TenderNed Netherlands Tenders Scraper</a> on Apify · Price: $2.50 per 1,000 notices; failed and empty runs and notices already seen are free</p>
+<p>TenderNed is the national procurement platform of the Netherlands. Every Dutch public buyer publishes its notices there, including many contracts below the EU threshold that never appear on TED. The website search works for one person, but bid teams that track several keywords end up copying notices into a sheet by hand.</p><p>This guide shows how to pull TenderNed notices from the official keyless open data API (CC0) into CSV, Excel or JSON, filter them by keyword, publication date, assignment type and open deadline, and run the search every morning so you only see notices that are new since the last run.</p>
+<a class="cta" href="https://apify.com/tinyrex/tenderned-tenders-scraper">Open TenderNed Netherlands Tenders Scraper on Apify →</a>
+<h2>Steps</h2><ol><li>Add search terms to <code>keywords</code> (Dutch or English, e.g. <code>software</code>, <code>ICT</code>, <code>schoonmaak</code>) or leave it empty for every notice in the date window.</li><li>Set <code>publishedWithinDays</code> or an exact <code>publishedFrom</code>/<code>publishedTo</code> range, and turn on <code>onlyOpen</code> to drop notices whose deadline has passed.</li><li>Schedule it daily with <code>onlyNew</code> on and a <code>stateKey</code> per saved search; each run then returns only new notices, and already-seen ones are free.</li></ol>
+<h2>Example input</h2><pre><code class="language-json">{
+  &quot;keywords&quot;: [
+    &quot;software&quot;
+  ],
+  &quot;publishedWithinDays&quot;: 14,
+  &quot;maxResults&quot;: 20,
+  &quot;onlyOpen&quot;: true
+}</code></pre>
+<h2>Example output (one item, shortened)</h2><pre><code class="language-json">{
+  &quot;source&quot;: &quot;tenderned&quot;,
+  &quot;noticeId&quot;: &quot;443740&quot;,
+  &quot;solicitationNumber&quot;: &quot;611473&quot;,
+  &quot;title&quot;: &quot;Managed Services en Consultancy voor de ServiceNow Omgeving&quot;,
+  &quot;description&quot;: &quot;LVNL wenst één geschikte dienstverlener te selecteren die LVNL zelfstandig en langdurig kan ondersteunen bij het beheer, onderhoud en de doorontwikkeling van het ServiceNow-platform...&quot;,
+  &quot;publicationDate&quot;: &quot;2026-10-10&quot;,
+  &quot;deadlineDate&quot;: &quot;2026-11-30&quot;,
+  &quot;isOpen&quot;: true,
+  &quot;buyerName&quot;: &quot;Luchtverkeersleiding Nederland&quot;,
+  &quot;buyerCountry&quot;: &quot;Netherlands&quot;,
+  &quot;estimatedValue&quot;: null,
+  &quot;currency&quot;: null,
+  &quot;noticeUrl&quot;: &quot;https://www.tenderned.nl/aankondigingen/overzicht/443740&quot;,
+  &quot;documentsUrl&quot;: &quot;https://www.tenderned.nl/aankondigingen/overzicht/443740&quot;,
+  &quot;cpvOrNaics&quot;: &quot;72000000-5&quot;,
+  &quot;naicsCode&quot;: null,
+  &quot;classificationCode&quot;: &quot;72000000-5&quot;,
+  &quot;procedureType&quot;: &quot;Openbaar&quot;,
+  &quot;noticeType&quot;: &quot;Aankondiging opdracht&quot;,
+  &quot;setAside&quot;: null,
+  &quot;placeOfPerformance&quot;: &quot;Groot-Amsterdam&quot;,
+  &quot;scrapedAt&quot;: &quot;2026-10-11T07:00:00.000Z&quot;
+}</code></pre>
+<p>Every run's dataset can be downloaded as JSON, CSV, Excel, XML or HTML from the Apify Console, or via <code>https://api.apify.com/v2/datasets/&lt;datasetId&gt;/items?format=csv</code>.</p>
+<h2>Run it from code</h2><h3>Python</h3><pre><code class="language-python">from apify_client import ApifyClient  # pip install apify-client
+
+client = ApifyClient(&quot;&lt;YOUR_APIFY_TOKEN&gt;&quot;)
+run_input = {
+  &quot;keywords&quot;: [
+    &quot;software&quot;
+  ],
+  &quot;publishedWithinDays&quot;: 14,
+  &quot;maxResults&quot;: 20,
+  &quot;onlyOpen&quot;: true
+}
+run = client.actor(&quot;tinyrex/tenderned-tenders-scraper&quot;).call(run_input=run_input)
+for item in client.dataset(run[&quot;defaultDatasetId&quot;]).iterate_items():
+    print(item)</code></pre><h3>JavaScript / Node.js</h3><pre><code class="language-javascript">import { ApifyClient } from &#x27;apify-client&#x27;; // npm i apify-client
+
+const client = new ApifyClient({ token: process.env.APIFY_TOKEN });
+const run = await client.actor(&#x27;tinyrex/tenderned-tenders-scraper&#x27;).call({
+  &quot;keywords&quot;: [
+    &quot;software&quot;
+  ],
+  &quot;publishedWithinDays&quot;: 14,
+  &quot;maxResults&quot;: 20,
+  &quot;onlyOpen&quot;: true
+});
+const { items } = await client.dataset(run.defaultDatasetId).listItems();
+console.log(items);</code></pre><h3>curl (no SDK)</h3><pre><code class="language-bash"># Runs the actor and returns the results directly (CSV here; use format=json for JSON)
+curl -X POST &quot;https://api.apify.com/v2/acts/tinyrex~tenderned-tenders-scraper/run-sync-get-dataset-items?format=csv&quot; \
+  -H &quot;Authorization: Bearer $APIFY_TOKEN&quot; \
+  -H &quot;Content-Type: application/json&quot; \
+  -d &#x27;{&quot;keywords&quot;: [&quot;software&quot;], &quot;publishedWithinDays&quot;: 14, &quot;maxResults&quot;: 20, &quot;onlyOpen&quot;: true}&#x27; &gt; results.csv</code></pre>
+<p>Get your API token in Apify Console → Settings → API &amp; Integrations. The free Apify plan includes monthly credit that is enough to try this.</p>
+<h2>Use it from an AI agent (MCP)</h2>
+<p>The <a href="https://mcp.apify.com">Apify MCP server</a> exposes this actor as a tool for Claude, Cursor, VS Code, n8n and other MCP clients. Add this to your client's MCP config (or use the OAuth flow at mcp.apify.com instead of a token):</p><pre><code class="language-json">{
+  &quot;mcpServers&quot;: {
+    &quot;apify&quot;: {
+      &quot;url&quot;: &quot;https://mcp.apify.com?tools=tinyrex/tenderned-tenders-scraper&quot;,
+      &quot;headers&quot;: {
+        &quot;Authorization&quot;: &quot;Bearer &lt;YOUR_APIFY_TOKEN&gt;&quot;
+      }
+    }
+  }
+}</code></pre>
+<p>Then ask in plain language, e.g. <i>"Tenderned api for this list and give me a table"</i>.</p>
+<h2>Use cases</h2><ul><li>Bid and tender teams: one daily sheet of new Dutch notices for your CPV codes or keywords.</li><li>Market research: count tenders per buyer, region or procedure type over time.</li><li>Combine with the TED and US/UK tender actors, which share the same schema, for one international pipeline.</li></ul>
+
+<h2>Pricing</h2><p>Pay per result: $2.50 per 1,000 notices; failed and empty runs and notices already seen are free. You can cap the cost of every run in the run options.</p>
+<h2>FAQ</h2><h3>Is there a free TenderNed API?</h3><p>Yes. TenderNed publishes its notices as open data under CC0 through a public JSON API with no key. The actor reads that API, so you get the same data as the website.</p><h3>Does it include tenders below the EU threshold?</h3><p>Yes. National notices that are only published on TenderNed are included, which is the main reason to use it next to TED.</p><h3>Can I get the CPV code and region of each tender?</h3><p>Yes, with <code>includeDetails</code> on (the default) each notice is enriched with its CPV code and NUTS place of performance. Turn it off for a faster run without those fields.</p><h3>Can I filter by works, supplies or services?</h3><p>Set <code>typeOpdracht</code> to <code>W</code> (works), <code>L</code> (supplies) or <code>D</code> (services).</p>
+<a class="cta" href="https://apify.com/tinyrex/tenderned-tenders-scraper">Try it on Apify →</a>
+<h2>Related guides</h2><ul><li><a href="../ted-tenders-api-export/">How to export EU public tenders from TED (Tenders Electronic Daily) to CSV or JSON</a></li><li><a href="../sam-gov-contracts-finder-tenders-api/">How to export US federal (SAM.gov) and UK (Contracts Finder) tenders to CSV or JSON</a></li></ul><h2>More guides</h2><ul><li><a href="../bulk-tech-stack-lookup-wappalyzer-alternative/">Bulk tech stack lookup: a Wappalyzer / BuiltWith alternative for thousands of domains</a></li><li><a href="../scrape-greenhouse-lever-ashby-jobs/">How to scrape Greenhouse, Lever and Ashby jobs (plus Personio, Teamtailor, Recruitee)</a></li><li><a href="../export-shopify-store-products-to-csv/">How to export all products from any Shopify store to CSV or JSON</a></li><li><a href="../scrape-workday-jobs-myworkdayjobs/">How to scrape jobs from Workday career sites (myworkdayjobs.com)</a></li><li><a href="../export-woocommerce-store-products-to-csv/">How to export products from any WooCommerce store to CSV or JSON</a></li><li><a href="../ted-tenders-api-export/">How to export EU public tenders from TED (Tenders Electronic Daily) to CSV or JSON</a></li><li><a href="../remote-jobs-api-himalayas-remoteok-weworkremotely/">How to scrape remote jobs from Himalayas, Remote OK, We Work Remotely and more in one run</a></li><li><a href="../eu-funding-calls-horizon-europe-api/">How to export open EU funding calls (Horizon Europe, Digital Europe, cascade funding) to CSV or JSON</a></li><li><a href="../rss-feed-to-json-csv-api/">How to turn any RSS or Atom feed into JSON or CSV (bulk, with monitoring)</a></li><li><a href="../extract-emails-socials-from-domain-list/">How to extract emails, phone numbers and social links from a list of company domains</a></li><li><a href="../bulk-website-screenshots-to-csv-google-drive/">How to take bulk website screenshots from a URL list and save them to CSV or Google Drive</a></li><li><a href="../sam-gov-contracts-finder-tenders-api/">How to export US federal (SAM.gov) and UK (Contracts Finder) tenders to CSV or JSON</a></li><li><a href="../siren-siret-lookup-french-company-list-api/">How to look up French companies by SIREN or SIRET and build a B2B list from Sirene</a></li><li><a href="../norway-org-number-lookup-brreg-company-list/">How to look up Norwegian companies by organisation number and build lead lists from Brreg</a></li><li><a href="../sec-edgar-api-download-10-k-8-k-filings-csv/">How to download SEC filings (10-K, 10-Q, 8-K, Form 4) by ticker and search EDGAR full text</a></li><li><a href="../npi-lookup-api-bulk-npi-validation-provider-list/">How to validate NPI numbers in bulk and build US healthcare provider lists from NPPES</a></li><li><a href="../companies-house-api-bulk-uk-company-lookup/">How to look up hundreds of UK companies on Companies House at once (profile, officers, PSC)</a></li><li><a href="../y-tunnus-lookup-finnish-company-list-ytj-api/">How to look up Finnish companies by Y-tunnus and build B2B lead lists from the YTJ register</a></li><li><a href="../extract-all-urls-from-sitemap/">How to extract all URLs from a website&#x27;s sitemap (and find broken links)</a></li><li><a href="../transcribe-audio-video-to-text-srt-whisper-api/">How to transcribe hundreds of audio and video files to text and subtitles with Whisper</a></li><li><a href="../bulk-pdf-to-text-ocr-scanned-pdf-api/">How to extract text from hundreds of PDFs, including scanned ones, in one run</a></li><li><a href="../bulk-email-validation-mx-disposable-check/">How to clean an email list before a campaign: bulk MX, disposable and typo check</a></li><li><a href="../bulk-on-page-seo-checker-title-meta-h1/">How to audit titles, meta descriptions, H1s and canonicals for hundreds of pages at once</a></li><li><a href="../find-broken-links-404-redirects-website/">How to find every broken link and redirect on a website, with the pages to fix</a></li><li><a href="../bulk-lei-lookup-gleif-api-validation/">How to validate LEI codes and find the LEI for a list of companies in bulk</a></li><li><a href="../bulk-lighthouse-audit-core-web-vitals/">How to run Lighthouse on hundreds of URLs and get Core Web Vitals in one table</a></li></ul></main>
+<footer>TinyRex Data Tools. Guides and examples for <a href="https://apify.com/tinyrex">TinyRex actors on Apify</a>. Only public data; respect each site's terms. Copy-paste Python, Node.js and curl code in <a href="https://github.com/emirmrkaljevic/tinyrex-examples">tinyrex-examples</a>. Source on <a href="https://github.com/emirmrkaljevic/tinyrex-data-tools">GitHub</a>.</footer></body></html>

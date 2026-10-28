@@ -1,0 +1,121 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Bulk Lighthouse Audit: Core Web Vitals and PageSpeed Scores for Many URLs (No API Key)</title><meta name="description" content="Real Google Lighthouse audits for a list of URLs without a PageSpeed Insights key or quota: performance, accessibility, best practices and SEO scores, LCP, CLS, TBT and the top issues per page. $10 per 1,000 audits."><link rel="canonical" href="https://emirmrkaljevic.github.io/tinyrex-data-tools/bulk-lighthouse-audit-core-web-vitals/">
+<meta property="og:title" content="Bulk Lighthouse Audit: Core Web Vitals and PageSpeed Scores for Many URLs (No API Key)"><meta property="og:description" content="Real Google Lighthouse audits for a list of URLs without a PageSpeed Insights key or quota: performance, accessibility, best practices and SEO scores, LCP, CLS, TBT and the top issues per page. $10 per 1,000 audits."><meta property="og:type" content="article"><meta property="og:url" content="https://emirmrkaljevic.github.io/tinyrex-data-tools/bulk-lighthouse-audit-core-web-vitals/">
+<link rel="stylesheet" href="../style.css"><script type="application/ld+json">[{"@context": "https://schema.org", "@type": "TechArticle", "headline": "How to run Lighthouse on hundreds of URLs and get Core Web Vitals in one table", "description": "Real Google Lighthouse audits for a list of URLs without a PageSpeed Insights key or quota: performance, accessibility, best practices and SEO scores, LCP, CLS, TBT and the top issues per page. $10 per 1,000 audits.", "dateModified": "2026-10-28", "keywords": "bulk lighthouse audit, bulk pagespeed test, core web vitals for multiple urls, pagespeed insights api alternative, lighthouse scores csv", "about": {"@type": "SoftwareApplication", "name": "Bulk Lighthouse Audit - Core Web Vitals, SEO, Accessibility", "url": "https://apify.com/tinyrex/lighthouse-audit", "applicationCategory": "DeveloperApplication", "operatingSystem": "Web"}}, {"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "Is this the same as PageSpeed Insights?", "acceptedAnswer": {"@type": "Answer", "text": "It runs the same Lighthouse engine with the mobile preset that PageSpeed Insights uses for lab data, so scores are comparable. It does not include the field data (CrUX) section, which comes from real Chrome users."}}, {"@type": "Question", "name": "Do I need a Google API key?", "acceptedAnswer": {"@type": "Answer", "text": "No. Lighthouse runs inside the actor in headless Chrome, so there is no key and no shared quota."}}, {"@type": "Question", "name": "Why do scores differ between runs?", "acceptedAnswer": {"@type": "Answer", "text": "Lab scores vary a little with network and CPU conditions, as in Chrome DevTools. For tracking, compare trends over several runs rather than single numbers."}}, {"@type": "Question", "name": "Can I get the full Lighthouse report?", "acceptedAnswer": {"@type": "Answer", "text": "Yes. saveHtmlReport stores the full HTML report with a public link, and saveJsonReport stores the raw JSON result."}}]}]</script></head><body>
+<header><a href="../">🦖 TinyRex Data Tools</a><span class="mut">practical guides for web data APIs</span></header>
+<main><h1>How to run Lighthouse on hundreds of URLs and get Core Web Vitals in one table</h1>
+<p class="mut">Updated 2026-10-28 · Tool used: <a href="https://apify.com/tinyrex/lighthouse-audit">Bulk Lighthouse Audit - Core Web Vitals, SEO, Accessibility</a> on Apify · Price: $10 per 1,000 successful audits (1 URL on 1 device); unreachable pages are free</p>
+<p>PageSpeed Insights is the usual way to check Core Web Vitals, but it tests one URL at a time and its keyless API quota is shared and often answers HTTP 429. Comparing a whole site section, a list of landing pages or a set of competitors quickly turns into a lot of copy and paste.</p><p>This guide shows how to run real Lighthouse audits (the open-source tool from Google Chrome) on a list of URLs inside an Apify actor, on mobile, desktop or both, and get one row per page with the four category scores, lab metrics such as LCP, CLS, TBT, FCP and Speed Index, page weight and the failing audits with the largest estimated savings.</p>
+<a class="cta" href="https://apify.com/tinyrex/lighthouse-audit">Open Bulk Lighthouse Audit on Apify →</a>
+<h2>Steps</h2><ol><li>Add pages to <code>urls</code> (bare domains work) and pick <code>formFactor</code>: <code>mobile</code> matches PageSpeed Insights, <code>both</code> counts as two audits.</li><li>Optionally limit <code>categories</code>, set <code>maxIssues</code> for the topIssues list, and turn on <code>saveHtmlReport</code> to get a link to the full Lighthouse report.</li><li>Export as CSV, sort by <code>performance</code> or <code>largestContentfulPaintMs</code>, and schedule weekly runs to track scores over time.</li></ol>
+<h2>Example input</h2><pre><code class="language-json">{
+  &quot;urls&quot;: [
+    &quot;https://example.com&quot;
+  ],
+  &quot;formFactor&quot;: &quot;mobile&quot;
+}</code></pre>
+<h2>Example output (one item, shortened)</h2><pre><code class="language-json">{
+  &quot;input&quot;: &quot;https://example.com&quot;,
+  &quot;url&quot;: &quot;https://example.com/&quot;,
+  &quot;formFactor&quot;: &quot;mobile&quot;,
+  &quot;finalUrl&quot;: &quot;https://example.com/&quot;,
+  &quot;statusCode&quot;: 200,
+  &quot;performance&quot;: 100,
+  &quot;accessibility&quot;: 96,
+  &quot;bestPractices&quot;: 100,
+  &quot;seo&quot;: 80,
+  &quot;reportHtmlUrl&quot;: null,
+  &quot;reportJsonUrl&quot;: null,
+  &quot;durationMs&quot;: 7903,
+  &quot;charged&quot;: true,
+  &quot;error&quot;: null,
+  &quot;auditedAt&quot;: &quot;2026-10-21T07:10:44.517Z&quot;,
+  &quot;firstContentfulPaintMs&quot;: 906,
+  &quot;largestContentfulPaintMs&quot;: 906,
+  &quot;totalBlockingTimeMs&quot;: 0,
+  &quot;cumulativeLayoutShift&quot;: 0,
+  &quot;speedIndexMs&quot;: 906,
+  &quot;timeToInteractiveMs&quot;: 906,
+  &quot;serverResponseTimeMs&quot;: 8,
+  &quot;totalByteWeight&quot;: 2143,
+  &quot;failedAuditCount&quot;: 6,
+  &quot;topIssues&quot;: [
+    {
+      &quot;id&quot;: &quot;render-blocking-insight&quot;,
+      &quot;category&quot;: &quot;performance&quot;,
+      &quot;title&quot;: &quot;Render-blocking requests&quot;,
+      &quot;score&quot;: 0,
+      &quot;displayValue&quot;: &quot;Est savings of 140 ms&quot;,
+      &quot;savingsMs&quot;: 150,
+      &quot;savingsBytes&quot;: null
+    },
+    {
+      &quot;id&quot;: &quot;landmark-one-main&quot;,
+      &quot;category&quot;: &quot;accessibility&quot;,
+      &quot;title&quot;: &quot;Document does not have a main landmark.&quot;,
+      &quot;score&quot;: 0,
+      &quot;displayValue&quot;: null,
+      &quot;savingsMs&quot;: null,
+      &quot;savingsBytes&quot;: null
+    },
+    {
+      &quot;id&quot;: &quot;meta-description&quot;,
+      &quot;category&quot;: &quot;seo&quot;,
+      &quot;title&quot;: &quot;Document does not have a meta description&quot;,
+      &quot;score&quot;: 0,
+      &quot;displayValue&quot;: null,
+      &quot;savingsMs&quot;: null,
+      &quot;savingsBytes&quot;: null
+    },
+    &quot;...&quot;
+  ],
+  &quot;lighthouseVersion&quot;: &quot;13.5.0&quot;,
+  &quot;runWarnings&quot;: []
+}</code></pre>
+<p>Every run's dataset can be downloaded as JSON, CSV, Excel, XML or HTML from the Apify Console, or via <code>https://api.apify.com/v2/datasets/&lt;datasetId&gt;/items?format=csv</code>.</p>
+<h2>Run it from code</h2><h3>Python</h3><pre><code class="language-python">from apify_client import ApifyClient  # pip install apify-client
+
+client = ApifyClient(&quot;&lt;YOUR_APIFY_TOKEN&gt;&quot;)
+run_input = {
+  &quot;urls&quot;: [
+    &quot;https://example.com&quot;
+  ],
+  &quot;formFactor&quot;: &quot;mobile&quot;
+}
+run = client.actor(&quot;tinyrex/lighthouse-audit&quot;).call(run_input=run_input)
+for item in client.dataset(run[&quot;defaultDatasetId&quot;]).iterate_items():
+    print(item)</code></pre><h3>JavaScript / Node.js</h3><pre><code class="language-javascript">import { ApifyClient } from &#x27;apify-client&#x27;; // npm i apify-client
+
+const client = new ApifyClient({ token: process.env.APIFY_TOKEN });
+const run = await client.actor(&#x27;tinyrex/lighthouse-audit&#x27;).call({
+  &quot;urls&quot;: [
+    &quot;https://example.com&quot;
+  ],
+  &quot;formFactor&quot;: &quot;mobile&quot;
+});
+const { items } = await client.dataset(run.defaultDatasetId).listItems();
+console.log(items);</code></pre><h3>curl (no SDK)</h3><pre><code class="language-bash"># Runs the actor and returns the results directly (CSV here; use format=json for JSON)
+curl -X POST &quot;https://api.apify.com/v2/acts/tinyrex~lighthouse-audit/run-sync-get-dataset-items?format=csv&quot; \
+  -H &quot;Authorization: Bearer $APIFY_TOKEN&quot; \
+  -H &quot;Content-Type: application/json&quot; \
+  -d &#x27;{&quot;urls&quot;: [&quot;https://example.com&quot;], &quot;formFactor&quot;: &quot;mobile&quot;}&#x27; &gt; results.csv</code></pre>
+<p>Get your API token in Apify Console → Settings → API &amp; Integrations. The free Apify plan includes monthly credit that is enough to try this.</p>
+<h2>Use it from an AI agent (MCP)</h2>
+<p>The <a href="https://mcp.apify.com">Apify MCP server</a> exposes this actor as a tool for Claude, Cursor, VS Code, n8n and other MCP clients. Add this to your client's MCP config (or use the OAuth flow at mcp.apify.com instead of a token):</p><pre><code class="language-json">{
+  &quot;mcpServers&quot;: {
+    &quot;apify&quot;: {
+      &quot;url&quot;: &quot;https://mcp.apify.com?tools=tinyrex/lighthouse-audit&quot;,
+      &quot;headers&quot;: {
+        &quot;Authorization&quot;: &quot;Bearer &lt;YOUR_APIFY_TOKEN&gt;&quot;
+      }
+    }
+  }
+}</code></pre>
+<p>Then ask in plain language, e.g. <i>"Bulk lighthouse audit for this list and give me a table"</i>.</p>
+<h2>Use cases</h2><ul><li>Performance monitoring: weekly scores for your key landing pages in one sheet.</li><li>Agency audits: compare a client's pages with competitors on the same device and settings.</li><li>Release checks: audit staging URLs before and after a deploy.</li><li>SEO reports: combine with the on-page SEO checker for one technical report.</li></ul>
+
+<h2>Pricing</h2><p>Pay per result: $10 per 1,000 successful audits (1 URL on 1 device); unreachable pages are free. You can cap the cost of every run in the run options.</p>
+<h2>FAQ</h2><h3>Is this the same as PageSpeed Insights?</h3><p>It runs the same Lighthouse engine with the mobile preset that PageSpeed Insights uses for lab data, so scores are comparable. It does not include the field data (CrUX) section, which comes from real Chrome users.</p><h3>Do I need a Google API key?</h3><p>No. Lighthouse runs inside the actor in headless Chrome, so there is no key and no shared quota.</p><h3>Why do scores differ between runs?</h3><p>Lab scores vary a little with network and CPU conditions, as in Chrome DevTools. For tracking, compare trends over several runs rather than single numbers.</p><h3>Can I get the full Lighthouse report?</h3><p>Yes. <code>saveHtmlReport</code> stores the full HTML report with a public link, and <code>saveJsonReport</code> stores the raw JSON result.</p>
+<a class="cta" href="https://apify.com/tinyrex/lighthouse-audit">Try it on Apify →</a>
+<h2>Related guides</h2><ul><li><a href="../bulk-on-page-seo-checker-title-meta-h1/">How to audit titles, meta descriptions, H1s and canonicals for hundreds of pages at once</a></li><li><a href="../find-broken-links-404-redirects-website/">How to find every broken link and redirect on a website, with the pages to fix</a></li><li><a href="../bulk-website-screenshots-to-csv-google-drive/">How to take bulk website screenshots from a URL list and save them to CSV or Google Drive</a></li><li><a href="../bulk-tech-stack-lookup-wappalyzer-alternative/">Bulk tech stack lookup: a Wappalyzer / BuiltWith alternative for thousands of domains</a></li></ul><h2>More guides</h2><ul><li><a href="../bulk-tech-stack-lookup-wappalyzer-alternative/">Bulk tech stack lookup: a Wappalyzer / BuiltWith alternative for thousands of domains</a></li><li><a href="../scrape-greenhouse-lever-ashby-jobs/">How to scrape Greenhouse, Lever and Ashby jobs (plus Personio, Teamtailor, Recruitee)</a></li><li><a href="../export-shopify-store-products-to-csv/">How to export all products from any Shopify store to CSV or JSON</a></li><li><a href="../scrape-workday-jobs-myworkdayjobs/">How to scrape jobs from Workday career sites (myworkdayjobs.com)</a></li><li><a href="../export-woocommerce-store-products-to-csv/">How to export products from any WooCommerce store to CSV or JSON</a></li><li><a href="../ted-tenders-api-export/">How to export EU public tenders from TED (Tenders Electronic Daily) to CSV or JSON</a></li><li><a href="../remote-jobs-api-himalayas-remoteok-weworkremotely/">How to scrape remote jobs from Himalayas, Remote OK, We Work Remotely and more in one run</a></li><li><a href="../eu-funding-calls-horizon-europe-api/">How to export open EU funding calls (Horizon Europe, Digital Europe, cascade funding) to CSV or JSON</a></li><li><a href="../rss-feed-to-json-csv-api/">How to turn any RSS or Atom feed into JSON or CSV (bulk, with monitoring)</a></li><li><a href="../extract-emails-socials-from-domain-list/">How to extract emails, phone numbers and social links from a list of company domains</a></li><li><a href="../bulk-website-screenshots-to-csv-google-drive/">How to take bulk website screenshots from a URL list and save them to CSV or Google Drive</a></li><li><a href="../sam-gov-contracts-finder-tenders-api/">How to export US federal (SAM.gov) and UK (Contracts Finder) tenders to CSV or JSON</a></li><li><a href="../siren-siret-lookup-french-company-list-api/">How to look up French companies by SIREN or SIRET and build a B2B list from Sirene</a></li><li><a href="../norway-org-number-lookup-brreg-company-list/">How to look up Norwegian companies by organisation number and build lead lists from Brreg</a></li><li><a href="../sec-edgar-api-download-10-k-8-k-filings-csv/">How to download SEC filings (10-K, 10-Q, 8-K, Form 4) by ticker and search EDGAR full text</a></li><li><a href="../npi-lookup-api-bulk-npi-validation-provider-list/">How to validate NPI numbers in bulk and build US healthcare provider lists from NPPES</a></li><li><a href="../companies-house-api-bulk-uk-company-lookup/">How to look up hundreds of UK companies on Companies House at once (profile, officers, PSC)</a></li><li><a href="../y-tunnus-lookup-finnish-company-list-ytj-api/">How to look up Finnish companies by Y-tunnus and build B2B lead lists from the YTJ register</a></li><li><a href="../extract-all-urls-from-sitemap/">How to extract all URLs from a website&#x27;s sitemap (and find broken links)</a></li><li><a href="../transcribe-audio-video-to-text-srt-whisper-api/">How to transcribe hundreds of audio and video files to text and subtitles with Whisper</a></li><li><a href="../bulk-pdf-to-text-ocr-scanned-pdf-api/">How to extract text from hundreds of PDFs, including scanned ones, in one run</a></li><li><a href="../bulk-email-validation-mx-disposable-check/">How to clean an email list before a campaign: bulk MX, disposable and typo check</a></li><li><a href="../tenderned-api-dutch-public-tenders-export/">How to get Dutch public tenders from TenderNed into a spreadsheet, with daily alerts</a></li><li><a href="../bulk-on-page-seo-checker-title-meta-h1/">How to audit titles, meta descriptions, H1s and canonicals for hundreds of pages at once</a></li><li><a href="../find-broken-links-404-redirects-website/">How to find every broken link and redirect on a website, with the pages to fix</a></li><li><a href="../bulk-lei-lookup-gleif-api-validation/">How to validate LEI codes and find the LEI for a list of companies in bulk</a></li></ul></main>
+<footer>TinyRex Data Tools. Guides and examples for <a href="https://apify.com/tinyrex">TinyRex actors on Apify</a>. Only public data; respect each site's terms. Copy-paste Python, Node.js and curl code in <a href="https://github.com/emirmrkaljevic/tinyrex-examples">tinyrex-examples</a>. Source on <a href="https://github.com/emirmrkaljevic/tinyrex-data-tools">GitHub</a>.</footer></body></html>

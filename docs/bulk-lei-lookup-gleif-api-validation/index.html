@@ -1,0 +1,130 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Bulk LEI Lookup: Validate LEI Codes and Find the LEI for Company Names (GLEIF API)</title><meta name="description" content="Look up hundreds of Legal Entity Identifiers from the official GLEIF API: validate LEIs, find the LEI from a company name, BIC or ISIN, and get status, addresses, register number and parent companies. $1 per 1,000 records."><link rel="canonical" href="https://emirmrkaljevic.github.io/tinyrex-data-tools/bulk-lei-lookup-gleif-api-validation/">
+<meta property="og:title" content="Bulk LEI Lookup: Validate LEI Codes and Find the LEI for Company Names (GLEIF API)"><meta property="og:description" content="Look up hundreds of Legal Entity Identifiers from the official GLEIF API: validate LEIs, find the LEI from a company name, BIC or ISIN, and get status, addresses, register number and parent companies. $1 per 1,000 records."><meta property="og:type" content="article"><meta property="og:url" content="https://emirmrkaljevic.github.io/tinyrex-data-tools/bulk-lei-lookup-gleif-api-validation/">
+<link rel="stylesheet" href="../style.css"><script type="application/ld+json">[{"@context": "https://schema.org", "@type": "TechArticle", "headline": "How to validate LEI codes and find the LEI for a list of companies in bulk", "description": "Look up hundreds of Legal Entity Identifiers from the official GLEIF API: validate LEIs, find the LEI from a company name, BIC or ISIN, and get status, addresses, register number and parent companies. $1 per 1,000 records.", "dateModified": "2026-10-28", "keywords": "bulk lei lookup, lei code validation, find lei by company name, gleif api bulk, bic to lei", "about": {"@type": "SoftwareApplication", "name": "LEI Lookup - Bulk GLEIF LEI Search, Validation & Parents", "url": "https://apify.com/tinyrex/gleif-lei-lookup", "applicationCategory": "DeveloperApplication", "operatingSystem": "Web"}}, {"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "How do I check if an LEI is valid?", "acceptedAnswer": {"@type": "Answer", "text": "The actor first verifies the ISO 17442 check digits, so typos are flagged without a request and cost nothing. Valid codes are then looked up at GLEIF; registrationStatus and renewalOverdue show lapsed LEIs."}}, {"@type": "Question", "name": "Can I find the LEI from a company name?", "acceptedAnswer": {"@type": "Answer", "text": "Yes. Name search matches legal-form suffixes both ways (AG and Aktiengesellschaft, Ltd and Limited), prefers the head office over branches and returns a matchScore, where 1 means an exact legal name match."}}, {"@type": "Question", "name": "Is GLEIF data free to use?", "acceptedAnswer": {"@type": "Answer", "text": "Yes. GLEIF publishes LEI data as open data under CC0, so you can use the results commercially."}}, {"@type": "Question", "name": "Can I map a BIC or ISIN to an LEI?", "acceptedAnswer": {"@type": "Answer", "text": "Yes, through GLEIF's official BIC-to-LEI and ISIN-to-LEI mappings."}}]}]</script></head><body>
+<header><a href="../">🦖 TinyRex Data Tools</a><span class="mut">practical guides for web data APIs</span></header>
+<main><h1>How to validate LEI codes and find the LEI for a list of companies in bulk</h1>
+<p class="mut">Updated 2026-10-28 · Tool used: <a href="https://apify.com/tinyrex/gleif-lei-lookup">LEI Lookup - Bulk GLEIF LEI Search, Validation &amp; Parents</a> on Apify · Price: $1 per 1,000 LEI records found; invalid check digits and no-match rows are free</p>
+<p>Compliance, onboarding and regulatory reporting teams often need the LEI of hundreds of counterparties, or need to check that the LEIs in a CRM are still valid and renewed. The GLEIF website search is built for one entity at a time.</p><p>This guide shows how to check a whole list in one run against the official GLEIF API (open CC0 data): verify LEI check digits, look up legal name, legal and head office address, register number, entity status and renewal date, find the LEI from a company name, BIC or ISIN, and add the direct and ultimate parent company.</p>
+<a class="cta" href="https://apify.com/tinyrex/gleif-lei-lookup">Open LEI Lookup on Apify →</a>
+<h2>Steps</h2><ol><li>Add LEIs to <code>leis</code>, company names to <code>companyNames</code> (optionally narrowed by <code>country</code>), or BICs and ISINs to <code>bics</code> and <code>isins</code>.</li><li>Keep <code>includeParents</code> on to get the direct and ultimate parent, or the reason reported when there is none.</li><li>Export as CSV and filter on <code>registrationStatus</code>, <code>renewalOverdue</code> and <code>matchScore</code> to spot lapsed LEIs and weak name matches.</li></ol>
+<h2>Example input</h2><pre><code class="language-json">{
+  &quot;leis&quot;: [
+    &quot;HWUPKR0MPOU8FGXBT394&quot;,
+    &quot;7LTWFZYICNSX8D621K86&quot;
+  ],
+  &quot;companyNames&quot;: [
+    &quot;Siemens AG&quot;
+  ]
+}</code></pre>
+<h2>Example output (one item, shortened)</h2><pre><code class="language-json">{
+  &quot;query&quot;: &quot;HWUPKR0MPOU8FGXBT394&quot;,
+  &quot;queryType&quot;: &quot;lei&quot;,
+  &quot;found&quot;: true,
+  &quot;matchScore&quot;: 1,
+  &quot;lei&quot;: &quot;HWUPKR0MPOU8FGXBT394&quot;,
+  &quot;legalName&quot;: &quot;Apple Inc.&quot;,
+  &quot;otherNames&quot;: [
+    &quot;Apple Computer, Inc.&quot;
+  ],
+  &quot;entityStatus&quot;: &quot;ACTIVE&quot;,
+  &quot;registrationStatus&quot;: &quot;ISSUED&quot;,
+  &quot;category&quot;: &quot;GENERAL&quot;,
+  &quot;legalFormId&quot;: &quot;H1UM&quot;,
+  &quot;jurisdiction&quot;: &quot;US-CA&quot;,
+  &quot;registeredAs&quot;: &quot;806592&quot;,
+  &quot;registrationAuthorityId&quot;: &quot;RA000598&quot;,
+  &quot;legalAddress&quot;: {
+    &quot;lines&quot;: &quot;C/O C T Corporation System, 330 N. Brand Blvd, Suite 700&quot;,
+    &quot;city&quot;: &quot;Glendale&quot;,
+    &quot;region&quot;: &quot;US-CA&quot;,
+    &quot;postalCode&quot;: &quot;91203&quot;,
+    &quot;country&quot;: &quot;US&quot;
+  },
+  &quot;headquartersAddress&quot;: {
+    &quot;lines&quot;: &quot;One Apple Park Way&quot;,
+    &quot;city&quot;: &quot;Cupertino&quot;,
+    &quot;region&quot;: &quot;US-CA&quot;,
+    &quot;postalCode&quot;: &quot;95014&quot;,
+    &quot;country&quot;: &quot;US&quot;
+  },
+  &quot;entityCreationDate&quot;: &quot;1977-01-03T00:00:00Z&quot;,
+  &quot;initialRegistrationDate&quot;: &quot;2012-06-06T15:53:00Z&quot;,
+  &quot;lastUpdateDate&quot;: &quot;2026-03-03T16:34:33Z&quot;,
+  &quot;nextRenewalDate&quot;: &quot;2027-03-08T17:27:20Z&quot;,
+  &quot;renewalOverdue&quot;: false,
+  &quot;managingLou&quot;: &quot;5493001KJTIIGC8Y1R12&quot;,
+  &quot;corroborationLevel&quot;: &quot;FULLY_CORROBORATED&quot;,
+  &quot;bic&quot;: [
+    &quot;APLEUS66XXX&quot;
+  ],
+  &quot;successorLei&quot;: null,
+  &quot;gleifUrl&quot;: &quot;https://search.gleif.org/#/record/HWUPKR0MPOU8FGXBT394&quot;,
+  &quot;directParent&quot;: {
+    &quot;lei&quot;: null,
+    &quot;name&quot;: null,
+    &quot;country&quot;: null,
+    &quot;exception&quot;: &quot;NATURAL_PERSONS&quot;
+  },
+  &quot;ultimateParent&quot;: {
+    &quot;lei&quot;: null,
+    &quot;name&quot;: null,
+    &quot;country&quot;: null,
+    &quot;exception&quot;: &quot;NATURAL_PERSONS&quot;
+  },
+  &quot;checksumValid&quot;: true,
+  &quot;error&quot;: null
+}</code></pre>
+<p>Every run's dataset can be downloaded as JSON, CSV, Excel, XML or HTML from the Apify Console, or via <code>https://api.apify.com/v2/datasets/&lt;datasetId&gt;/items?format=csv</code>.</p>
+<h2>Run it from code</h2><h3>Python</h3><pre><code class="language-python">from apify_client import ApifyClient  # pip install apify-client
+
+client = ApifyClient(&quot;&lt;YOUR_APIFY_TOKEN&gt;&quot;)
+run_input = {
+  &quot;leis&quot;: [
+    &quot;HWUPKR0MPOU8FGXBT394&quot;,
+    &quot;7LTWFZYICNSX8D621K86&quot;
+  ],
+  &quot;companyNames&quot;: [
+    &quot;Siemens AG&quot;
+  ]
+}
+run = client.actor(&quot;tinyrex/gleif-lei-lookup&quot;).call(run_input=run_input)
+for item in client.dataset(run[&quot;defaultDatasetId&quot;]).iterate_items():
+    print(item)</code></pre><h3>JavaScript / Node.js</h3><pre><code class="language-javascript">import { ApifyClient } from &#x27;apify-client&#x27;; // npm i apify-client
+
+const client = new ApifyClient({ token: process.env.APIFY_TOKEN });
+const run = await client.actor(&#x27;tinyrex/gleif-lei-lookup&#x27;).call({
+  &quot;leis&quot;: [
+    &quot;HWUPKR0MPOU8FGXBT394&quot;,
+    &quot;7LTWFZYICNSX8D621K86&quot;
+  ],
+  &quot;companyNames&quot;: [
+    &quot;Siemens AG&quot;
+  ]
+});
+const { items } = await client.dataset(run.defaultDatasetId).listItems();
+console.log(items);</code></pre><h3>curl (no SDK)</h3><pre><code class="language-bash"># Runs the actor and returns the results directly (CSV here; use format=json for JSON)
+curl -X POST &quot;https://api.apify.com/v2/acts/tinyrex~gleif-lei-lookup/run-sync-get-dataset-items?format=csv&quot; \
+  -H &quot;Authorization: Bearer $APIFY_TOKEN&quot; \
+  -H &quot;Content-Type: application/json&quot; \
+  -d &#x27;{&quot;leis&quot;: [&quot;HWUPKR0MPOU8FGXBT394&quot;, &quot;7LTWFZYICNSX8D621K86&quot;], &quot;companyNames&quot;: [&quot;Siemens AG&quot;]}&#x27; &gt; results.csv</code></pre>
+<p>Get your API token in Apify Console → Settings → API &amp; Integrations. The free Apify plan includes monthly credit that is enough to try this.</p>
+<h2>Use it from an AI agent (MCP)</h2>
+<p>The <a href="https://mcp.apify.com">Apify MCP server</a> exposes this actor as a tool for Claude, Cursor, VS Code, n8n and other MCP clients. Add this to your client's MCP config (or use the OAuth flow at mcp.apify.com instead of a token):</p><pre><code class="language-json">{
+  &quot;mcpServers&quot;: {
+    &quot;apify&quot;: {
+      &quot;url&quot;: &quot;https://mcp.apify.com?tools=tinyrex/gleif-lei-lookup&quot;,
+      &quot;headers&quot;: {
+        &quot;Authorization&quot;: &quot;Bearer &lt;YOUR_APIFY_TOKEN&gt;&quot;
+      }
+    }
+  }
+}</code></pre>
+<p>Then ask in plain language, e.g. <i>"Bulk lei lookup for this list and give me a table"</i>.</p>
+<h2>Use cases</h2><ul><li>KYB and onboarding: confirm a new client's legal name, address and LEI status.</li><li>MiFIR and EMIR reporting: check that every counterparty LEI is issued and not lapsed.</li><li>CRM clean-up: add LEIs and parent companies to an account list.</li><li>Ownership research: map subsidiaries to their ultimate parent.</li></ul>
+
+<h2>Pricing</h2><p>Pay per result: $1 per 1,000 LEI records found; invalid check digits and no-match rows are free. You can cap the cost of every run in the run options.</p>
+<h2>FAQ</h2><h3>How do I check if an LEI is valid?</h3><p>The actor first verifies the ISO 17442 check digits, so typos are flagged without a request and cost nothing. Valid codes are then looked up at GLEIF; <code>registrationStatus</code> and <code>renewalOverdue</code> show lapsed LEIs.</p><h3>Can I find the LEI from a company name?</h3><p>Yes. Name search matches legal-form suffixes both ways (AG and Aktiengesellschaft, Ltd and Limited), prefers the head office over branches and returns a <code>matchScore</code>, where 1 means an exact legal name match.</p><h3>Is GLEIF data free to use?</h3><p>Yes. GLEIF publishes LEI data as open data under CC0, so you can use the results commercially.</p><h3>Can I map a BIC or ISIN to an LEI?</h3><p>Yes, through GLEIF's official BIC-to-LEI and ISIN-to-LEI mappings.</p>
+<a class="cta" href="https://apify.com/tinyrex/gleif-lei-lookup">Try it on Apify →</a>
+<h2>Related guides</h2><ul><li><a href="../companies-house-api-bulk-uk-company-lookup/">How to look up hundreds of UK companies on Companies House at once (profile, officers, PSC)</a></li><li><a href="../siren-siret-lookup-french-company-list-api/">How to look up French companies by SIREN or SIRET and build a B2B list from Sirene</a></li><li><a href="../sec-edgar-api-download-10-k-8-k-filings-csv/">How to download SEC filings (10-K, 10-Q, 8-K, Form 4) by ticker and search EDGAR full text</a></li><li><a href="../norway-org-number-lookup-brreg-company-list/">How to look up Norwegian companies by organisation number and build lead lists from Brreg</a></li></ul><h2>More guides</h2><ul><li><a href="../bulk-tech-stack-lookup-wappalyzer-alternative/">Bulk tech stack lookup: a Wappalyzer / BuiltWith alternative for thousands of domains</a></li><li><a href="../scrape-greenhouse-lever-ashby-jobs/">How to scrape Greenhouse, Lever and Ashby jobs (plus Personio, Teamtailor, Recruitee)</a></li><li><a href="../export-shopify-store-products-to-csv/">How to export all products from any Shopify store to CSV or JSON</a></li><li><a href="../scrape-workday-jobs-myworkdayjobs/">How to scrape jobs from Workday career sites (myworkdayjobs.com)</a></li><li><a href="../export-woocommerce-store-products-to-csv/">How to export products from any WooCommerce store to CSV or JSON</a></li><li><a href="../ted-tenders-api-export/">How to export EU public tenders from TED (Tenders Electronic Daily) to CSV or JSON</a></li><li><a href="../remote-jobs-api-himalayas-remoteok-weworkremotely/">How to scrape remote jobs from Himalayas, Remote OK, We Work Remotely and more in one run</a></li><li><a href="../eu-funding-calls-horizon-europe-api/">How to export open EU funding calls (Horizon Europe, Digital Europe, cascade funding) to CSV or JSON</a></li><li><a href="../rss-feed-to-json-csv-api/">How to turn any RSS or Atom feed into JSON or CSV (bulk, with monitoring)</a></li><li><a href="../extract-emails-socials-from-domain-list/">How to extract emails, phone numbers and social links from a list of company domains</a></li><li><a href="../bulk-website-screenshots-to-csv-google-drive/">How to take bulk website screenshots from a URL list and save them to CSV or Google Drive</a></li><li><a href="../sam-gov-contracts-finder-tenders-api/">How to export US federal (SAM.gov) and UK (Contracts Finder) tenders to CSV or JSON</a></li><li><a href="../siren-siret-lookup-french-company-list-api/">How to look up French companies by SIREN or SIRET and build a B2B list from Sirene</a></li><li><a href="../norway-org-number-lookup-brreg-company-list/">How to look up Norwegian companies by organisation number and build lead lists from Brreg</a></li><li><a href="../sec-edgar-api-download-10-k-8-k-filings-csv/">How to download SEC filings (10-K, 10-Q, 8-K, Form 4) by ticker and search EDGAR full text</a></li><li><a href="../npi-lookup-api-bulk-npi-validation-provider-list/">How to validate NPI numbers in bulk and build US healthcare provider lists from NPPES</a></li><li><a href="../companies-house-api-bulk-uk-company-lookup/">How to look up hundreds of UK companies on Companies House at once (profile, officers, PSC)</a></li><li><a href="../y-tunnus-lookup-finnish-company-list-ytj-api/">How to look up Finnish companies by Y-tunnus and build B2B lead lists from the YTJ register</a></li><li><a href="../extract-all-urls-from-sitemap/">How to extract all URLs from a website&#x27;s sitemap (and find broken links)</a></li><li><a href="../transcribe-audio-video-to-text-srt-whisper-api/">How to transcribe hundreds of audio and video files to text and subtitles with Whisper</a></li><li><a href="../bulk-pdf-to-text-ocr-scanned-pdf-api/">How to extract text from hundreds of PDFs, including scanned ones, in one run</a></li><li><a href="../bulk-email-validation-mx-disposable-check/">How to clean an email list before a campaign: bulk MX, disposable and typo check</a></li><li><a href="../tenderned-api-dutch-public-tenders-export/">How to get Dutch public tenders from TenderNed into a spreadsheet, with daily alerts</a></li><li><a href="../bulk-on-page-seo-checker-title-meta-h1/">How to audit titles, meta descriptions, H1s and canonicals for hundreds of pages at once</a></li><li><a href="../find-broken-links-404-redirects-website/">How to find every broken link and redirect on a website, with the pages to fix</a></li><li><a href="../bulk-lighthouse-audit-core-web-vitals/">How to run Lighthouse on hundreds of URLs and get Core Web Vitals in one table</a></li></ul></main>
+<footer>TinyRex Data Tools. Guides and examples for <a href="https://apify.com/tinyrex">TinyRex actors on Apify</a>. Only public data; respect each site's terms. Copy-paste Python, Node.js and curl code in <a href="https://github.com/emirmrkaljevic/tinyrex-examples">tinyrex-examples</a>. Source on <a href="https://github.com/emirmrkaljevic/tinyrex-data-tools">GitHub</a>.</footer></body></html>
