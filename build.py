@@ -660,16 +660,17 @@ pre{background:#0f1720;color:#e6edf3;padding:14px;border-radius:8px;overflow:aut
 table.sample{width:100%;border-collapse:collapse;font-size:.9rem;margin:1em 0}table.sample th,table.sample td{border:1px solid #e3e7ec;padding:8px 10px;text-align:left;vertical-align:top}table.sample th{background:var(--code)}
 .pricebox{border:1px solid #e3e7ec;border-radius:10px;padding:16px;margin:12px 0}"""
 
-def page(path, title, desc, body, ld=None):
+def page(path, title, desc, body, ld=None, footer_extra=""):
     url = f"{BASE}/{path}"
     ldj = f'<script type="application/ld+json">{json.dumps(ld)}</script>' if ld else ""
+    extra = footer_extra or ""
     return f"""<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>{E(title)}</title><meta name="description" content="{E(desc)}"><link rel="canonical" href="{url}">
 <meta property="og:title" content="{E(title)}"><meta property="og:description" content="{E(desc)}"><meta property="og:type" content="article"><meta property="og:url" content="{url}">
 <link rel="stylesheet" href="{'../' if path else ''}style.css">{ldj}</head><body>
 <header><a href="{'../' if path else './'}">🦖 TinyRex Data Tools</a><span class="mut">practical guides for web data APIs</span></header>
 <main>{body}</main>
-<footer>TinyRex Data Tools. Guides and examples for <a href="https://apify.com/tinyrex">TinyRex actors on Apify</a>. Only public data; respect each site's terms. Copy-paste Python, Node.js and curl code in <a href="https://github.com/emirmrkaljevic/tinyrex-examples">tinyrex-examples</a>. Source on <a href="https://github.com/emirmrkaljevic/tinyrex-data-tools">GitHub</a>.</footer></body></html>"""
+<footer>TinyRex Data Tools. Guides and examples for <a href="https://apify.com/tinyrex">TinyRex actors on Apify</a>. Only public data; respect each site's terms. Copy-paste Python, Node.js and curl code in <a href="https://github.com/emirmrkaljevic/tinyrex-examples">tinyrex-examples</a>. Source on <a href="https://github.com/emirmrkaljevic/tinyrex-data-tools">GitHub</a>.{extra}</footer></body></html>"""
 
 def code(s, lang=""):
     return f'<pre><code class="language-{lang}">{E(s)}</code></pre>'
@@ -722,7 +723,10 @@ curl -X POST "https://api.apify.com/v2/acts/{tid}/run-sync-get-dataset-items?for
 {related}<h2>More guides</h2><ul>{others}</ul>"""
     ld = [{"@context": "https://schema.org", "@type": "TechArticle", "headline": a["h1"], "description": a["desc"], "dateModified": TODAY, "keywords": ", ".join(a["kw"]), "about": {"@type": "SoftwareApplication", "name": a["title"], "url": store, "applicationCategory": "DeveloperApplication", "operatingSystem": "Web"}},
           {"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": q, "acceptedAnswer": {"@type": "Answer", "text": re.sub('<[^>]+>', '', ans)}} for q, ans in a["faq"]]}]
-    return page(f"{a['slug']}/", a["ptitle"], a["desc"], body, ld)
+    extra = ""
+    if a.get("name") == "remote-jobs-scraper":
+        extra = ' Listed on <a href="https://getprojectradar.com/notes/remote-jobs-scraper-tinyrex">Project Radar</a>.'
+    return page(f"{a['slug']}/", a["ptitle"], a["desc"], body, ld, footer_extra=extra)
 
 def index(actors, tuts=(), cps=()):
     cards = "".join(f'<div class="card"><h3><a href="{a["slug"]}/">{E(a["title"].split(" - ")[0])}</a></h3><p>{E(a["short"])}</p><p class="mut">{E(a["price"])}</p><p><a href="{a["slug"]}/">Guide</a> · <a href="{STORE}{a["name"]}">Apify Store</a></p></div>' for a in actors)
